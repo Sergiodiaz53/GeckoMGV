@@ -1,0 +1,8 @@
+{%extends "includes/serviceform.html"%}
+{%block form%}
+
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Submit" />
+
+{% endblock %}

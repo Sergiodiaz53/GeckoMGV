@@ -1,0 +1,102 @@
+{%load staticfiles%}
+
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js">
+<!--<![endif]-->
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>MultiGenome Visualization</title>
+<meta name="description" content="">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+
+<link rel="stylesheet" href="{% static "css/normalize.css" %}">
+<link rel="stylesheet" href="{% static "css/main.css" %}">
+<link rel="stylesheet" href="{% static "css/bootstrap.min.css" %}">
+<link rel="stylesheet" href="{% static "css/custom.css" %}">
+<link rel="stylesheet" href="{% static "css/jquery-ui.theme.min.css" %}">
+<link rel="stylesheet" href="{% static "css/bootstrap-dialog.css" %}">
+
+<!-- jQuery UI Bootstrap CSS: http://bit.ly/19bKslN -->
+<link rel="stylesheet" href="{% static "css/custom-theme/jquery.ui.1.10.3.ie.css" %}">
+<link rel="stylesheet" href="{% static "css/custom-theme/jquery-ui-1.10.3.custom.css" %}">
+<link rel="stylesheet" href="{% static "css/custom-theme/jquery-ui-1.10.3.theme.css" %}">
+
+    <script type="text/javascript" src="{% static "js/APIS/jquery-1.11.1.min.js" %}"></script>
+
+</head>
+<body role="document">
+
+
+	<div id="header">
+        <nav class="navbar navbar-default navbar-inverse navbar-fixed-top" role="navigation">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                </button>
+                  <a class="navbar-brand" href="#">MG Visualizator</a>
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li class="navbar-left active"><a href="/">Home</a></li>
+                    <li class="navbar-left"><a href="#contact">Contact</a></li>
+                    <li class="navbar-left"><a href="{% url 'services_view' %}">Services</a></li>
+                    <li class="navbar-left"><a href="{% url 'fileManager_view' %}">File manager</a></li>
+                    <li class="navbar-left"><a href="data/MG-Help.pdf">Help</a></li>
+                        {% if user.is_authenticated %}
+                                <li class="align-right"><a href="#"><i class="fa fa-sign-out fa-fw whiteColor">Welcome {{ user.get_username }}</i></a></li>
+                                <li class="align-right"><a href="{% url 'logout_view' %}"><i class="fa fa-sign-out fa-fw redColor">Logout</i></a></li>
+                        {% else %}
+                            <li>
+                                <a class="btn btn-default btn-outline btn-circle collapsed"  data-toggle="collapse" href="#nav-collapse2" aria-expanded="false" aria-controls="nav-collapse2">Sign in</a>
+                            </li>
+                        {% endif %}
+                    <div class="collapse nav navbar-nav nav-collapse slide-down" id="nav-collapse2">
+                            <form class="navbar-form navbar-right form-inline" role="form" action="{% url 'login_view' %}" method="POST">
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    <label class="sr-only" for="User">Username</label>
+                                    <input type="text" name="username" class="form-control" id="user" placeholder="Username" autofocus required />
+                                </div>
+                                <div class="form-group">
+                                    <label class="sr-only" for="Password">Password</label>
+                                    <input type="password" name="password" class="form-control" id="password" placeholder="Password" required />
+                                </div>
+
+                                <button type="submit" class="btn btn-success">Sign in</button>
+                            </form>
+                    </div>
+                </ul>
+            </div>
+        </nav>
+	</div>
+
+{%block content%}
+
+
+{% endblock %}
+
+    <link rel="stylesheet" href="{% static "css/custom-theme/jquery.ui.1.10.3.ie.css" %}">
+
+	<script type="text/javascript" src="{% static "js/APIS/modernizr-2.6.2.min.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/APIS/bootstrap.min.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/Plugins/bootstrap-dialog.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/Plugins/plugins.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/APIS/jquery-ui.min.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/MGV/CanvasPainter.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/MGV/FileManager.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/MGV/TableManager.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/MGV/MatrixPainter.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/Plugins/html5csv.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/mainFunctions.js" %}"></script>
+
+</body>
+</html>

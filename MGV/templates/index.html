@@ -1,0 +1,318 @@
+{%extends "includes/basic.html"%}
+{%load staticfiles%}
+{%block content%}
+
+	<div id="main" class="container center-block" role="main">
+
+		<div class="row row-centered">
+			<div class="col-md-8">
+				<div class="row row-centered my-container2">
+					<div>
+						<div id="fileName">
+							Upload a fragments file
+							<button id="infoPopover" type="button"
+								class="btn btn-warning btn-xs btn-padding" data-container="body"
+								data-toggle="popover" data-placement="right"
+								data-content="Not file loaded" data-html="true">?</button>
+						</div>
+					</div>
+
+					<!-- ---------- CANVAS -------------------- -->
+					<div id="canvasContainer" class="canvas-centered">
+						<canvas id="myCanvasGrid" width="600" height="550"></canvas>
+						<canvas id="myCanvas" width="500" height="500"></canvas>
+						<canvas id="myCanvasLayer1" width="500" height="500"> </canvas>
+					</div>
+				</div>
+
+				<div class="row row-centered my-container2">
+					<div class="col-md-8 col-centered">
+						<div class="div-centered">
+							<div id="fileNameMAT">
+								Upload a Matrix file
+								<button id="infoPopoverMatriz" type="button"
+									class="btn btn-warning btn-xs btn-padding"
+									data-container="body" data-toggle="popover"
+									data-placement="right" data-content="Not file loaded"
+									data-html="true">?</button>
+							</div>
+						</div>
+
+						<!-- ---------- CANVAS Matrix -------------------- -->
+						<div id="canvasContainerMatrix" class="div-centered">
+							<canvas id="myCanvasMatrix" width="500" height="100"> </canvas>
+						</div>
+
+					</div>
+				</div>
+
+			</div>
+
+			<div class="col-md-4">
+				<div class="row row-centered">
+					<div class="col-xs-9 col-sm-9 col-centered">
+						<div class="panel panel-primary">
+							<div class="panel-heading">
+								<h3 class="panel-title">Map</h3>
+							</div>
+							<div class="panel-body ">
+									<div id="canvasMapContainer" class="div-centered row-centered top-buffer">
+										<img id="mapimage" width="202" height="202"/>
+										<canvas id="myMap" width="200" height="200"></canvas>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row row-centered">
+					<div class="col-xs-9 col-sm-9 col-centered">
+						<div class="panel panel-primary">
+							<div class="panel-heading">
+								<h3 class="panel-title">Functions</h3>
+							</div>
+							<div class="panel-body">
+								<div class="row row-centered top-buffer">
+									<span class="btn btn-primary btn-file"> Load frags <input
+										type="file" multiple="true"
+										onchange="handleFiles(this.files,'csv')" accept=".csv">
+									</span>
+									<span class="btn btn-primary btn-file"> Load MAT <input
+										type="file" onchange="handleFiles(this.files,'mat')"
+										accept=".MAT">
+									</span>
+								</div>
+                                <div class="row row-centered top-buffer">
+									<span class="btn btn-primary btn-file">Load Mauven<input type="file" multiple="true" onchange="handleFiles(this.files,'mvn')" accept=".txt">
+									</span>
+
+								</div>
+								<div class="row row-centered top-buffer">
+									<select id="viewSelect">
+										<option selected disabled>Choose view</option>
+										<option>Traditional</option>
+										<option>Horizontal</option>
+									</select>
+								</div>
+								<div class="row row-centered top-buffer">
+									<div class="btn-group btn-group-justified btn-padding">
+										<div class="btn-group">
+											<button type="button" class="btn btn-default"
+												onclick="resetDraw()">Initial View</button>
+										</div>
+										<div class="btn-group">
+											<button type="button" class="btn btn-default"
+												onclick="activateBoard()">Grid</button>
+										</div>
+									</div>
+								</div>
+								<div class="row row-centered top-buffer btn-group">
+									<div class="btn-group btn-group-justified btn-padding">
+										<div class="btn-group">
+											<!--<button type ="button" class="btn btn-default" onclick="showDivInfoInPopup('output', 'popuptable.html', 'PopupTable')">CSB & Frag info</button> -->
+											<!--<button class="btn btn-default" data-toggle="modal" data-target="#infoModal" data-backdrop="false">CSB & Frag info</button>-->
+											<button class="btn btn-default" onclick="dialogFrags()">CSB
+												& Frag info</button>
+										</div>
+										<div class="btn-group">
+											<!--<button type ="button" class="btn btn-default" onclick="showDivInfoInPopup('annotationsOutput', 'annotationstable.html', 'Annotations Table')">Annotations</button>-->
+											<button class="btn btn-default" onclick="dialogAnnotations()">Annotations</button>
+										</div>
+									</div>
+								</div>
+
+								<div class="row top-buffer btn-padding form-group row-centered">
+									<form name="option" class="form-centered">
+										<input type="radio" name="tipo" value="Frag" checked
+											onClick="redraw()"><span class="formType">HSP</span>
+										<input type="radio" name="tipo" value="CSB" onClick="redraw()"><span
+											class="formType">CSB</span> <input type="radio" name="tipo"
+											value="all" onClick="redraw()"><span class="formType">HSP
+											& CSB</span>
+									</form>
+								</div>
+
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row row-centered">
+					<div class="col-xs-9 col-sm-9 col-centered">
+						<div class="panel panel-primary">
+							<div class="panel-heading">
+								<h3 class="panel-title">Filters</h3>
+							</div>
+							<div class="panel-body">
+								<div class="row top-buffer btn-padding">
+									<form name="filters" id="filters">
+										<div class="checkbox">
+											<label> <input type="checkbox" id="filterIrrelevants"
+												value="irrelevants" onClick="redraw()">Statistical
+												Significance
+											</label>
+										</div>
+										<div class="checkbox">
+											<label> <input type="checkbox" id="filterOverlapped"
+												value="overlapped" onClick="redraw()">Overlapped
+												(Repetitions)
+											</label>
+										</div>
+										<div class="checkbox">
+											<label> <input type="checkbox" id="filterOverlapped2"
+												value="overlapped2" onClick="redraw()">Duplications
+											</label>
+										</div>
+										<div class="checkbox">
+											<label> <input type="checkbox" id="filterPositives"
+												value="positives" onClick="redraw()">Positive blocks
+											</label>
+										</div>
+										<div class="input-group group-padding">
+											<span class="input-group-addon"> <input
+												type="checkbox" id="filterLenght" value="lenght"
+												onClick="redraw()">MinLength<br>
+											</span> <input type="number" class="form-control"
+												id="filterLenghtNumber" value="200">
+										</div>
+										<div class="input-group group-padding">
+											<span class="input-group-addon"> <input
+												type="checkbox" id="filterSimilarity" value="similarity"
+												onClick="redraw()">MinSimilarity<br>
+											</span> <input type="number" class="form-control"
+												id="filterSimilarityNumber" value="50" min="0" max="100">
+										</div>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal -->
+	<div id="infoModal" class="modal fade" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel" aria-hidden="true">
+		<div id="infoModal-dialog" class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+					</button>
+					<h4 class="modal-title" id="myModalLabel">CSB & Frag info</h4>
+					<button type="button" id="downloadFile"
+						class="btn btn-primary pull-right" onclick="saveCSV()">Save</button>
+				</div>
+				<div id="output" class="modal-body"></div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<!-- Annotation Modal -->
+	<div id="AnnotationModal" class="modal fade" tabindex="-1"
+		role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+		<div class="AnnotationModal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+					</button>
+					<h4 class="modal-title" id="myModalLabel2">Annotations</h4>
+				</div>
+				<div id="annotationsOutput" class="modal-body"></div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+
+	<div class="popover right" id="CSBPopover" role="tooltip"></div>
+
+    <link rel="stylesheet" href="{% static "css/custom-theme/jquery.ui.1.10.3.ie.css" %}">
+
+	<script src="{% static "js/APIS/modernizr-2.6.2.min.js" %}"></script>
+	<script src="{% static "js/APIS/jquery-1.11.1.min.js" %}"></script>
+	<script src="{% static "js/APIS/bootstrap.min.js" %}"></script>
+	<script src="{% static "js/Plugins/bootstrap-dialog.js" %}"></script>
+	<script src="{% static "js/Plugins/plugins.js" %}"></script>
+	<script src="{% static "js/APIS/jquery-ui.min.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/MGV/CanvasPainter.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/MGV/FileManager.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/MGV/TableManager.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/MGV/MatrixPainter.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/Plugins/html5csv.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/mainFunctions.js" %}"></script>
+
+	<script>
+		//InfoPopover = File info popover.
+		$(function() {
+			$("#infoPopover").popover();
+		});
+
+		//Draggable Modal CSB Info
+		$("#infoModal").draggable({
+			handle : ".modal-header"
+		});
+
+		//Draggable Modal CSB Info
+		$("#AnnotationModal").draggable({
+			handle : ".modal-header"
+		});
+
+		//Erase localStorage when close
+		$(window).unload(function() {
+			localStorage.clear()
+		});
+
+		//Detect changes on filterLength value
+		$("#filterLenghtNumber").change(function() {
+			if (document.getElementById("filterLenght").checked) {
+				redraw();
+			}
+		});
+
+		$("#filterSimilarityNumber").change(function() {
+			if (document.getElementById("filterLenght").checked) {
+				redraw();
+			}
+		});
+
+		//Not sending form on ENTER
+		$("#filters").submit(function() {
+			return false;
+		});
+
+		//Detecting keyEvent on form
+		$("#filterLenghtNumber").keyup(function(e) {
+			if (e.keyCode == 13) {
+				redraw();
+			}
+		});
+
+		$("#filterSimilarityNumber")
+				.keyup(
+						function(e) {
+							if (e.keyCode == 13) {
+								if (document
+										.getElementById("filterSimilarityNumber").value > 100) {
+									document
+											.getElementById("filterSimilarityNumber").value = 100;
+								} else if (document
+										.getElementById("filterSimilarityNumber").value < 0) {
+									document
+											.getElementById("filterSimilarityNumber").value = 0;
+								}
+								redraw();
+							}
+						});
+	</script>
+
+{% endblock %}

@@ -1,0 +1,66 @@
+{%extends "includes/basic.html"%}
+{%load staticfiles%}
+{%block content%}
+
+    <div id="main" class="container center-block" role="main" xmlns="http://www.w3.org/1999/html">
+
+    		<div class="row row-centered">
+			    <div id = 'uploadFile' class="col-md-8 col-centered">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <a data-toggle="collapse" data-target="#uploadColapsed" href="#uploadColapsed" class="collapsed collapse-link">Upload file</a>
+                        </div>
+                        <div id="uploadColapsed" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <form action="{% url "uploadFile_view" %}" method="post" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    <p>{{ form.non_field_errors }}</p>
+
+                                    <p>{{ form.userfile.label_tag }} {{ form.userfile.help_text }}</p>
+                                    <p>
+                                        {{ form.userfile.errors }}
+                                        {{ form.userfile }}
+                                    </p>
+                                    <p><input type="submit" value="Upload" /></p>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row row-centered">
+            <table class="table table-striped">
+                <thead>
+                  <tr>
+                      <th>Filename</th>
+                      <th>Size</th>
+                      <th class="center">Options</th>
+                  </tr>
+                </thead>
+                {% for file in files %}
+                    <thead>
+                    <tr>
+                        <th>{{ file.filename }} </th>
+                        <th>{{ file.file.size|filesizeformat}} </th>
+                        <th class="center">
+                            <form role="form" action="{% url 'deleteFile_view' %}" method="POST">
+                                {% csrf_token %}
+                                <input type="text" class="hidden" name="filename" value="{{ file.file.name }}">
+                                <button type="submit" class="btn btn-xs btn-danger glyphicon glyphicon-remove">Delete</button>
+                            </form>
+                            <form role="form" action="{% url 'deleteFile_view' %}" method="POST">
+                                {% csrf_token %}
+                                <input type="text" class="hidden" name="filename" value="{{ file.file.name }}">
+                                <button type="submit" class="btn btn-xs btn-warning glyphicon glyphicon-pencil">Edit</button>
+                            </form>
+                        </th>
+                    </tr>
+                    </thead>
+                {% endfor %}
+
+            </table>
+            </div>
+        </div>
+
+{% endblock %}

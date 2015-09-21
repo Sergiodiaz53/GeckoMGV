@@ -1,0 +1,35 @@
+
+{%extends "includes/basic.html"%}
+{%load staticfiles%}
+{%block content%}
+
+    <div id="main" class="container center-block" role="main">
+
+    		<div class="row row-centered">
+			    <div class="col-md-8 col-centered">
+                    <h2>Services</h2>
+
+                    <ul>
+
+                    {% for service in services %}
+                        <li class="list-group-item clearfix">
+                            <h4 class="list-group-item-heading">{{ service.name }}</h4>
+                            <p class="list-group-item-text"> {{ service.help }}</p>
+                            <span class="pull-right">
+                                <form role="form" action="{% url 'serviceInterface' %}" method="POST">
+                                    {% csrf_token %}
+                                    <input type="text" name="serviceName" class="form-control hidden" value="{{ service.name }}" />
+                                    <input type="text" name="exeName" class="form-control hidden" value= "{{ service.exeName }}" />
+                                    <button type="submit" class="btn btn-xs btn-info glyphicon glyphicon-cog"> Start</button>
+                                </form>
+                            </span>
+                        </li>
+
+                    {% endfor %}
+
+                    </ul>
+                </div>
+            </div>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,33 @@
+{%extends "includes/basic.html"%}
+{%load staticfiles%}
+{%block content%}
+
+    <div id="main" class="container center-block" role="main">
+
+    		<div class="row row-centered">
+			    <div class="col-md-8 col-centered">
+                <br/><br/><br/><br/><br/><br/>
+                    <form id="serviceForm" action="{% url 'executeService' %}" method="POST">
+                        {% csrf_token %}
+
+                        <input type="text" name="serviceName" class="hidden" value="{{ name }}" />
+                        <input type="text" name="exeName" class="hidden" value= "{{ exeName }}" />
+
+                        {%block form%}
+
+                        {% endblock %}
+
+                        <div class="control-group">
+                            <label class="control-label" for="submit"></label>
+                            <div class="controls">
+                                <button type="submit" id="submit" name="submit" class="btn btn-primary">Enviar</button>
+                            </div>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+    </div>
+
+{% endblock %}

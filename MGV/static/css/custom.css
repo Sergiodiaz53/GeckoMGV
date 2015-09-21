@@ -1,0 +1,347 @@
+body {
+    padding-top: 70px;
+    padding-bottom: 30px;
+}
+
+.center {
+    text-align: center;
+}
+
+.redColor {
+    color: red;
+}
+
+.whiteColor {
+    color: #ffffff;
+}
+
+
+/* Show borders in tables */
+
+.my-container [class^="col-"] {
+       padding-top: 10px;
+       padding-bottom: 10px;
+       background-color: #eee;
+       border: 1px solid #ddd;
+       background-color: rgba(67, 137, 201, 0.7);
+       border: 1px solid rgba(67, 137, 201, 1.0);
+}
+
+.my-container2 {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background-color: #eee;
+    border: 1px solid #ddd;
+    background-color: rgba(102, 171, 138, 0.7);
+    border: 1px solid rgba(102, 171, 138, 1.0);
+    margin-bottom: 25px;
+}
+
+#csvInfoTable{
+    width: 100%;
+}
+
+#output {
+    text-align: center;
+}
+
+.td {
+    text-align: center;
+}
+
+.columnRight {
+    text-align: right;
+}
+
+.bigCell {
+    width: auto;
+}
+
+.leftCell {
+    text-align: left;
+}
+
+.row-centered {
+    text-align:center;
+}
+.col-centered {
+    display:inline-block;
+    float:none;
+    /* reset the text-align */
+    text-align:left;
+    /* inline-block space fix */
+    margin-right:-4px;
+}
+
+.form-centered {
+    text-align: center;
+}
+
+.canvas-centered {
+    display:inline-block;
+    float:none;
+    /* reset the text-align */
+    text-align:left;
+    /* inline-block space fix */
+    margin-right:-4px;
+}
+
+.top-buffer {
+    margin-top:10px;
+}
+
+.div-centered {
+    text-align: center;
+}
+
+.panel-body {
+    margin-top:-15px;
+    margin-bottom:-5px;
+}
+
+.btn-padding {
+    padding-left: 5px;
+    padding-right: 5px;
+    text-align: left;
+}
+
+.btn-file {
+    position: relative;
+    overflow: hidden;
+}
+.btn-file input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    font-size: 100px;
+    text-align: right;
+    opacity: 0;
+    outline: none;
+    background: white;
+    cursor: inherit;
+    display: block;
+}
+
+.formType {
+    margin-right: 5px;
+    margin-left: 5px;
+}
+
+#canvasContainer{
+    width: 600px;
+    height: 550px;
+    margin-bottom: 25px;
+}
+
+#myCanvas {
+    background-color: transparent;
+    border:1px solid #000000;
+    position: absolute;
+    z-index: 2;
+    margin-top: 25px;
+    margin-left: 50px;
+}
+
+#myMap {
+    background-color: transparent;
+    border:1px solid #000000;
+    position:relative;
+    z-index:2;
+}
+
+#mapimage{
+    position:absolute;
+    z-index:1;
+}
+
+#myCanvasLayer1 {
+
+    background-color: transparent;
+    border:1px solid #000000;
+    position: absolute;
+    z-index: 1;
+    margin-top: 25px;
+    margin-left: 50px;
+}
+
+#myCanvasGrid {
+    background-color: white ;
+    border:1px solid #000000;
+    position: absolute;
+    z-index: 1;
+}
+
+#myCanvasMatrix {
+    background-color:#ffffff;
+    border:1px solid #000000;
+}
+.horizontalCanvas {
+    background-color: white;
+    border:1px solid #000000;
+    position: relative;
+    z-index: 2;
+}
+
+/* ----- Progress bar CSS ----- */
+
+#progress_bar {
+    margin: 10px 0;
+    padding: 3px;
+    border: 1px solid #000;
+    font-size: 14px;
+    clear: both;
+    opacity: 1.0;
+    -moz-transition: opacity 1s linear;
+    -o-transition: opacity 1s linear;
+    -webkit-transition: opacity 1s linear;
+}
+#progress_bar.loading {
+    opacity: 1.0;
+}
+#progress_bar .percent {
+    background-color: #99ccff;
+    height: auto;
+    width: 0;
+}
+
+#fileName {
+    padding-bottom: 5px;
+}
+
+#infoModal-dialog{
+    width: auto;
+}
+
+#AnnotationModal-dialog {
+    width: auto;
+}
+
+.modal-header {
+    overflow: auto;
+    padding-top: 5px;
+    padding-bottom: 15px;
+}
+
+.group-padding {
+    padding-bottom: 5px;
+}
+
+.table {
+    -webkit-user-select: auto !important;
+    -khtml-user-select: auto !important;
+    -moz-user-select: auto !important;
+    -ms-user-select: auto !important;
+    -o-user-select: auto !important;
+    user-select: auto !important;
+}
+
+
+/* FileManager CSS */
+
+.collapse-link {
+    color: #ffffff;
+}
+
+.optionButton {
+    float: left;
+}
+
+/* Table Generator */
+
+.CSSTableGenerator {
+    margin:0px;padding:0px;
+    width:100%;
+    box-shadow: 10px 10px 5px #888888;
+    border:1px solid #000000;
+
+    -moz-border-radius-bottomleft:25px;
+    -webkit-border-bottom-left-radius:25px;
+    border-bottom-left-radius:25px;
+
+    -moz-border-radius-bottomright:25px;
+    -webkit-border-bottom-right-radius:25px;
+    border-bottom-right-radius:25px;
+
+    -moz-border-radius-topright:25px;
+    -webkit-border-top-right-radius:25px;
+    border-top-right-radius:25px;
+
+    -moz-border-radius-topleft:25px;
+    -webkit-border-top-left-radius:25px;
+    border-top-left-radius:25px;
+}.CSSTableGenerator table{
+     border-collapse: collapse;
+     border-spacing: 0;
+     width:100%;
+     height:100%;
+     margin:0px;padding:0px;
+ }.CSSTableGenerator tr:last-child td:last-child {
+      -moz-border-radius-bottomright:25px;
+      -webkit-border-bottom-right-radius:25px;
+      border-bottom-right-radius:25px;
+  }
+.CSSTableGenerator table tr:first-child td:first-child {
+    -moz-border-radius-topleft:25px;
+    -webkit-border-top-left-radius:25px;
+    border-top-left-radius:25px;
+}
+.CSSTableGenerator table tr:first-child td:last-child {
+    -moz-border-radius-topright:25px;
+    -webkit-border-top-right-radius:25px;
+    border-top-right-radius:25px;
+}.CSSTableGenerator tr:last-child td:first-child{
+     -moz-border-radius-bottomleft:25px;
+     -webkit-border-bottom-left-radius:25px;
+     border-bottom-left-radius:25px;
+ }.CSSTableGenerator tr:hover td{
+
+  }
+.CSSTableGenerator tr:nth-child(odd){ background-color:#abd3bf; }
+.CSSTableGenerator tr:nth-child(even)    { background-color:#ffffff; }.CSSTableGenerator td{
+                                                                          vertical-align:middle;
+
+
+                                                                          border:1px solid #000000;
+                                                                          border-width:0px 1px 1px 0px;
+                                                                          text-align:center;
+                                                                          padding:5px;
+                                                                          font-size:13px;
+                                                                          font-family:Courier;
+                                                                          font-weight:normal;
+                                                                          color:#000000;
+                                                                      }.CSSTableGenerator tr:last-child td{
+                                                                           border-width:0px 1px 0px 0px;
+                                                                       }.CSSTableGenerator tr td:last-child{
+                                                                            border-width:0px 0px 1px 0px;
+                                                                        }.CSSTableGenerator tr:last-child td:last-child{
+                                                                             border-width:0px 0px 0px 0px;
+                                                                         }
+.CSSTableGenerator tr:first-child td{
+    background:-o-linear-gradient(bottom, #66a199 5%, #66ac8a 100%);	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #66a199), color-stop(1, #66ac8a) );
+    background:-moz-linear-gradient( center top, #66a199 5%, #66ac8a 100% );
+    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="#66a199", endColorstr="#66ac8a");	background: -o-linear-gradient(top,#66a199,66ac8a);
+
+    background-color:#66a199;
+    border:0px solid #000000;
+    text-align:center;
+    border-width:0px 0px 1px 1px;
+    font-size:19px;
+    font-family:Courier;
+    font-weight:bold;
+    color:#ffffff;
+}
+.CSSTableGenerator tr:first-child:hover td{
+    background:-o-linear-gradient(bottom, #66a199 5%, #66ac8a 100%);	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #66a199), color-stop(1, #66ac8a) );
+    background:-moz-linear-gradient( center top, #66a199 5%, #66ac8a 100% );
+    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="#66a199", endColorstr="#66ac8a");	background: -o-linear-gradient(top,#66a199,66ac8a);
+
+    background-color:#66a199;
+}
+.CSSTableGenerator tr:first-child td:first-child{
+    border-width:0px 0px 1px 0px;
+}
+.CSSTableGenerator tr:first-child td:last-child{
+    border-width:0px 0px 1px 1px;
+}
