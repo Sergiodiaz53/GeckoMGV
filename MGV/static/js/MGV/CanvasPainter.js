@@ -535,9 +535,9 @@ function createInstance() {
 				if (!dragged)
 					selectFrag(lines, getMousePos(canvas, evt), evt);
 
-				if ((!selected) && vertical)
+				if ((!selected) && vertical){
 					redraw();
-
+					$('#CSBPopover').hide();}
 				// Zooming in a concrete area
 				/*
 				 * if (area) { console.log("Scale: " + (startX / mouseX) + "," +
@@ -560,7 +560,7 @@ function createInstance() {
 				 */
 
 				if ((area) && vertical) {
-
+					$('#CSBPopover').hide();
 					console.log("Selecting new area :" + startX + ","
 							+ (canvas.height - mouseY) + "," + mouseX + ","
 							+ (canvas.height - startY));
