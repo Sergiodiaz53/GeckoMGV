@@ -140,6 +140,7 @@ function processData(csv, i) {
                 auxLines.push("========================================================");
                 auxLines.push("Total CSB\t:-");
                 auxLines.push("x========================================================");
+                auxLines.push("Type,xStart,yStart,xEnd,yEnd,strand(f/r),block,length,score,ident,similarity,%ident,SeqX,SeqY")
                 allTextLines.shift();
                 ii=16;
             }else{
@@ -152,7 +153,7 @@ function processData(csv, i) {
                 }
                 var x1=parseInt(Math.abs(temp[2]))+parseInt(temp[0]);
                 var x2=parseInt((temp[1]))+parseInt(temp[0]);
-                auxLines.push(["Frag",Math.abs(temp[2]).toString(),temp[1],x1,x2,char,"0","0","0","0","0","0","0","0"])
+                auxLines.push(["Frag",Math.abs(temp[2]).toString(),temp[1],x1,x2,char,"0",temp[0],"0","0","0","0","0","0"])
             }
 
             ii++;
