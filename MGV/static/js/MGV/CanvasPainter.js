@@ -475,28 +475,37 @@ function createInstance() {
 	};
 
 	var lastX = canvas.width / 2, lastY = canvas.height / 2;
-	var dragStart, dragged, area = false, mousedown = false, startX, startY, mouseX, mouseY, selection;
+	var dragStart, dragged, area = false, mousedown = false, startX, startY, mouseX, mouseY, ctrlZoom = false;
 
 	window.addEventListener('keydown', function(evt) {
-		if (evt.keyCode == 16) {
-			canvas.style.cursor = "crosshair";
-			area = true;
-		}
 
-		if (evt.keyCode == 90) {
-			selection = true;
+		switch(evt.keyCode) {
+			case 16: //Shift: If you press the shift button you are allowed to draw an area to zoom.
+				//DEPRECATED. Now you can zoom by drawing a square with the mouse.
+				canvas.style.cursor = "crosshair";
+				area = true;
+				break;
+			case 18: //Alt: Block the zoom, when pressed only frag selection is allowed
+				canvas.style.cursor = "pointer";
+				ctrlZoom = true;
+				break;
 		}
 
 	}, false);
 
 	window.addEventListener('keyup', function(evt) {
-		if (evt.keyCode == 16) {
-			canvas.style.cursor = "default";
-			area = false;
-		}
 
-		if (evt.keyCode == 90) {
-			selection = false;
+		switch(evt.keyCode) {
+
+			case 16:
+				canvas.style.cursor = "default";
+				area = false;
+				break;
+			case 18:
+				canvas.style.cursor = "default";
+				ctrlZoom = false;
+				break;
+
 		}
 
 	}, false);
@@ -585,7 +594,7 @@ function createInstance() {
 
 	canvas.addEventListener('mousemove', function(evt) {
 
-		if (!selection) {
+		if (!ctrlZoom) {
 			lastX = evt.offsetX || (evt.pageX - canvas.offsetLeft);
 			lastY = evt.offsetY || (evt.pageY - canvas.offsetTop);
 
@@ -1235,7 +1244,7 @@ function selectFrag(lines, position, evt) {
 
 			x1 = ((((canvas.width * parseInt(lines[j][i][1])) / xtotal) - currentArea.x0) / ((currentArea.x1 - currentArea.x0)))
 					* canvas.width;
-			y1 = ((((canvas.height * parseInt(lines[j][i][2])) / ytotal) - currentArea.y0) / ((currentArea.y1 - currentArea.y0)))
+			y1 = ((((canvas.height * parseInt(lines[j][i][2])) / ytotal) - currentArea.y0) /  ((currentArea.y1 - currentArea.y0)))
 					* canvas.height;
 
 			x2 = (((canvas.width * (parseInt(lines[j][i][3])) / xtotal) - currentArea.x0) / ((currentArea.x1 - currentArea.x0)))
