@@ -115,7 +115,7 @@ function createInstance() {
 
 				console.log('cucu');
 				var row = annotationTable.insertRow(-1);
-				console.log("Line: "+lines[0]);
+				//console.log("Line: "+lines[0]);
 				for (var j = 0; j < lines[0][16].length; j++) {
 					console.log(j);
 					if ((j <= 3) || ((j > 5) && (j < 7)) || (j >= 14)) {
@@ -508,7 +508,9 @@ function createInstance() {
 				canvas.style.cursor = "default";
 				ctrlZoom = false;
 				break;
-
+            case 225: //Alt Gr: Block dragging on square shape only
+                squared=false;
+                break;
 		}
 
 	}, false);
@@ -573,7 +575,6 @@ function createInstance() {
 							* scaleY;
 					currentArea.x0 += (scaleX * startX);
 					currentArea.y0 += (canvas.height - mouseY) * scaleY;
-
 					scaleX = (currentArea.x1 - currentArea.x0) / canvas.width;
 					scaleY = (currentArea.y1 - currentArea.y0) / canvas.height;
 
@@ -637,12 +638,13 @@ function createInstance() {
 			} else if(area && mousedown && squared){
 				var layer1 = document.getElementById("myCanvasLayer1");
 				var ctx1 = layer1.getContext("2d");
-
-				mouseY = mouseX = parseInt(evt.clientX - offsetX);
-                console.log(mouseX+" - "+startX+" - "+startY);
+                //startY=startX;
+				mouseX = parseInt(evt.clientX - offsetX);
+				mouseY = -startX+startY+mouseX;;
+                //console.log(mouseX+" - "+startX+" - "+startY);
 				ctx1.clearRect(0, 0, canvas.width, canvas.height);
 				ctx1.beginPath();
-				ctx1.rect(startX, startY, mouseX - startX, mouseX - startX);
+				ctx1.rect(startX, startY, mouseX - startX, mouseY - startY);
 				ctx1.stroke();
 			}
 		}
