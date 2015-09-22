@@ -475,7 +475,7 @@ function createInstance() {
 	};
 
 	var lastX = canvas.width / 2, lastY = canvas.height / 2;
-	var dragStart, dragged, area = false, mousedown = false, startX, startY, mouseX, mouseY, ctrlZoom = false;
+	var dragStart, dragged, area = false, mousedown = false, startX, startY, mouseX, mouseY,squared ,ctrlZoom = false;
 
 	window.addEventListener('keydown', function(evt) {
 
@@ -489,6 +489,9 @@ function createInstance() {
 				canvas.style.cursor = "pointer";
 				ctrlZoom = true;
 				break;
+            case 225: //Alt Gr: Block dragging on square shape only
+                squared=true;
+                break;
 		}
 
 	}, false);
@@ -619,7 +622,7 @@ function createInstance() {
 			 * redraw(); }
 			 */
 
-			if (area && mousedown) {
+			if (area && mousedown && !squared) {
 
 				var layer1 = document.getElementById("myCanvasLayer1");
 				var ctx1 = layer1.getContext("2d");
@@ -630,6 +633,16 @@ function createInstance() {
 				ctx1.clearRect(0, 0, canvas.width, canvas.height);
 				ctx1.beginPath();
 				ctx1.rect(startX, startY, mouseX - startX, mouseY - startY);
+				ctx1.stroke();
+			} else if(area && mousedown && squared){
+				var layer1 = document.getElementById("myCanvasLayer1");
+				var ctx1 = layer1.getContext("2d");
+
+				mouseY = mouseX = parseInt(evt.clientX - offsetX);
+                console.log(mouseX+" - "+startX+" - "+startY);
+				ctx1.clearRect(0, 0, canvas.width, canvas.height);
+				ctx1.beginPath();
+				ctx1.rect(startX, startY, mouseX - startX, mouseX - startX);
 				ctx1.stroke();
 			}
 		}
