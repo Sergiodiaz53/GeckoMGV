@@ -487,9 +487,9 @@ function createInstance() {
 				//canvas.style.cursor = "crosshair";
 				shiftSel = true;
 				break;
-			case 18: //Alt: Block the zoom, when pressed only frag selection is allowed
+			case 18: //Alt: Block dragging on square shape
 				canvas.style.cursor = "pointer";
-				ctrlZoom = true;
+				squared = true;
 				break;
             case 17: //Ctrl: Block dragging on square shape only when ussed together with Alt
                 squared=true;
@@ -508,7 +508,7 @@ function createInstance() {
 				break;
 			case 18:
 				canvas.style.cursor = "default";
-				ctrlZoom = false;
+				squared = false;
 				break;
             case 17: //Ctrl: Block dragging on square shape only when ussed together with Alt
                 squared=false;
@@ -634,7 +634,6 @@ function createInstance() {
 
 	canvas.addEventListener('mousemove', function(evt) {
 
-		if (!ctrlZoom||(ctrlZoom&squared)) {
 			lastX = evt.offsetX || (evt.pageX - canvas.offsetLeft);
 			lastY = evt.offsetY || (evt.pageY - canvas.offsetTop);
 
@@ -671,7 +670,7 @@ function createInstance() {
 				ctx1.beginPath();
 				ctx1.rect(startX, startY, mouseX - startX, mouseY - startY);
 				ctx1.stroke();
-			} else if(area && mousedown && squared&&ctrlZoom){
+			} else if(area && mousedown && squared){
 				var layer1 = document.getElementById("myCanvasLayer1");
 				var ctx1 = layer1.getContext("2d");
                 //startY=startX;
@@ -683,7 +682,6 @@ function createInstance() {
 				ctx1.rect(startX, startY, mouseX - startX, mouseY - startY);
 				ctx1.stroke();
 			}
-		}
 	}, false);
 
 	/*
