@@ -110,8 +110,9 @@
 										<div class="btn-group">
 											<!--<button type ="button" class="btn btn-default" onclick="showDivInfoInPopup('output', 'popuptable.html', 'PopupTable')">CSB & Frag info</button> -->
 											<!--<button class="btn btn-default" data-toggle="modal" data-target="#infoModal" data-backdrop="false">CSB & Frag info</button>-->
-											<button class="btn btn-default" onclick="dialogFrags()">CSB
+											<button type="button" class="btn btn-default" onclick="dialogFrags()">CSB
 												& Frag info</button>
+
 										</div>
 										<div class="btn-group">
 											<!--<button type ="button" class="btn btn-default" onclick="showDivInfoInPopup('annotationsOutput', 'annotationstable.html', 'Annotations Table')">Annotations</button>-->
@@ -190,66 +191,15 @@
 		</div>
 	</div>
 
-	<!-- Modal -->
-	<div id="infoModal" class="modal fade" tabindex="-1" role="dialog"
-		aria-labelledby="myModalLabel" aria-hidden="true">
-		<div id="infoModal-dialog" class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal">
-						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
-					</button>
-					<h4 class="modal-title" id="myModalLabel">CSB & Frag info</h4>
-					<button type="button" id="downloadFile"
-						class="btn btn-primary pull-right" onclick="saveCSV()">Save</button>
-				</div>
-				<div id="output" class="modal-body"></div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-				</div>
-			</div>
-		</div>
-	</div>
+    <!--Dialog for CSB & Frag Info -->
+    <div id="output"></div>
 
+    <!--Dialog for Annotations -->
+    <div id="annotationsOutput"></div>
 
-	<!-- Annotation Modal -->
-	<div id="AnnotationModal" class="modal fade" tabindex="-1"
-		role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
-		<div class="AnnotationModal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal">
-						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
-					</button>
-					<h4 class="modal-title" id="myModalLabel2">Annotations</h4>
-				</div>
-				<div id="annotationsOutput" class="modal-body"></div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-				</div>
-			</div>
-		</div>
-	</div>
-
-
-
-
+    <!-- Popover to show CSB Info in Canvas -->
 	<div class="popover right" id="CSBPopover" role="tooltip"></div>
 
-    <link rel="stylesheet" href="{% static "css/custom-theme/jquery.ui.1.10.3.ie.css" %}">
-
-	<script src="{% static "js/APIS/modernizr-2.6.2.min.js" %}"></script>
-	<script src="{% static "js/APIS/jquery-1.11.1.min.js" %}"></script>
-	<script src="{% static "js/APIS/bootstrap.min.js" %}"></script>
-	<script src="{% static "js/Plugins/bootstrap-dialog.js" %}"></script>
-	<script src="{% static "js/Plugins/plugins.js" %}"></script>
-	<script src="{% static "js/APIS/jquery-ui.min.js" %}"></script>
-	<script type="text/javascript" src="{% static "js/MGV/CanvasPainter.js" %}"></script>
-	<script type="text/javascript" src="{% static "js/MGV/FileManager.js" %}"></script>
-	<script type="text/javascript" src="{% static "js/MGV/TableManager.js" %}"></script>
-	<script type="text/javascript" src="{% static "js/MGV/MatrixPainter.js" %}"></script>
-	<script type="text/javascript" src="{% static "js/Plugins/html5csv.js" %}"></script>
-	<script type="text/javascript" src="{% static "js/mainFunctions.js" %}"></script>
 
 	<script>
 		//InfoPopover = File info popover.

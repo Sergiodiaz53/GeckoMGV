@@ -43,3 +43,6 @@ def serviceInterface(request):
         return render(request, 'serviceInterface.html', {'name': service.name, 'exeName': service.exeName, 'files': files, 'form': form})
 
 
+def testForm(request):
+    print request
+    return HttpResponse("OK", content_type="text/plain")

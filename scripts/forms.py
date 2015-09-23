@@ -16,7 +16,7 @@ class ExecuteService(forms.Form):
 
 class kmersForm(forms.Form):
     filename = forms.ChoiceField(label="Filename", widget=forms.Select(attrs={'class':'selector'}))
-    K = forms.CharField(label='K', max_length=1)
+    K = forms.CharField(label='K', max_length=1, widget=forms.TextInput(attrs={'id': 'parameter1'}))
     fullOut = forms.CharField(label='fullOut', max_length=1)
 
     def __init__(self, *args, **kwargs):

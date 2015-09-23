@@ -6,7 +6,9 @@
 
 function saveCSV(){
 
-    var annotationTable =  document.getElementById("csvAnnotationTable");
+
+
+    var annotationTable =  document.getElementById("annotationsOutput");
     annotationTable.deleteRow(0);
 
     console.table(annotationTable);
@@ -36,7 +38,7 @@ function saveCSV(){
 
 
 
-
+//Show external page in popup
 function showDivInfoInPopup(divID, page, name){
     var windowFeatures =  'height=' + 500 +
         ',width=' + 500 +
@@ -60,17 +62,36 @@ function dialogFrags(){
     $('#output').dialog({
         height:400,
         widht: 800,
+        title: 'CSB & Frag',
+        buttons: [
+            {
+                text: "Save CSV",
+                click: function () {
+                    saveCSV()
+                },
+                "class":"ui-button-primary"
+            },
+
+            {
+                text: "Close",
+                click: function () {
+                    $(this).dialog("close");
+                }
+            }
+        ],
         open: function () {
             $detachedChildren.appendTo($dialogContainer);
         }
     });
 }
+
 function dialogAnnotations(){
     var $dialogContainer = $('#annotationsOutput');
     var $detachedChildren = $dialogContainer.children().detach();
     $('#annotationsOutput').dialog({
         height:400,
         widht: 800,
+        title: 'Annotations',
         open: function () {
             $detachedChildren.appendTo($dialogContainer);
         }
