@@ -82,6 +82,7 @@ function createInstance() {
 	}
 
 	redraw = function redraw() {
+        $('#CSBPopover').hide();
 		console.time("reDraw()");
 
 		// Clear the canvas
@@ -542,7 +543,8 @@ function createInstance() {
 
 				if ((!selected) && vertical){
 					redraw();
-					$('#CSBPopover').hide();}
+					//$('#CSBPopover').hide();
+					}
 				// Zooming in a concrete area
 				/*
 				 * if (area) { console.log("Scale: " + (startX / mouseX) + "," +
@@ -565,7 +567,7 @@ function createInstance() {
 				 */
 
 				if ((area) && vertical) {
-					$('#CSBPopover').hide();
+					//$('#CSBPopover').hide();
 					console.log("Selecting new area :" + startX + ","
 							+ (canvas.height - mouseY) + "," + mouseX + ","
 							+ (canvas.height - startY));
@@ -856,14 +858,17 @@ function verticalDrawLines(actualLines, i, fragment, color) {
 	var mode = document.option.tipo;
 
 	if (actualLines[i][0] == 'CSB') {
-		if (mode[2].checked) {
-			ctx.strokeStyle = rgb(255, 0, 0);
-		} else {
+        console.log(mode[1]);
+		if (mode[2].checked&&!fragment) {
+			ctx.strokeStyle = rgb(0, 150, 0);
+		} else if(fragment){
+            ctx.strokeStyle = rgb(255, 0, 0);
+        }else{
 			ctx.strokeStyle = rgb(0, 0, 0);
 		}
 	} else {
 		if (fragment) {
-			ctx.strokeStyle = rgb(255, 0, 0);
+            ctx.strokeStyle = rgb(255, 0, 0);
 		} else {
 			ctx.strokeStyle = color;
 		}
