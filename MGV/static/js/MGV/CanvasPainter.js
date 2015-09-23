@@ -21,6 +21,7 @@ var mouseInRect = {
 };
 var lines = [];
 var currentLines = [];
+var selectedLines=[];
 var auxLines = [];
 var currentArea = {
 	x0 : 0,
@@ -476,15 +477,15 @@ function createInstance() {
 	};
 
 	var lastX = canvas.width / 2, lastY = canvas.height / 2;
-	var dragStart, dragged, area = false, mousedown = false, startX, startY, mouseX, mouseY,squared ,ctrlZoom = false;
+	var dragStart, dragged, area = false, mousedown = false, startX, startY, mouseX, mouseY,squared ,shiftSel,ctrlZoom= false;
 
 	window.addEventListener('keydown', function(evt) {
 
 		switch(evt.keyCode) {
 			case 16: //Shift: If you press the shift button you are allowed to draw an area to zoom.
 				//DEPRECATED. Now you can zoom by drawing a square with the mouse.
-				canvas.style.cursor = "crosshair";
-				area = true;
+				//canvas.style.cursor = "crosshair";
+				shiftSel = true;
 				break;
 			case 18: //Alt: Block the zoom, when pressed only frag selection is allowed
 				canvas.style.cursor = "pointer";
@@ -503,7 +504,7 @@ function createInstance() {
 
 			case 16:
 				canvas.style.cursor = "default";
-				area = false;
+				shiftSel = false;
 				break;
 			case 18:
 				canvas.style.cursor = "default";
@@ -527,7 +528,8 @@ function createInstance() {
 						dragged = false;
 						console.log("MouseDown")
 						mousedown = true;
-
+                        if(!shiftSel)
+                            selectedLines=[];
 						startX = parseInt(evt.clientX - offsetX);
 						startY = parseInt(evt.clientY - offsetY);
 
@@ -566,7 +568,7 @@ function createInstance() {
 				 * redraw(); }
 				 */
 
-				if ((area) && vertical) {
+				if ((area) && vertical&&!shiftSel) {
 					//$('#CSBPopover').hide();
 					console.log("Selecting new area :" + startX + ","
 							+ (canvas.height - mouseY) + "," + mouseX + ","
@@ -595,6 +597,38 @@ function createInstance() {
 
 					redraw();
 				}
+                if(area&&vertical&&shiftSel) {
+                    var j=0;
+                    for (var x = selectedLines.length; x < lines.length; x++) {
+                        currentLines = lines[x].slice(0);
+                        console.log(currentLines.length);
+                        for (var i=0; i < currentLines.length; i++) {
+                            if ((parseInt(currentLines[i][1]) >= ((currentArea.x0+scaleX * startX)
+                                * xtotal / 500))
+                                && (parseInt(currentLines[i][2]) >= ((currentArea.y0+(canvas.height - mouseY) * scaleY)
+                                * ytotal / 500))
+                                && (parseInt(currentLines[i][3]) <= ((currentArea.x0 + mouseX * scaleX)
+                                * xtotal / 500))
+                                && (parseInt(currentLines[i][4]) <= ((currentArea.y0 + (canvas.height - startY)
+                                * scaleY) * ytotal / 500))) {
+                                paint = true;
+                            } else {
+                                paint = false;
+                            }
+                            if (paint) {
+                                verticalDrawLines(lines[x], i, true, null);
+                                selectedLines[j++] = currentLines[i];
+                            }
+                        }
+                    }
+                    for(var i=0;i<selectedLines.length;i++){
+                        console.log(selectedLines[i]);
+                    }
+                    var layer1 = document.getElementById("myCanvasLayer1");
+                    var ctx1 = layer1.getContext("2d");
+                    ctx1.clearRect(0, 0, canvas.width, canvas.height);
+                    area=false;
+                }
 
 			}, false);
 
