@@ -491,7 +491,7 @@ function createInstance() {
 				canvas.style.cursor = "pointer";
 				ctrlZoom = true;
 				break;
-            case 225: //Alt Gr: Block dragging on square shape only
+            case 17: //Ctrl: Block dragging on square shape only when ussed together with Alt
                 squared=true;
                 break;
 		}
@@ -510,7 +510,7 @@ function createInstance() {
 				canvas.style.cursor = "default";
 				ctrlZoom = false;
 				break;
-            case 225: //Alt Gr: Block dragging on square shape only
+            case 17: //Ctrl: Block dragging on square shape only when ussed together with Alt
                 squared=false;
                 break;
 		}
@@ -634,7 +634,7 @@ function createInstance() {
 
 	canvas.addEventListener('mousemove', function(evt) {
 
-		if (!ctrlZoom) {
+		if (!ctrlZoom||(ctrlZoom&squared)) {
 			lastX = evt.offsetX || (evt.pageX - canvas.offsetLeft);
 			lastY = evt.offsetY || (evt.pageY - canvas.offsetTop);
 
@@ -671,7 +671,7 @@ function createInstance() {
 				ctx1.beginPath();
 				ctx1.rect(startX, startY, mouseX - startX, mouseY - startY);
 				ctx1.stroke();
-			} else if(area && mousedown && squared){
+			} else if(area && mousedown && squared&&ctrlZoom){
 				var layer1 = document.getElementById("myCanvasLayer1");
 				var ctx1 = layer1.getContext("2d");
                 //startY=startX;
