@@ -668,6 +668,7 @@ function createInstance() {
 				ctx1.beginPath();
 				ctx1.rect(startX, startY, mouseX - startX, mouseY - startY);
 				ctx1.stroke();
+            } else if(area && mousedown && squared){
 				var layer1 = document.getElementById("myCanvasLayer1");
 				var ctx1 = layer1.getContext("2d");
                 //startY=startX;

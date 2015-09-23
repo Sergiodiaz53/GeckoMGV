@@ -2,6 +2,7 @@
 - Modified the way CSB & Frag info and annotations are showed, Now are jQueryUI dialogs with bootstrap looklike (jQueryUI plugin).
 - jQueryUI updated
 - Key event SHIFT now can select an area of frags.
+- Modified key event to force squared area, now either Ctrl or Alt
 
 21/09/2015
 - Key event SHIFT added for block zoom and select frags.
