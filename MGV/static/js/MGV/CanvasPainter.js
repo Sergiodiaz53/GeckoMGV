@@ -484,11 +484,10 @@ function createInstance() {
 		switch(evt.keyCode) {
 			case 16: //Shift: If you press the shift button you are allowed to draw an area to zoom.
 				//DEPRECATED. Now you can zoom by drawing a square with the mouse.
-				//canvas.style.cursor = "crosshair";
+				canvas.style.cursor = "pointer";
 				shiftSel = true;
 				break;
 			case 18: //Alt: Block dragging on square shape
-				canvas.style.cursor = "pointer";
 				squared = true;
 				break;
             case 17: //Ctrl: Block dragging on square shape only when ussed together with Alt
@@ -507,7 +506,6 @@ function createInstance() {
 				shiftSel = false;
 				break;
 			case 18:
-				canvas.style.cursor = "default";
 				squared = false;
 				break;
             case 17: //Ctrl: Block dragging on square shape only when ussed together with Alt
@@ -670,7 +668,6 @@ function createInstance() {
 				ctx1.beginPath();
 				ctx1.rect(startX, startY, mouseX - startX, mouseY - startY);
 				ctx1.stroke();
-			} else if(area && mousedown && squared){
 				var layer1 = document.getElementById("myCanvasLayer1");
 				var ctx1 = layer1.getContext("2d");
                 //startY=startX;
