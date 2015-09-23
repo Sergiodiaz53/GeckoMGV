@@ -82,10 +82,7 @@
 									</span>
 								</div>
                                 <div class="row row-centered top-buffer">
-									<span class="btn btn-primary btn-file">Load Mauven<input type="file" multiple="true" onchange="handleFiles(this.files,'mvn')" accept=".txt">
-									<span class="btn btn-primary btn-file">Load Mauve<input type="file" multiple="true" onchange="handleFiles(this.files,'mvn')" accept=".txt">
-									</span>
-
+									<span class="btn btn-primary btn-file">Load Mauve<input type="file" multiple="true" onchange="handleFiles(this.files,'mvn')" accept=".txt"></span>
 								</div>
 								<div class="row row-centered top-buffer">
 									<select id="viewSelect">
@@ -193,10 +190,10 @@
 	</div>
 
     <!--Dialog for CSB & Frag Info -->
-    <div id="output"></div>
+    <div id="output" class="ui-helper-hidden"></div>
 
     <!--Dialog for Annotations -->
-    <div id="annotationsOutput"></div>
+    <div id="annotationsOutput" class="ui-helper-hidden"></div>
 
     <!-- Popover to show CSB Info in Canvas -->
 	<div class="popover right" id="CSBPopover" role="tooltip"></div>
