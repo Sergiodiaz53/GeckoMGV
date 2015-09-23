@@ -21,6 +21,7 @@ var mouseInRect = {
 };
 var lines = [];
 var currentLines = [];
+var selectedLines=[];
 var auxLines = [];
 var currentArea = {
 	x0 : 0,
@@ -82,6 +83,7 @@ function createInstance() {
 	}
 
 	redraw = function redraw() {
+        $('#CSBPopover').hide();
 		console.time("reDraw()");
 
 		// Clear the canvas
@@ -115,7 +117,7 @@ function createInstance() {
 
 				console.log('cucu');
 				var row = annotationTable.insertRow(-1);
-				console.log("Line: "+lines[0]);
+				//console.log("Line: "+lines[0]);
 				for (var j = 0; j < lines[0][16].length; j++) {
 					console.log(j);
 					if ((j <= 3) || ((j > 5) && (j < 7)) || (j >= 14)) {
@@ -475,20 +477,23 @@ function createInstance() {
 	};
 
 	var lastX = canvas.width / 2, lastY = canvas.height / 2;
-	var dragStart, dragged, area = false, mousedown = false, startX, startY, mouseX, mouseY, ctrlZoom = false;
+	var dragStart, dragged, area = false, mousedown = false, startX, startY, mouseX, mouseY,squared ,shiftSel,ctrlZoom= false;
 
 	window.addEventListener('keydown', function(evt) {
 
 		switch(evt.keyCode) {
 			case 16: //Shift: If you press the shift button you are allowed to draw an area to zoom.
 				//DEPRECATED. Now you can zoom by drawing a square with the mouse.
-				canvas.style.cursor = "crosshair";
-				area = true;
+				//canvas.style.cursor = "crosshair";
+				shiftSel = true;
 				break;
 			case 18: //Alt: Block the zoom, when pressed only frag selection is allowed
 				canvas.style.cursor = "pointer";
 				ctrlZoom = true;
 				break;
+            case 225: //Alt Gr: Block dragging on square shape only
+                squared=true;
+                break;
 		}
 
 	}, false);
@@ -499,13 +504,15 @@ function createInstance() {
 
 			case 16:
 				canvas.style.cursor = "default";
-				area = false;
+				shiftSel = false;
 				break;
 			case 18:
 				canvas.style.cursor = "default";
 				ctrlZoom = false;
 				break;
-
+            case 225: //Alt Gr: Block dragging on square shape only
+                squared=false;
+                break;
 		}
 
 	}, false);
@@ -521,7 +528,8 @@ function createInstance() {
 						dragged = false;
 						console.log("MouseDown")
 						mousedown = true;
-
+                        if(!shiftSel)
+                            selectedLines=[];
 						startX = parseInt(evt.clientX - offsetX);
 						startY = parseInt(evt.clientY - offsetY);
 
@@ -537,7 +545,8 @@ function createInstance() {
 
 				if ((!selected) && vertical){
 					redraw();
-					$('#CSBPopover').hide();}
+					//$('#CSBPopover').hide();
+					}
 				// Zooming in a concrete area
 				/*
 				 * if (area) { console.log("Scale: " + (startX / mouseX) + "," +
@@ -559,8 +568,8 @@ function createInstance() {
 				 * redraw(); }
 				 */
 
-				if ((area) && vertical) {
-					$('#CSBPopover').hide();
+				if ((area) && vertical&&!shiftSel) {
+					//$('#CSBPopover').hide();
 					console.log("Selecting new area :" + startX + ","
 							+ (canvas.height - mouseY) + "," + mouseX + ","
 							+ (canvas.height - startY));
@@ -570,7 +579,6 @@ function createInstance() {
 							* scaleY;
 					currentArea.x0 += (scaleX * startX);
 					currentArea.y0 += (canvas.height - mouseY) * scaleY;
-
 					scaleX = (currentArea.x1 - currentArea.x0) / canvas.width;
 					scaleY = (currentArea.y1 - currentArea.y0) / canvas.height;
 
@@ -589,6 +597,38 @@ function createInstance() {
 
 					redraw();
 				}
+                if(area&&vertical&&shiftSel) {
+                    var j=0;
+                    for (var x = selectedLines.length; x < lines.length; x++) {
+                        currentLines = lines[x].slice(0);
+                        console.log(currentLines.length);
+                        for (var i=0; i < currentLines.length; i++) {
+                            if ((parseInt(currentLines[i][1]) >= ((currentArea.x0+scaleX * startX)
+                                * xtotal / 500))
+                                && (parseInt(currentLines[i][2]) >= ((currentArea.y0+(canvas.height - mouseY) * scaleY)
+                                * ytotal / 500))
+                                && (parseInt(currentLines[i][3]) <= ((currentArea.x0 + mouseX * scaleX)
+                                * xtotal / 500))
+                                && (parseInt(currentLines[i][4]) <= ((currentArea.y0 + (canvas.height - startY)
+                                * scaleY) * ytotal / 500))) {
+                                paint = true;
+                            } else {
+                                paint = false;
+                            }
+                            if (paint) {
+                                verticalDrawLines(lines[x], i, true, null);
+                                selectedLines[j++] = currentLines[i];
+                            }
+                        }
+                    }
+                    for(var i=0;i<selectedLines.length;i++){
+                        console.log(selectedLines[i]);
+                    }
+                    var layer1 = document.getElementById("myCanvasLayer1");
+                    var ctx1 = layer1.getContext("2d");
+                    ctx1.clearRect(0, 0, canvas.width, canvas.height);
+                    area=false;
+                }
 
 			}, false);
 
@@ -619,7 +659,7 @@ function createInstance() {
 			 * redraw(); }
 			 */
 
-			if (area && mousedown) {
+			if (area && mousedown && !squared) {
 
 				var layer1 = document.getElementById("myCanvasLayer1");
 				var ctx1 = layer1.getContext("2d");
@@ -627,6 +667,17 @@ function createInstance() {
 				mouseX = parseInt(evt.clientX - offsetX);
 				mouseY = parseInt(evt.clientY - offsetY);
 
+				ctx1.clearRect(0, 0, canvas.width, canvas.height);
+				ctx1.beginPath();
+				ctx1.rect(startX, startY, mouseX - startX, mouseY - startY);
+				ctx1.stroke();
+			} else if(area && mousedown && squared){
+				var layer1 = document.getElementById("myCanvasLayer1");
+				var ctx1 = layer1.getContext("2d");
+                //startY=startX;
+				mouseX = parseInt(evt.clientX - offsetX);
+				mouseY = -startX+startY+mouseX;;
+                //console.log(mouseX+" - "+startX+" - "+startY);
 				ctx1.clearRect(0, 0, canvas.width, canvas.height);
 				ctx1.beginPath();
 				ctx1.rect(startX, startY, mouseX - startX, mouseY - startY);
@@ -841,14 +892,17 @@ function verticalDrawLines(actualLines, i, fragment, color) {
 	var mode = document.option.tipo;
 
 	if (actualLines[i][0] == 'CSB') {
-		if (mode[2].checked) {
-			ctx.strokeStyle = rgb(255, 0, 0);
-		} else {
+        console.log(mode[1]);
+		if (mode[2].checked&&!fragment) {
+			ctx.strokeStyle = rgb(0, 150, 0);
+		} else if(fragment){
+            ctx.strokeStyle = rgb(255, 0, 0);
+        }else{
 			ctx.strokeStyle = rgb(0, 0, 0);
 		}
 	} else {
 		if (fragment) {
-			ctx.strokeStyle = rgb(255, 0, 0);
+            ctx.strokeStyle = rgb(255, 0, 0);
 		} else {
 			ctx.strokeStyle = color;
 		}
