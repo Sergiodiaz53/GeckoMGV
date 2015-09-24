@@ -1,5 +1,6 @@
 24/09/2015
 -From now only filtered frags will be selected when using selection tool.
+-Added multiple selection tool, it's possible to select many frags many times by selecting other areas.
 
 23/09/2015
 - Modified the way CSB & Frag info and annotations are showed, Now are jQueryUI dialogs with bootstrap looklike (jQueryUI plugin).
