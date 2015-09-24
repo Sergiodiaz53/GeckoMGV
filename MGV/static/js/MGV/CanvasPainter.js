@@ -596,11 +596,12 @@ function createInstance() {
 					redraw();
 				}
                 if(area&&vertical&&shiftSel) {
-                    var j=0;
-                    for (var x = selectedLines.length; x < lines.length; x++) {
+                    for (var x = 0; x < lines.length; x++) {
+                        var aux=[];
                         currentLines = lines[x].slice(0);
                         console.log(currentLines.length);
                         for (var i=0; i < currentLines.length; i++) {
+                            if(paint=filter(currentLines[i]))
                             if ((parseInt(currentLines[i][1]) >= ((currentArea.x0+scaleX * startX)
                                 * xtotal / 500))
                                 && (parseInt(currentLines[i][2]) >= ((currentArea.y0+(canvas.height - mouseY) * scaleY)
@@ -615,12 +616,16 @@ function createInstance() {
                             }
                             if (paint) {
                                 verticalDrawLines(lines[x], i, true, null);
-                                selectedLines[j++] = currentLines[i];
+                                aux.push(i);
+                                if(selectedLines[x]==null)
+                                    selectedLines[x]=[];
+                                selectedLines[x].push(aux);
                             }
                         }
                     }
                     for(var i=0;i<selectedLines.length;i++){
-                        console.log(selectedLines[i]);
+                        for(var j=0;j<selectedLines.length;j++)
+                            console.log(selectedLines[i][j]);
                     }
                     var layer1 = document.getElementById("myCanvasLayer1");
                     var ctx1 = layer1.getContext("2d");
