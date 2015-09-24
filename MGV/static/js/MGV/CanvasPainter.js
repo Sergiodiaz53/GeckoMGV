@@ -83,7 +83,6 @@ function createInstance() {
 	}
 
 	redraw = function redraw() {
-        $('#CSBPopover').hide();
 		console.time("reDraw()");
 
 		// Clear the canvas
@@ -543,7 +542,7 @@ function createInstance() {
 				if ((!selected) && vertical){
                     if(selectedLines.length==0)
 					redraw();
-					//$('#CSBPopover').hide();
+					$('#CSBPopover').hide();
 					}
 				// Zooming in a concrete area
 				/*
@@ -567,7 +566,7 @@ function createInstance() {
 				 */
 
 				if ((area) && vertical&&!shiftSel) {
-					//$('#CSBPopover').hide();
+					$('#CSBPopover').hide();
 					console.log("Selecting new area :" + startX + ","
 							+ (canvas.height - mouseY) + "," + mouseX + ","
 							+ (canvas.height - startY));
