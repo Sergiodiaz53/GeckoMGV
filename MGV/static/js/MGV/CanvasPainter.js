@@ -119,7 +119,6 @@ function createInstance() {
 				var row = annotationTable.insertRow(-1);
 				//console.log("Line: "+lines[0]);
 				for (var j = 0; j < lines[0][16].length; j++) {
-					console.log(j);
 					if ((j <= 3) || ((j > 5) && (j < 7)) || (j >= 14)) {
 						var firstNameCell = row.insertCell(-1);
 						firstNameCell.appendChild(document
@@ -542,6 +541,7 @@ function createInstance() {
 					selectFrag(lines, getMousePos(canvas, evt), evt);
 
 				if ((!selected) && vertical){
+                    if(selectedLines.length==0)
 					redraw();
 					//$('#CSBPopover').hide();
 					}
@@ -597,9 +597,7 @@ function createInstance() {
 				}
                 if(area&&vertical&&shiftSel) {
                     for (var x = 0; x < lines.length; x++) {
-                        var aux=[];
                         currentLines = lines[x].slice(0);
-                        console.log(currentLines.length);
                         for (var i=0; i < currentLines.length; i++) {
                             if(paint=filter(currentLines[i]))
                             if ((parseInt(currentLines[i][1]) >= ((currentArea.x0+scaleX * startX)
@@ -616,15 +614,14 @@ function createInstance() {
                             }
                             if (paint) {
                                 verticalDrawLines(lines[x], i, true, null);
-                                aux.push(i);
                                 if(selectedLines[x]==null)
                                     selectedLines[x]=[];
-                                selectedLines[x].push(aux);
+                                selectedLines[x].push(i);
                             }
                         }
                     }
                     for(var i=0;i<selectedLines.length;i++){
-                        for(var j=0;j<selectedLines.length;j++)
+                        for(var j=0;j<selectedLines[i].length;j++)
                             console.log(selectedLines[i][j]);
                     }
                     var layer1 = document.getElementById("myCanvasLayer1");
