@@ -19,13 +19,17 @@ def storeService(request):
 def executeService(request):
     print request.POST
     if request.method == 'POST':
-        args = []
-        for arg in request.POST:
-            if arg != 'exeName' and arg != 'serviceName' and arg != 'csrfmiddlewaretoken' and arg != 'submit':
-                args.append(request.POST.get(arg))
         service = Script.objects.get(exeName=request.POST.get('exeName'))
+        auxForm= getattr(forms, service.form)
+        form = auxForm(user = request.user, request = request)
+        args = []
+
+        for i in xrange(1,(len(form.fields))+1) :
+            idParamater = 'parameter'+str(i)
+            args.append(request.POST.get(idParamater))
+
         command = [service.path+request.POST.get('exeName')]
-        command.extend(reversed(args))
+        command.extend(args)
         output = subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0]
         print output
     return render(request, 'serviceResult.html', {'serviceName': request.POST.get('serviceName'), 'output': output})

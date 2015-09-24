@@ -15,9 +15,10 @@ class ExecuteService(forms.Form):
         fields = ["name", "args"]
 
 class kmersForm(forms.Form):
-    filename = forms.ChoiceField(label="Filename", widget=forms.Select(attrs={'class':'selector'}))
-    K = forms.CharField(label='K', max_length=1, widget=forms.TextInput(attrs={'id': 'parameter1'}))
-    fullOut = forms.CharField(label='fullOut', max_length=1)
+    parameter1 = forms.ChoiceField(label="Filename", widget=forms.Select(attrs={'class':'selector','id': 'Filename'}))
+    parameter2 = forms.CharField(label='K', max_length=1, widget=forms.TextInput(attrs={'id': 'K'}))
+    parameter3 = forms.CharField(label='fullOut', max_length=1, widget=forms.NumberInput(attrs={'id': 'fullOut'}))
+
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
@@ -25,5 +26,5 @@ class kmersForm(forms.Form):
         super(kmersForm, self).__init__(*args, **kwargs)
         print self.user
         print userFile.objects.filter(user=self.user)
-        self.fields['filename'] = forms.ChoiceField(choices=[(file.file.name, file.file.name)
+        self.fields['parameter1'] = forms.ChoiceField(choices=[(file.file.name, file.file.name)
                                                              for file in userFile.objects.filter(user=self.user)])
