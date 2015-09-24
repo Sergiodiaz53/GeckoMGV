@@ -83,7 +83,6 @@ function createInstance() {
 	}
 
 	redraw = function redraw() {
-        $('#CSBPopover').hide();
 		console.time("reDraw()");
 
 		// Clear the canvas
@@ -119,7 +118,6 @@ function createInstance() {
 				var row = annotationTable.insertRow(-1);
 				//console.log("Line: "+lines[0]);
 				for (var j = 0; j < lines[0][16].length; j++) {
-					console.log(j);
 					if ((j <= 3) || ((j > 5) && (j < 7)) || (j >= 14)) {
 						var firstNameCell = row.insertCell(-1);
 						firstNameCell.appendChild(document
@@ -542,8 +540,9 @@ function createInstance() {
 					selectFrag(lines, getMousePos(canvas, evt), evt);
 
 				if ((!selected) && vertical){
+                    if(selectedLines.length==0)
 					redraw();
-					//$('#CSBPopover').hide();
+					$('#CSBPopover').hide();
 					}
 				// Zooming in a concrete area
 				/*
@@ -567,7 +566,7 @@ function createInstance() {
 				 */
 
 				if ((area) && vertical&&!shiftSel) {
-					//$('#CSBPopover').hide();
+					$('#CSBPopover').hide();
 					console.log("Selecting new area :" + startX + ","
 							+ (canvas.height - mouseY) + "," + mouseX + ","
 							+ (canvas.height - startY));
@@ -596,11 +595,10 @@ function createInstance() {
 					redraw();
 				}
                 if(area&&vertical&&shiftSel) {
-                    var j=0;
-                    for (var x = selectedLines.length; x < lines.length; x++) {
+                    for (var x = 0; x < lines.length; x++) {
                         currentLines = lines[x].slice(0);
-                        console.log(currentLines.length);
                         for (var i=0; i < currentLines.length; i++) {
+                            if(paint=filter(currentLines[i]))
                             if ((parseInt(currentLines[i][1]) >= ((currentArea.x0+scaleX * startX)
                                 * xtotal / 500))
                                 && (parseInt(currentLines[i][2]) >= ((currentArea.y0+(canvas.height - mouseY) * scaleY)
@@ -615,12 +613,15 @@ function createInstance() {
                             }
                             if (paint) {
                                 verticalDrawLines(lines[x], i, true, null);
-                                selectedLines[j++] = currentLines[i];
+                                if(selectedLines[x]==null)
+                                    selectedLines[x]=[];
+                                selectedLines[x].push(i);
                             }
                         }
                     }
                     for(var i=0;i<selectedLines.length;i++){
-                        console.log(selectedLines[i]);
+                        for(var j=0;j<selectedLines[i].length;j++)
+                            console.log(selectedLines[i][j]);
                     }
                     var layer1 = document.getElementById("myCanvasLayer1");
                     var ctx1 = layer1.getContext("2d");
@@ -668,6 +669,7 @@ function createInstance() {
 				ctx1.beginPath();
 				ctx1.rect(startX, startY, mouseX - startX, mouseY - startY);
 				ctx1.stroke();
+            } else if(area && mousedown && squared){
 				var layer1 = document.getElementById("myCanvasLayer1");
 				var ctx1 = layer1.getContext("2d");
                 //startY=startX;
