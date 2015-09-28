@@ -9,7 +9,7 @@
     }
     .panel-heading .accordion-toggle.collapsed:after {
         /* symbol for "collapsed" panels */
-        content: "\e080";  
+        content: "\e080";
     }
 
 /* ----- */
