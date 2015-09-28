@@ -345,7 +345,7 @@ function createInstance() {
 								auxLines.push(lines[i]);
 								// console.timeEnd("paint()");
 							} else {
-								color = rgb(189, 195, 199);
+								color = rgba(189, 195, 199, 0.7);
 								drawLine(currentLines, i, xtotal, ytotal, mode,
 										color, x);
 								drawLine(currentLines, i, xtotal, ytotal, mode,
@@ -1052,6 +1052,10 @@ function getMax(lines, k) {
 
 function rgb(r, g, b) {
 	return "rgb(" + r + "," + g + "," + b + ")";
+}
+
+function rgba(r, g, b, a) {
+	return "rgba(" + r + "," + g + "," + b + "," + a + ")";
 }
 
 function aleatorio(inferior, superior) {
