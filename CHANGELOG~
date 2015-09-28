@@ -1,5 +1,12 @@
+28/09/2015
+- Added transparency to Horizontal view
+- Main panels of index are now collapsible
+- Single frags can be selectec and unselected by a single click while holdingh Shift
+
 24/09/2015
--From now only filtered frags will be selected when using selection tool.
+- From now only filtered frags will be selected when using selection tool.
+- Added multiple selection tool, it's possible to select many frags many times by selecting other areas.
+- Fixed ordering parameters issue in Django. Invoking services now working correctly
 
 23/09/2015
 - Modified the way CSB & Frag info and annotations are showed, Now are jQueryUI dialogs with bootstrap looklike (jQueryUI plugin).
