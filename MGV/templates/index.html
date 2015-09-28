@@ -53,14 +53,16 @@
 					<div class="col-xs-9 col-sm-9 col-centered">
 						<div class="panel panel-primary">
 							<div class="panel-heading">
-								<h3 class="panel-title">Map</h3>
+                                <a data-toggle="collapse" data-target="#MapColapsed" href="#MapColapsed" class="collapse-link panel-title accordion-toggle">Map</a>
 							</div>
-							<div class="panel-body ">
-									<div id="canvasMapContainer" class="div-centered row-centered top-buffer">
-										<img id="mapimage" width="202" height="202"/>
-										<canvas id="myMap" width="200" height="200"></canvas>
-								</div>
-							</div>
+                            <div id="MapColapsed" class="panel-collapse collapse in">
+                                <div class="panel-body ">
+                                        <div id="canvasMapContainer" class="div-centered row-centered top-buffer">
+                                            <img id="mapimage" width="202" height="202"/>
+                                            <canvas id="myMap" width="200" height="200"></canvas>
+                                    </div>
+                                </div>
+                            </div>
 						</div>
 					</div>
 				</div>
@@ -68,9 +70,10 @@
 					<div class="col-xs-9 col-sm-9 col-centered">
 						<div class="panel panel-primary">
 							<div class="panel-heading">
-								<h3 class="panel-title">Functions</h3>
+                                <a data-toggle="collapse" data-target="#FunctionsColapsed" href="#FunctionsColapsed" class="collapse-link panel-title accordion-toggle">Functions</a>
 							</div>
-							<div class="panel-body">
+                            <div id="FunctionsColapsed" class="panel-collapse collapse in">
+                                <div class="panel-body">
 								<div class="row row-centered top-buffer">
 									<span class="btn btn-primary btn-file"> Load frags <input
 										type="file" multiple="true"
@@ -131,6 +134,7 @@
 								</div>
 
 							</div>
+                            </div>
 						</div>
 					</div>
 				</div>
@@ -138,8 +142,9 @@
 					<div class="col-xs-9 col-sm-9 col-centered">
 						<div class="panel panel-primary">
 							<div class="panel-heading">
-								<h3 class="panel-title">Filters</h3>
+                                <a data-toggle="collapse" data-target="#FiltersColapsed" href="#FiltersColapsed" class="collapse-link panel-title accordion-toggle">Filters</a>
 							</div>
+                            <div id="FiltersColapsed" class="panel-collapse collapse in">
 							<div class="panel-body">
 								<div class="row top-buffer btn-padding">
 									<form name="filters" id="filters">
