@@ -524,8 +524,6 @@ function createInstance() {
 						dragged = false;
 						console.log("MouseDown")
 						mousedown = true;
-                        if(!shiftSel)
-                            selectedLines=[];
 						startX = parseInt(evt.clientX - offsetX);
 						startY = parseInt(evt.clientY - offsetY);
 
@@ -536,8 +534,82 @@ function createInstance() {
 				console.log("MouseUP");
 				mousedown = false;
 				dragStart = null;
-				if (!dragged)
-					selectFrag(lines, getMousePos(canvas, evt), evt);
+				if (!dragged) {
+                    if (!shiftSel) {
+                        selectFrag(lines, getMousePos(canvas, evt), evt);
+                        selectedLines = [];
+                    }else{
+                        //en pruebas
+                        var linefound=false;
+                        var arrayIndex=0;
+                        var lineIndex=0;
+                        var distance=0;
+                        var x1,y1,x2,y2;
+                        var x0=getMousePos(canvas,evt).x;
+                        var y0=getMousePos(canvas,evt).y;
+	                    var mode = document.option.tipo;
+                        $('#CSBPopover').hide();
+                        for (var j = 0; j < lines.length; j++) {
+                        xtotal = fileHeader[0].seqXLength;
+                        ytotal = fileHeader[0].seqYLength;
+                        var i = 17;
+
+                        console.log("X: " + xtotal + " Y:" + ytotal);
+
+                        while (!linefound && i < lines[j].length) {
+
+                            x1 = ((((canvas.width * parseInt(lines[j][i][1])) / xtotal) - currentArea.x0) / ((currentArea.x1 - currentArea.x0)))
+                                    * canvas.width;
+                            y1 = ((((canvas.height * parseInt(lines[j][i][2])) / ytotal) - currentArea.y0) /  ((currentArea.y1 - currentArea.y0)))
+                                    * canvas.height;
+
+                            x2 = (((canvas.width * (parseInt(lines[j][i][3])) / xtotal) - currentArea.x0) / ((currentArea.x1 - currentArea.x0)))
+                                    * canvas.width;
+                            y2 = (((canvas.height * (parseInt(lines[j][i][4])) / ytotal) - currentArea.y0) / ((currentArea.y1 - currentArea.y0)))
+                                    * canvas.height;
+
+                            if ((mode[0].checked && mode[0].value == lines[j][i][0])
+                                    || (mode[1].checked && mode[1].value == lines[j][i][0])
+                                    || mode[2].checked) {
+
+                                // Pendiente positiva
+                                if ((x0 > x1) && (x0 < x2) && (y0 != y1) && y0!= y2) {
+                                    distance = calculateDistance(getMousePos(canvas,evt),lines[j][i]);
+                                    console.log(distance+" - "+x0+" - "+y0);
+                                    if (distance < 6) {
+                                        linefound = true;
+                                        arrayIndex = j;
+                                        lineIndex = i;
+                                        //console.log("linefound PP: " + j + " " + i);
+                                    } else {
+                                        i++;
+                                    }
+
+                                }else {
+                                i++;
+                                }
+                            } else {
+                                i++;
+                            }
+		}
+                                    if(linefound&&filter(lines[arrayIndex][lineIndex])){
+                                        //console.log(calculateDistance(getMousePos(canvas, evt),lines[x][i])+" - "+getMousePos(canvas, evt).x+" - "+getMousePos(canvas, evt).y);
+                                        console.log(lineIndex+" - "+arrayIndex);
+                                        if(selectedLines[arrayIndex]==null)
+                                            selectedLines[arrayIndex]=[];
+                                        var index =-1;
+                                        if((index=selectedLines[arrayIndex].indexOf(lineIndex))>-1){
+                                            selectedLines[arrayIndex].splice(index, 1);
+                                            console.log("removed");
+                                            verticalDrawLines(lines[arrayIndex], lineIndex, false, rgb(R[arrayIndex],G[arrayIndex],B[arrayIndex]));
+                                        }else{
+                                            selectedLines[arrayIndex].push(lineIndex);
+                                            verticalDrawLines(lines[arrayIndex], lineIndex, true, null);
+                                        }
+                                    }
+                        }
+                    }
+                }
 
 				if ((!selected) && vertical){
                     if(selectedLines.length==0)
@@ -889,7 +961,6 @@ function verticalDrawLines(actualLines, i, fragment, color) {
 	var mode = document.option.tipo;
 
 	if (actualLines[i][0] == 'CSB') {
-        console.log(mode[1]);
 		if (mode[2].checked&&!fragment) {
 			ctx.strokeStyle = rgb(0, 150, 0);
 		} else if(fragment){
@@ -1272,6 +1343,27 @@ function drawBoard(vertical) {
 	}
 
 }
+function calculateDistance(position,frag){
+    var distance = 0;
+	var aux, aux2;
+	var x1, x2, y1, y2;
+	var x0 = position.x;
+	var y0 = position.y;
+    x1 = ((((canvas.width * parseInt(frag[1])) / xtotal) - currentArea.x0) / ((currentArea.x1 - currentArea.x0)))
+					* canvas.width;
+    y1 = ((((canvas.height * parseInt(frag[2])) / ytotal) - currentArea.y0) /  ((currentArea.y1 - currentArea.y0)))
+            * canvas.height;
+
+    x2 = (((canvas.width * (parseInt(frag[3])) / xtotal) - currentArea.x0) / ((currentArea.x1 - currentArea.x0)))
+            * canvas.width;
+    y2 = (((canvas.height * (parseInt(frag[4])) / ytotal) - currentArea.y0) / ((currentArea.y1 - currentArea.y0)))
+            * canvas.height;
+    //console.log(x1+" - "+y1+" - "+x2+" - "+y2);
+    aux = Math.abs(((x2 - x1) * (y1 - y0))- ((x1 - x0) * (y2 - y1)));
+    aux2 = Math.sqrt(Math.pow(x2 - x1, 2)+ Math.pow(y2 - y1, 2));
+    distance = aux / aux2;
+    return distance;
+}
 
 function selectFrag(lines, position, evt) {
 
@@ -1312,43 +1404,21 @@ function selectFrag(lines, position, evt) {
 					|| mode[2].checked) {
 
 				// Pendiente positiva
-				if ((x0 > x1) && (x0 < x2) && (y0 > y1) && y0 < y2) {
-
-					aux = Math.abs(((x2 - x1) * (y1 - y0))
-							- ((x1 - x0) * (y2 - y1)));
-					aux2 = Math.sqrt(Math.pow(x2 - x1, 2)
-							+ Math.pow(y2 - y1, 2));
-					distance = aux / aux2;
-
-					if (distance < 6) {
-						linefound = true;
+				if ((x0 > x1) && (x0 < x2) && (y0 != y1) && y0!= y2) {
+					distance = calculateDistance(position,lines[j][i]);
+                    console.log(distance+" - "+x0+" - "+y0);
+					if (distance < 6&&filter(lines[j][i])) {
+                        linefound = true;
 						arrayIndex = j;
 						lineIndex = i;
-						console.log("linefound PP: " + j + " " + i);
+						//console.log("linefound PP: " + j + " " + i);
 					} else {
 						i++;
 					}
 
-				} else if ((x0 > x1) && (x0 < x2) && (y0 < y1) && (y0 > y2)) {
-
-					aux = Math.abs(((x2 - x1) * (y1 - y0))
-							- ((x1 - x0) * (y2 - y1)));
-					aux2 = Math.sqrt(Math.pow(x2 - x1, 2)
-							+ Math.pow(y2 - y1, 2));
-					distance = aux / aux2;
-
-					if (distance < 6) {
-						linefound = true;
-						arrayIndex = j;
-						lineIndex = i;
-						// console.log("linefound PN: "+j+" "+i);
-					} else {
-						i++;
-					}
-
-				} else {
-					i++;
-				}
+				}else {
+				i++;
+			    }
 			} else {
 				i++;
 			}
