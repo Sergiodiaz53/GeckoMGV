@@ -201,7 +201,6 @@ function createInstance() {
 					console.log("X: " + x + "Headers: " + headers);
 
 					fileHeader[x] = new CSVHeader(headers);
-                    console.log(headers[1]+" - "+headers[2]);
 
 					document.getElementById("fileName").innerHTML += ' <button id="infoPopover'
 							+ x
@@ -903,7 +902,10 @@ function filter(line) {
 
 function drawLine(lines, i, xtotal, ytotal, mode, color, canvasNumber) {
 	if (vertical) {
-		verticalDrawLines(lines, i, false, color);
+        var sel=false;
+        if(selectedLines.length>canvasNumber&&selectedLines[canvasNumber].indexOf(i)>-1)
+            sel=true;
+		verticalDrawLines(lines, i, sel, color);
 	} else {
 		horizontalDrawLines(lines, i, xtotal, ytotal, mode, color, canvasNumber);
 	}
