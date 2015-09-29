@@ -1,3 +1,7 @@
+29/09/2015
+-Frags remain in red while they're selected.
+-Canvas info and tittle will vary depending on number of frags, also the popover from the info have as title the sequences compared.
+
 28/09/2015
 - Added transparency to Horizontal view
 - Main panels of index are now collapsible
