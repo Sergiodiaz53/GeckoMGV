@@ -7,7 +7,7 @@
 //Global Variables
 var fileHeader = [];
 var fileInfo;
-
+var multigenome;
 
 //My Objectsx
 function CSVHeader (headers) {
@@ -32,6 +32,8 @@ function handleFiles(files, type) {
     // Check for the various File API support.
     if (window.FileReader) {
         // FileReader are supported.
+        if(files.length>1)
+            multigenome=true;
         for(var i=0; i <files.length; i++) {
             fileType = type;
             getAsText(files[i],i);
@@ -78,8 +80,10 @@ function processData(csv, i) {
     console.log("ProcessData: "+i)
 
     if(fileType == 'csv') {
-
-        document.getElementById("fileName").innerHTML = fileName;
+        var title=fileName;
+        if(multigenome)
+            title="Multigenome comparison";
+        document.getElementById("fileName").innerHTML = title;;
 
         //InfoPopover = File info popover ()
         $(function () {
@@ -108,7 +112,10 @@ function processData(csv, i) {
         redraw()
 
     } else if (fileType=='mvn') {
-        document.getElementById("fileName").innerHTML = fileNameMVN;
+        var title=fileNameMVN;
+        if(multigenome)
+            title="Multigenome comparison";
+        document.getElementById("fileName").innerHTML = title;
 
         //InfoPopover = File info popover ()
         $(function () {

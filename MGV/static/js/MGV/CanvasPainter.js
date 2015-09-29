@@ -201,13 +201,16 @@ function createInstance() {
 					console.log("X: " + x + "Headers: " + headers);
 
 					fileHeader[x] = new CSVHeader(headers);
+                    console.log(headers[1]+" - "+headers[2]);
 
 					document.getElementById("fileName").innerHTML += ' <button id="infoPopover'
 							+ x
-							+ '" type="button" class="btn btn-warning btn-xs btn-padding" data-container="body" data-toggle="popover" data-placement="right" data-html="true" data-content="<b> X Sequence length: </b>'
+							+ '" type="button" class="btn btn-warning btn-xs btn-padding" data-container="body" data-toggle="popover" title ="'+headers[1].substr(0,headers[1].length-6)+" - "+headers[2].substr(0,headers[2].length-6)+' "data-placement="right" data-html="true" data-content="<b> X Sequence length: </b>'
 							+ fileHeader[x].seqXLength
 							+ '</br> <b> Y Sequence length: </b>'
 							+ fileHeader[x].seqYLength + '">?</button>';
+                    if(lines.length>1)
+                        document.getElementById("infoPopover"+x).style.background=rgb(R[x],G[x],B[x]);
 					$('[data-toggle="popover"]').popover();
 
 					fileInfo = table2;
@@ -562,7 +565,6 @@ function createInstance() {
                                     * canvas.width;
                             y1 = ((((canvas.height * parseInt(lines[j][i][2])) / ytotal) - currentArea.y0) /  ((currentArea.y1 - currentArea.y0)))
                                     * canvas.height;
-
                             x2 = (((canvas.width * (parseInt(lines[j][i][3])) / xtotal) - currentArea.x0) / ((currentArea.x1 - currentArea.x0)))
                                     * canvas.width;
                             y2 = (((canvas.height * (parseInt(lines[j][i][4])) / ytotal) - currentArea.y0) / ((currentArea.y1 - currentArea.y0)))
@@ -572,10 +574,8 @@ function createInstance() {
                                     || (mode[1].checked && mode[1].value == lines[j][i][0])
                                     || mode[2].checked) {
 
-                                // Pendiente positiva
                                 if ((x0 > x1) && (x0 < x2) && (y0 != y1) && y0!= y2) {
                                     distance = calculateDistance(getMousePos(canvas,evt),lines[j][i]);
-                                    console.log(distance+" - "+x0+" - "+y0);
                                     if (distance < 6) {
                                         linefound = true;
                                         arrayIndex = j;
@@ -593,8 +593,6 @@ function createInstance() {
                             }
 		}
                                     if(linefound&&filter(lines[arrayIndex][lineIndex])){
-                                        //console.log(calculateDistance(getMousePos(canvas, evt),lines[x][i])+" - "+getMousePos(canvas, evt).x+" - "+getMousePos(canvas, evt).y);
-                                        console.log(lineIndex+" - "+arrayIndex);
                                         if(selectedLines[arrayIndex]==null)
                                             selectedLines[arrayIndex]=[];
                                         var index =-1;
@@ -639,6 +637,12 @@ function createInstance() {
 
 				if ((area) && vertical&&!shiftSel) {
 					$('#CSBPopover').hide();
+                    if(startX>mouseX)
+                        startX=[mouseX,mouseX=startX][0];
+
+                    if(startY>mouseY)
+                        startY=[mouseY,mouseY=startY][0];
+
 					console.log("Selecting new area :" + startX + ","
 							+ (canvas.height - mouseY) + "," + mouseX + ","
 							+ (canvas.height - startY));
@@ -667,33 +671,40 @@ function createInstance() {
 					redraw();
 				}
                 if(area&&vertical&&shiftSel) {
+                     if(startX>mouseX)
+                        startX=[mouseX,mouseX=startX][0];
+
+                    if(startY>mouseY)
+                        startY=[mouseY,mouseY=startY][0];
+                    $('#CSBPopover').hide();
+                    var mode = document.option.tipo;
                     for (var x = 0; x < lines.length; x++) {
                         currentLines = lines[x].slice(0);
                         for (var i=0; i < currentLines.length; i++) {
-                            if(paint=filter(currentLines[i]))
-                            if ((parseInt(currentLines[i][1]) >= ((currentArea.x0+scaleX * startX)
-                                * xtotal / 500))
-                                && (parseInt(currentLines[i][2]) >= ((currentArea.y0+(canvas.height - mouseY) * scaleY)
-                                * ytotal / 500))
-                                && (parseInt(currentLines[i][3]) <= ((currentArea.x0 + mouseX * scaleX)
-                                * xtotal / 500))
-                                && (parseInt(currentLines[i][4]) <= ((currentArea.y0 + (canvas.height - startY)
-                                * scaleY) * ytotal / 500))) {
-                                paint = true;
-                            } else {
-                                paint = false;
-                            }
-                            if (paint) {
-                                verticalDrawLines(lines[x], i, true, null);
-                                if(selectedLines[x]==null)
-                                    selectedLines[x]=[];
-                                selectedLines[x].push(i);
+                            if ((mode[0].checked && mode[0].value == currentLines[i][0])
+                                    || (mode[1].checked && mode[1].value == currentLines[i][0])
+                                    || mode[2].checked) {
+                                if(paint=filter(currentLines[i]))
+                                if ((parseInt(currentLines[i][1]) >= ((currentArea.x0+scaleX * startX)
+                                    * xtotal / 500))
+                                    && (parseInt(currentLines[i][2]) >= ((currentArea.y0+(canvas.height - mouseY) * scaleY)
+                                    * ytotal / 500))
+                                    && (parseInt(currentLines[i][3]) <= ((currentArea.x0 + mouseX * scaleX)
+                                    * xtotal / 500))
+                                    && (parseInt(currentLines[i][4]) <= ((currentArea.y0 + (canvas.height - startY)
+                                    * scaleY) * ytotal / 500))) {
+                                    paint = true;
+                                } else {
+                                    paint = false;
+                                }
+                                if (paint) {
+                                    verticalDrawLines(lines[x], i, true, null);
+                                    if(selectedLines[x]==null)
+                                        selectedLines[x]=[];
+                                    selectedLines[x].push(i);
+                                }
                             }
                         }
-                    }
-                    for(var i=0;i<selectedLines.length;i++){
-                        for(var j=0;j<selectedLines[i].length;j++)
-                            console.log(selectedLines[i][j]);
                     }
                     var layer1 = document.getElementById("myCanvasLayer1");
                     var ctx1 = layer1.getContext("2d");
