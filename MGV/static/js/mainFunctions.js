@@ -7,32 +7,35 @@
 function saveCSV(){
 
 
-
+    console.log("saving");
     var annotationTable =  document.getElementById("annotationsOutput");
-    annotationTable.deleteRow(0);
+    //annotationTable.deleteRow(0);
 
     console.table(annotationTable);
 
-    var csvInfoTable = document.getElementById("csvInfoTable");
+    var csvInfoTable = document.getElementById("csvInfoTable0");
     csvInfoTable.deleteRow(0);
 
+   // console.log(lines);
+
     var row = csvInfoTable.insertRow(0);
-    for (var j = 0; j < lines[16].length; j++) {
+    for (var j = 0; j < lines[0][16].length; j++) {
         var firstNameCell = row.insertCell(-1);
-        firstNameCell.appendChild(document.createTextNode(lines[16][j]));
+        firstNameCell.appendChild(document.createTextNode(lines[0][16][j]));
     }
 
+    var clone=annotationTable.cloneNode(true);
     var outputTable = document.getElementById("output");
     outputTable.innerHTML = "";
     outputTable.appendChild(fileInfo);
     outputTable.appendChild(csvInfoTable);
-    outputTable.appendChild(annotationTable);
+    outputTable.appendChild(clone);
 
     var fileName = $("#fileName").text().split(" ")[0];
     CSV.begin("#output").download(fileName).go();
-
     $('#infoModal').modal('toggle');
 
+    console.log(document.getElementById("annotationsOutput"));
     redraw();
 }
 
