@@ -15,6 +15,7 @@ var zoomBoard = false;
 var vertical = true;
 var map = false;
 var dragInMap = false;
+var showingSelected=false;
 var mouseInRect = {
 	x : 0,
 	y : 0
@@ -114,7 +115,6 @@ function createInstance() {
 				annotationTable.className = "table table-condensed table-striped";
 				annotationTable.id = "csvAnnotationTable" + x;
 
-				console.log('cucu');
 				var row = annotationTable.insertRow(-1);
 				//console.log("Line: "+lines[0]);
 				for (var j = 0; j < lines[0][16].length; j++) {
@@ -700,7 +700,8 @@ function createInstance() {
                                     verticalDrawLines(lines[x], i, true, null);
                                     if(selectedLines[x]==null)
                                         selectedLines[x]=[];
-                                    selectedLines[x].push(i);
+                                    if(selectedLines[x].indexOf(i)==-1)
+                                        selectedLines[x].push(i);
                                 }
                             }
                         }
@@ -1066,6 +1067,36 @@ function horizontalDrawLines(lines, i, xtotal, ytotal, rectsFilled,
 
 }
 
+function showSelected(){
+    if(!showingSelected){
+        document.getElementById("annotationsOutput").innerHTML = "<ul class='nav nav-tabs' id='annotations-tab'></ul>"
+				+ "<div class='tab-content' id='annotations-tab-content'></div>";
+        for (var x = 0; x < lines.length; x++) {
+            var table = document.createElement("table");
+            table.className = "table table-condensed";
+            table.id = "csvInfoTable" + x;
+            add2Table(16,table);
+            for (var i = 0; i < lines[x].length; i++) {
+                 if(selectedLines.length>x&&selectedLines[x].indexOf(i)>-1) {
+                     add2Table(i, table);
+                 }
+            }
+
+            var newAnnot=document.createElement("table");
+            newAnnot.className="table table-condensed";
+            newAnnot.id = "csvAnnotationTable" + x;
+            var currentAnnotTab = document.getElementById("fileAnnotation" + x);
+            var auxAnnotationsDiv = document.getElementById("file" + x);
+            //auxAnnotationsDiv.removeChild(auxAnnotationsDiv.childNodes[1]);
+            auxAnnotationsDiv.replaceChild(table,document.getElementById("csvInfoTable"+x));
+            //currentAnnotTab.replaceChild(newAnnot,document.getElementById("csvAnnotationTable" + x));
+        }
+        showingSelected=true;
+    }else{
+        showingSelected=false;
+        redraw();
+    }
+}
 
 /**
  * Draws a rounded rectangle using the current state of the canvas. If you omit

@@ -7,11 +7,8 @@
 function saveCSV(){
 
 
-    console.log("saving");
     var annotationTable =  document.getElementById("annotationsOutput");
     //annotationTable.deleteRow(0);
-
-    console.table(annotationTable);
 
     var csvInfoTable = document.getElementById("csvInfoTable0");
     csvInfoTable.deleteRow(0);
@@ -35,8 +32,7 @@ function saveCSV(){
     CSV.begin("#output").download(fileName).go();
     $('#infoModal').modal('toggle');
 
-    console.log(document.getElementById("annotationsOutput"));
-    redraw();
+    //redraw();
 }
 
 
@@ -68,9 +64,17 @@ function dialogFrags(){
         title: 'CSB & Frag',
         buttons: [
             {
+                text: "selected",
+                click: function () {
+                   showSelected()
+                },
+                "class":"ui-button-primary"
+            },
+            {
                 text: "Save CSV",
                 click: function () {
                     saveCSV()
+                    //redraw();
                 },
                 "class":"ui-button-primary"
             },
