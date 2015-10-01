@@ -855,27 +855,27 @@ function filter(line) {
 	var filterPositives = document.getElementById("filterPositives").checked;
 
 	switch (parseInt(line[6])) {
-	case -1:
-		if (!filterIrrelevants) {
-			paint = true;
-		}
-		break;
-	case -2:
-		if (!filterOverlapped) {
-			paint = true;
-		}
-		break;
-	default:
-		if (filterLenght) {
-			var lenghtFilter = document.getElementById("filterLenghtNumber").value
-			if (parseInt(line[7]) >= parseInt(lenghtFilter)) {
-				paint = true;
-			}
-			break;
-		} else {
-			paint = true;
-			break;
-		}
+        case -1:
+            if (!filterIrrelevants) {
+                paint = true;
+            }
+            break;
+        case -2:
+            if (!filterOverlapped) {
+                paint = true;
+            }
+            break;
+        default:
+            if (filterLenght) {
+                var lenghtFilter = document.getElementById("filterLenghtNumber").value
+                if (parseInt(line[7]) >= parseInt(lenghtFilter)) {
+                    paint = true;
+                }
+                break;
+            } else {
+                paint = true;
+                break;
+            }
 	}
 
 	if (filterSimilarity) {
