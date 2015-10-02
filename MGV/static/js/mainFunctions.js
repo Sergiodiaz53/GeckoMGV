@@ -5,33 +5,42 @@
  */
 
 function saveCSV(){
+    var anot=[],csvtab=[];
+    for(var x=0;x<lines.length;x++) {
+        var annotationTable = document.getElementById("annotationsOutput");
+        //annotationTable.deleteRow(0);
 
+        var csvInfoTable = document.getElementById("csvInfoTable"+x);
+        csvInfoTable.deleteRow(0);
+        var cloneCsv= csvInfoTable.cloneNode(true);
+        // console.log(lines);
 
-    var annotationTable =  document.getElementById("annotationsOutput");
-    //annotationTable.deleteRow(0);
-
-    var csvInfoTable = document.getElementById("csvInfoTable0");
-    csvInfoTable.deleteRow(0);
-
-   // console.log(lines);
-
-    var row = csvInfoTable.insertRow(0);
-    for (var j = 0; j < lines[0][16].length; j++) {
-        var firstNameCell = row.insertCell(-1);
-        firstNameCell.appendChild(document.createTextNode(lines[0][16][j]));
+        var row = csvInfoTable.insertRow(0);
+        for (var j = 0; j < lines[x][16].length; j++) {
+            var firstNameCell = row.insertCell(-1);
+            firstNameCell.appendChild(document.createTextNode(lines[x][16][j]));
+        }
+        var cloneAn = annotationTable.cloneNode(true);
+        anot.push(cloneAn);
+        csvtab.push(csvInfoTable);
     }
 
-    var clone=annotationTable.cloneNode(true);
-    var outputTable = document.getElementById("output");
-    outputTable.innerHTML = "";
-    outputTable.appendChild(fileInfo);
-    outputTable.appendChild(csvInfoTable);
-    outputTable.appendChild(clone);
-
-    var fileName = $("#fileName").text().split(" ")[0];
-    CSV.begin("#output").download(fileName).go();
-    $('#infoModal').modal('toggle');
-
+    for(var x=0;x<lines.length;x++) {
+        var output = document.getElementById("file"+x);
+        var outputTable = document.createElement("table");
+        outputTable.className = "table table-condensed";
+        outputTable.id="output"+x;
+        outputTable.innerHTML = "";
+        outputTable.appendChild(fileInfo[x]);
+        outputTable.appendChild(csvtab[x]);
+        outputTable.appendChild(anot[x]);
+        output.appendChild(outputTable);
+        console.log(document.getElementById("output"+x));
+        var fileName = lines[x][2][0].split(":")[1].trim()+"-"+lines[x][3][0].split(":")[1].trim();
+        console.log("downloading "+fileName);
+        CSV.begin("#output"+x).download(fileName).go();
+        $('#infoModal').modal('toggle');
+    }
     //redraw();
 }
 

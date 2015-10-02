@@ -211,9 +211,10 @@ function createInstance() {
                     if(lines.length>1)
                         document.getElementById("infoPopover"+x).style.background=rgb(R[x],G[x],B[x]);
 					$('[data-toggle="popover"]').popover();
-
-					fileInfo = table2;
 					console.timeEnd("CreateFileHeader()");
+
+                    fileInfo[x]=table2;
+
 				}
 
 				// Get xyLenght
@@ -446,11 +447,11 @@ function createInstance() {
 					auxAnnotationsDiv.id = "fileAnnotation" + x;
 				}
 
-				auxDiv.appendChild(fileInfo);
+				auxDiv.appendChild(fileInfo[x]);
 				auxDiv.appendChild(table);
 				$("#files-tab-content").append(auxDiv);
 
-				auxAnnotationsDiv.appendChild(fileInfo);
+				auxAnnotationsDiv.appendChild(fileInfo[x]);
 				auxAnnotationsDiv.appendChild(annotationTable);
 				$("#annotations-tab-content").append(auxAnnotationsDiv);
 
@@ -597,7 +598,6 @@ function createInstance() {
                                         var index =-1;
                                         if((index=selectedLines[arrayIndex].indexOf(lineIndex))>-1){
                                             selectedLines[arrayIndex].splice(index, 1);
-                                            console.log("removed");
                                             verticalDrawLines(lines[arrayIndex], lineIndex, false, rgb(R[arrayIndex],G[arrayIndex],B[arrayIndex]));
                                         }else{
                                             selectedLines[arrayIndex].push(lineIndex);
@@ -1068,6 +1068,11 @@ function horizontalDrawLines(lines, i, xtotal, ytotal, rectsFilled,
 }
 
 function showSelected(){
+    for (var x = 0; x < selectedLines.length; x++) {
+        console.log(x+"\n\n");
+        for(var j=0;j<selectedLines[x].length;j++)
+            console.log(selectedLines[x][j]);
+    }
     if(!showingSelected){
         document.getElementById("annotationsOutput").innerHTML = "<ul class='nav nav-tabs' id='annotations-tab'></ul>"
 				+ "<div class='tab-content' id='annotations-tab-content'></div>";
@@ -1075,8 +1080,9 @@ function showSelected(){
             var table = document.createElement("table");
             table.className = "table table-condensed";
             table.id = "csvInfoTable" + x;
+            currentLines=lines[x];
             add2Table(16,table);
-            for (var i = 0; i < lines[x].length; i++) {
+            for (var i = 0; i < currentLines.length; i++) {
                  if(selectedLines.length>x&&selectedLines[x].indexOf(i)>-1) {
                      add2Table(i, table);
                  }

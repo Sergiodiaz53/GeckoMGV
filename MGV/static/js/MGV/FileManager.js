@@ -6,7 +6,7 @@
 
 //Global Variables
 var fileHeader = [];
-var fileInfo;
+var fileInfo=[];
 var multigenome;
 
 //My Objectsx
