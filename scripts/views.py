@@ -32,7 +32,8 @@ def executeService(request):
         command.extend(args)
         output = subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0]
         print output
-    return render(request, 'serviceResult.html', {'serviceName': request.POST.get('serviceName'), 'output': output})
+        fileResult = createFile(request, output, 'test')
+    return render(request, 'serviceResult.html', {'serviceName': request.POST.get('serviceName'), 'fileResult': fileResult})
 
 def listServices(request):
     print "listServices_scripts"
@@ -45,7 +46,6 @@ def serviceInterface(request):
         myForm= getattr(forms, service.form)
         form = myForm(user = request.user, request = request)
         return render(request, 'serviceInterface.html', {'name': service.name, 'exeName': service.exeName, 'files': files, 'form': form})
-
 
 def testForm(request):
     print request
