@@ -33,7 +33,8 @@ def executeService(request):
         output = subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0]
         print output
         fileResult = createFile(request, output, 'test')
-    return render(request, 'serviceResult.html', {'serviceName': request.POST.get('serviceName'), 'fileResult': fileResult})
+        print fileResult.file
+    return render(request, 'serviceResult.html', {'serviceName': request.POST.get('serviceName'), 'fileResult': fileResult, 'filePath': fileResult.file})
 
 def listServices(request):
     print "listServices_scripts"

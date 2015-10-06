@@ -65,11 +65,11 @@ def deleteFile_view(request):
 
 def fileViewer_view(request):
     if request.user.is_authenticated():
-        file = open(str(userFile.objects.get(file = request.POST.get('filename')).file),'r')
+        file = open(str(userFile.objects.get(file = request.POST.get('filename')).file), 'r')
         content = file.read()
         print content
         file.close()
-        return render(request, 'fileViewer.html', {'fileName': request.POST.get('filename') , 'content': content})
+        return render(request, 'fileViewer.html', {'fileName': request.POST.get('filename'), 'content': content})
 
 def listUserFiles(request):
     if request.user.is_authenticated():
