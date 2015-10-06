@@ -3,6 +3,9 @@
 
     {% csrf_token %}
     {{ form }}
+
+    <label for="namefile">Save results as:</label>
+    <input type="text" name="nameFileResult" id="namefile"><br>
     <input type="submit" value="Submit" />
 
 {% endblock %}

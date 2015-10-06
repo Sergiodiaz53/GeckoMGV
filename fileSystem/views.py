@@ -5,12 +5,6 @@ from django.http import HttpResponse
 from MGV.views import *
 import csv
 
-
-from django.shortcuts import render_to_response
-from django.template import RequestContext
-from django.http import HttpResponseRedirect
-from django.core.urlresolvers import reverse
-
 # Create your views here.
 
 def generate_SavePath(request, filename):
@@ -28,7 +22,7 @@ def uploadFile(request):
 
 def createFile(request, content, filename):
     print "Creating file..."
-    path = generate_SavePath(request,'mytestfile.csv')
+    path = generate_SavePath(request, filename)
     file = open(path,'wb')
     file.write(content)
     file.close()
@@ -41,9 +35,9 @@ def deleteFile(request):
     if request.method == 'POST':
         form = DeleteFileForm(request.POST)
         if form.is_valid():
-            userFile.objects.get(file = request.POST.get('filename')).delete()
+            userFile.objects.get(file=request.POST.get('filename')).delete()
             os.remove(request.POST.get('filename'))
-    return userFile.objects.filter(user = request.user)
+    return userFile.objects.filter(user=request.user)
 
 def fileManager_view(request):
     form = FileForm()
@@ -75,5 +69,3 @@ def listUserFiles(request):
     if request.user.is_authenticated():
         files = userFile.objects.filter(user=request.user)
         return files
-    else:
-        return None

@@ -31,10 +31,10 @@ def executeService(request):
         command = [service.path+request.POST.get('exeName')]
         command.extend(args)
         output = subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0]
-        print output
-        fileResult = createFile(request, output, 'test')
-        print fileResult.file
-    return render(request, 'serviceResult.html', {'serviceName': request.POST.get('serviceName'), 'fileResult': fileResult, 'filePath': fileResult.file})
+
+        fileResult = createFile(request, output, request.POST.get('nameFileResult')+'.csv')
+        return render(request, 'serviceResult.html', {'serviceName': request.POST.get('serviceName'), 'fileResult': fileResult, 'filePath': fileResult.file})
+
 
 def listServices(request):
     print "listServices_scripts"
