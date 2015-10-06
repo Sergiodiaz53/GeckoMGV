@@ -93,7 +93,7 @@ function createInstance() {
 		ctx.restore();
 
 		// Clear previous data
-		document.getElementById("output").innerHTML = "<ul class='nav nav-tabs' id='files-tab'></ul>"
+		document.getElementById("output").innerHTML = "<div class=\"SearchTitle\" > <div class=\"SearchTitleFilterButton\"> <span>Filter:</span> <input type=\"text\" class=\"SearchFilter\" /> <button class=\"SearchButton\" onclick=\"showResults($(\'.SearchFilter\').val())\" ><span class=\"glyphicon glyphicon-search\"></span></button> </div> </div> <ul class='nav nav-tabs' id='files-tab'></ul>"
 				+ " <div class='tab-content' id='files-tab-content'></div>";
 
 		document.getElementById("annotationsOutput").innerHTML = "<ul class='nav nav-tabs' id='annotations-tab'></ul>"
@@ -1490,7 +1490,7 @@ function selectFrag(lines, position, evt) {
 								+ lines[arrayIndex][lineIndex][0]
 								+ " - "
 								+ (lineIndex - parseInt(fragsStarts))
-								+ "</div><div class='arrow'></div><div class='popover-content'>"
+                                + "</div><div class='arrow'></div><div class='popover-content'>"
 								+ "<br>xStart: "
 								+ lines[arrayIndex][lineIndex][1]
 								+ "<br>yStart: "

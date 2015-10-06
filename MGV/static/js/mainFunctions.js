@@ -62,7 +62,20 @@ function showDivInfoInPopup(divID, page, name){
     var myWindow = window.open(page, name, windowFeatures);
     myWindow.dataFromParent = divText;
 }
-
+function showResults(filterText)
+{
+    for(var fileNum=0;fileNum<lines.length;fileNum++){
+        var toFilter = document.getElementById("csvInfoTable"+fileNum).childNodes[0].childNodes;
+        for(var i=1;i<toFilter.length;i++){
+            if(!showingSelected)
+                if(toFilter[i].childNodes[0].innerHTML.indexOf("G")==0&&toFilter[i].childNodes[16].innerHTML.toLowerCase().indexOf(filterText.toLowerCase())==-1) {
+                    document.getElementById("csvInfoTable" + fileNum).childNodes[0].removeChild(toFilter[i]);
+                    console.log("borrado");
+                    i--;
+                }
+        }
+    }
+}
 
 function dialogFrags(){
     var $dialogContainer = $('#output');
