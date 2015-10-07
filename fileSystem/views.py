@@ -3,14 +3,13 @@ from fileSystem.forms import *
 from fileSystem.models import *
 from django.http import HttpResponse
 from MGV.views import *
-
-
-from django.shortcuts import render_to_response
-from django.template import RequestContext
-from django.http import HttpResponseRedirect
-from django.core.urlresolvers import reverse
+import csv
 
 # Create your views here.
+
+def generate_SavePath(request, filename):
+    url = "media/files/users/%s/%s" % (request.user.username, filename)
+    return url
 
 def uploadFile(request):
     print "UploadingFile..."
@@ -21,14 +20,32 @@ def uploadFile(request):
             newFile.save()
     return userFile.objects.filter(user = request.user)
 
+def createFile(request, content, filename):
+    print "Creating file..."
+    path = generate_SavePath(request, filename+".csv")
+
+    print userFile.objects.filter(file=path)
+    x = 1
+
+    while len(userFile.objects.filter(file=path)) != 0:
+        path = generate_SavePath(request, filename+str(x)+'.csv')
+        x += 1
+
+    file = open(path,'wb')
+    file.write(content)
+    file.close()
+    newFile = userFile(user=request.user, file=path)
+    newFile.save()
+    return userFile.objects.get(file=path)
+
 def deleteFile(request):
     print "Deleting File..."
     if request.method == 'POST':
         form = DeleteFileForm(request.POST)
         if form.is_valid():
-            userFile.objects.get(file = request.POST.get('filename')).delete()
+            userFile.objects.get(file=request.POST.get('filename')).delete()
             os.remove(request.POST.get('filename'))
-    return userFile.objects.filter(user = request.user)
+    return userFile.objects.filter(user=request.user)
 
 def fileManager_view(request):
     form = FileForm()
@@ -48,9 +65,15 @@ def deleteFile_view(request):
     files = deleteFile(request)
     return render(request, 'filemanager.html', {'form': form, 'files': files})
 
+def fileViewer_view(request):
+    if request.user.is_authenticated():
+        file = open(str(userFile.objects.get(file = request.POST.get('filename')).file), 'r')
+        content = file.read()
+        print content
+        file.close()
+        return render(request, 'fileViewer.html', {'fileName': request.POST.get('filename'), 'content': content})
+
 def listUserFiles(request):
     if request.user.is_authenticated():
         files = userFile.objects.filter(user=request.user)
         return files
-    else:
-        return None

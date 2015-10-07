@@ -1,0 +1,17 @@
+{%extends "includes/basic.html"%}
+{%load staticfiles%}
+{%block content%}
+
+    <div id="main" class="container center-block" role="main">
+
+    		<div class="row row-centered">
+			    <div class="col-md-8 col-centered">
+
+                    <h2>{{ fileName }} : </h2>
+                    <p> {{ content }}</p>
+
+                </div>
+            </div>
+    </div>
+
+{% endblock %}

@@ -6,13 +6,29 @@
 
     		<div class="row row-centered">
 			    <div class="col-md-8 col-centered">
+                    <div class="row row-centered">
+                        <h2>{{ serviceName }} results: </h2>
 
-                    <h2>{{ serviceName }} results: </h2>
+                        <!-- <p>{{ output|linebreaks }}</p> -->
 
-                    <p>{{ output|linebreaks }}</p>
+                        <form id="viewFileForm" role="form" action="{% url 'fileViewer_view' %}" method="POST">
+                                {% csrf_token %}
+                                <input type="text" class="hidden" name="filename" value="{{ filePath }}">
+                                <img src="{% static "css/images/fileIcon.png" %}" class="submitableImage">
+                        </form>
 
+                        <p>{{ fileResult.filename }}</p>
+
+
+                    </div>
                 </div>
             </div>
     </div>
+
+    <script>
+       $('img.submitableImage').click(function(){
+          $('#viewFileForm').submit();
+       });
+    </script>
 
 {% endblock %}

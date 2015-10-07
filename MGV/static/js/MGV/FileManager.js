@@ -97,12 +97,8 @@ function processData(csv, i) {
             auxLines.push(allTextLines.shift().split(','));
         }
 
-
-        //Save lines array
-        localStorage["lines"+i] = JSON.stringify(auxLines);
-
         // Recovery lines
-        lines[i] = JSON.parse(localStorage["lines"+i]);
+        lines[i] = JSON.parse(JSON.stringify(auxLines));
 
         reset = true;
         fileHeader = [];
@@ -166,12 +162,8 @@ function processData(csv, i) {
             ii++;
         }
 
-
-        //Save lines array
-        localStorage["lines"+i] = JSON.stringify(auxLines);
-
         // Recovery lines
-        lines[i] = JSON.parse(localStorage["lines"+i]);
+        lines[i] = JSON.parse(JSON.stringify(auxLines));
         reset = true;
         fileHeader = [];
 
@@ -200,12 +192,8 @@ function processData(csv, i) {
             auxLines.push(allTextLines.shift().split('\t'));
         }
 
-
-        //Save matrix in array
-        localStorage["matrix"] = JSON.stringify(auxLines);
-
         // Recovery lines
-        matrix = JSON.parse(localStorage["matrix"]);
+        matrix = JSON.parse(JSON.stringify(auxLines));
         currentMatrix = matrix.slice(0);
 
         for (var i = 1; i < currentMatrix.length; i++) {

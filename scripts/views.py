@@ -21,18 +21,20 @@ def executeService(request):
     if request.method == 'POST':
         service = Script.objects.get(exeName=request.POST.get('exeName'))
         auxForm= getattr(forms, service.form)
-        form = auxForm(user = request.user, request = request)
+        form = auxForm(user = request.user, request=request)
         args = []
 
-        for i in xrange(1,(len(form.fields))+1) :
+        for i in xrange(1, (len(form.fields))+1):
             idParamater = 'parameter'+str(i)
             args.append(request.POST.get(idParamater))
 
         command = [service.path+request.POST.get('exeName')]
         command.extend(args)
         output = subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0]
-        print output
-    return render(request, 'serviceResult.html', {'serviceName': request.POST.get('serviceName'), 'output': output})
+
+        fileResult = createFile(request, output, request.POST.get('nameFileResult'))
+        return render(request, 'serviceResult.html', {'serviceName': request.POST.get('serviceName'), 'fileResult': fileResult, 'filePath': fileResult.file})
+
 
 def listServices(request):
     print "listServices_scripts"
@@ -45,7 +47,6 @@ def serviceInterface(request):
         myForm= getattr(forms, service.form)
         form = myForm(user = request.user, request = request)
         return render(request, 'serviceInterface.html', {'name': service.name, 'exeName': service.exeName, 'files': files, 'form': form})
-
 
 def testForm(request):
     print request

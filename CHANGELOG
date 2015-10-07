@@ -1,5 +1,14 @@
+07/10/2015
+- Generate results files with the same name fixed
+
 06/10/2015
--Now you can filter annotations by their contents writing on the search box and clicking on the search button.
+- Preview_View shows the content of a file after execution and also from the fileManager_View
+- LocalStorage deprecated for 'lines'
+- Modify results filename is allowed now
+- Now you can filter annotations by their contents writing on the search box and clicking on the search button.
+
+05/10/2015
+Save files after execution - alpha version
 
 30/09/2015
 -Displayed data can be downloaded as .csv by clicking on save

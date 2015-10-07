@@ -49,7 +49,7 @@
                                 <input type="text" class="hidden" name="filename" value="{{ file.file.name }}">
                                 <button type="submit" class="btn btn-xs btn-danger glyphicon glyphicon-remove">Delete</button>
                             </form>
-                            <form role="form" action="{% url 'deleteFile_view' %}" method="POST">
+                            <form role="form" action="{% url 'fileViewer_view' %}" method="POST">
                                 {% csrf_token %}
                                 <input type="text" class="hidden" name="filename" value="{{ file.file.name }}">
                                 <button type="submit" class="btn btn-xs btn-warning glyphicon glyphicon-pencil">Edit</button>
