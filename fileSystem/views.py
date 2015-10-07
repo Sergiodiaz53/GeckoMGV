@@ -22,7 +22,15 @@ def uploadFile(request):
 
 def createFile(request, content, filename):
     print "Creating file..."
-    path = generate_SavePath(request, filename)
+    path = generate_SavePath(request, filename+".csv")
+
+    print userFile.objects.filter(file=path)
+    x = 1
+
+    while len(userFile.objects.filter(file=path)) != 0:
+        path = generate_SavePath(request, filename+str(x)+'.csv')
+        x += 1
+
     file = open(path,'wb')
     file.write(content)
     file.close()

@@ -21,10 +21,10 @@ def executeService(request):
     if request.method == 'POST':
         service = Script.objects.get(exeName=request.POST.get('exeName'))
         auxForm= getattr(forms, service.form)
-        form = auxForm(user = request.user, request = request)
+        form = auxForm(user = request.user, request=request)
         args = []
 
-        for i in xrange(1,(len(form.fields))+1) :
+        for i in xrange(1, (len(form.fields))+1):
             idParamater = 'parameter'+str(i)
             args.append(request.POST.get(idParamater))
 
@@ -32,7 +32,7 @@ def executeService(request):
         command.extend(args)
         output = subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0]
 
-        fileResult = createFile(request, output, request.POST.get('nameFileResult')+'.csv')
+        fileResult = createFile(request, output, request.POST.get('nameFileResult'))
         return render(request, 'serviceResult.html', {'serviceName': request.POST.get('serviceName'), 'fileResult': fileResult, 'filePath': fileResult.file})
 
 
