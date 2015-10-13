@@ -3,6 +3,7 @@
  Multigenome Visualizer
  Bitlab - Universidad de Málaga
  */
+var prevTable=[];
 
 function saveCSV(){
     var anot=[],csvtab=[];
@@ -65,16 +66,26 @@ function showDivInfoInPopup(divID, page, name){
 function showResults(filterText)
 {
     for(var fileNum=0;fileNum<lines.length;fileNum++){
-        var toFilter = document.getElementById("csvInfoTable"+fileNum).childNodes[0].childNodes;
+        var table = document.getElementById("csvInfoTable"+fileNum);
+        if(prevTable.length>fileNum)
+            table.replaceChild(prevTable[fileNum].cloneNode(true),table.childNodes[0]);
+    }
+    console.log("ha entrado");
+    if(filterText!="")
+    for(var fileNum=0;fileNum<lines.length;fileNum++){
+        var toFiltertemp = document.getElementById("csvInfoTable"+fileNum).childNodes[0];
+        prevTable[fileNum]=toFiltertemp.cloneNode(true);
+        var toFilter=toFiltertemp.childNodes;
         for(var i=1;i<toFilter.length;i++){
             if(!showingSelected)
                 if(toFilter[i].childNodes[0].innerHTML.indexOf("G")==0&&toFilter[i].childNodes[16].innerHTML.toLowerCase().indexOf(filterText.toLowerCase())==-1) {
                     document.getElementById("csvInfoTable" + fileNum).childNodes[0].removeChild(toFilter[i]);
-                    console.log("borrado");
+                    //console.log("borrado");
                     i--;
                 }
         }
     }
+
 }
 
 function dialogFrags(){
