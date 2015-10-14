@@ -13,6 +13,7 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 
+
 #Project root is intended to be used when building paths,
 # e.g. ``os.path.join(PROJECT_ROOT, 'relative/path')``.
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__name__))
@@ -41,13 +42,12 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
     'django_extensions',
     'customAuth',
     'scripts',
     'MGV',
-    'fileSystem',
-    'forms_builder.forms',
-    'django.contrib.sites'
+    'fileSystem'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -97,8 +97,14 @@ USE_L10N = True
 USE_TZ = True
 
 
-# static files (CSS, JavaScript, Images)
+# Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
 STATIC_URL = '/static/'
-MEDIA_URL = os.path.join(PROJECT_ROOT, 'media/')
+STATICFILES_DIRS = (os.path.join(BASE_DIR, "MGV", "static"),)
+
+# Media files
+MEDIA_URL = 'media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+
+

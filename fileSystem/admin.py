@@ -5,5 +5,5 @@ from fileSystem.models import *
 
 
 class FileAdmin(admin.ModelAdmin):
-    list_display = (u'user', 'file')
+    list_display = (u'user','filename', 'file')
 admin.site.register(userFile, FileAdmin)

@@ -164,18 +164,6 @@ body {
     margin-left: 50px;
 }
 
-#myMap {
-    background-color: transparent;
-    border:1px solid #000000;
-    position:relative;
-    z-index:2;
-}
-
-#mapimage{
-    position:absolute;
-    z-index:1;
-}
-
 #myCanvasLayer1 {
 
     background-color: transparent;
@@ -192,6 +180,19 @@ body {
     position: absolute;
     z-index: 1;
 }
+
+#myMap {
+    background-color: transparent;
+    border:1px solid #000000;
+    position:relative;
+    z-index:2;
+}
+
+#mapimage{
+    position:absolute;
+    z-index:1;
+}
+
 
 #myCanvasMatrix {
     background-color:#ffffff;

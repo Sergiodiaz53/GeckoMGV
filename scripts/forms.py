@@ -26,7 +26,7 @@ class kmersForm(forms.Form):
         super(kmersForm, self).__init__(*args, **kwargs)
         print self.user
         print userFile.objects.filter(user=self.user)
-        self.fields['parameter1'] = forms.ChoiceField(choices=[(file.file.name, file.file.name) for file in userFile.objects.filter(user=self.user)], label="Filename", widget=forms.Select(attrs={'class':'selector','id': 'Filename'}))
+        self.fields['parameter1'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="Filename", widget=forms.Select(attrs={'class':'selector','id': 'Filename'}))
 
 class csb2csvForm(forms.Form):
     parameter1 = forms.ChoiceField(label="CSB file", widget=forms.Select(attrs={'class':'selector','id': 'CSBfile'}))
