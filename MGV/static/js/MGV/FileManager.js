@@ -90,15 +90,12 @@ function processData(csv, i) {
             $("#infoPopover").popover();
         });
 
-        var auxLines = [];
-        var allTextLines = csv.split(/\r\n|\n/);
-        var j = 0;
-        while (allTextLines.length) {
-            auxLines.push(allTextLines.shift().split(','));
-        }
-
-        // Recovery lines
-        lines[i] = JSON.parse(JSON.stringify(auxLines));
+        Papa.parse(csv, {
+            complete: function(results) {
+                var ind = lines.length;
+                lines[ind] = results.data;
+                }
+        });
 
         reset = true;
         fileHeader = [];

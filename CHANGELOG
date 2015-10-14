@@ -3,6 +3,7 @@
 - Fixed directory dependencies between production/development
 - Minor changes in the fileSystem app
 - Minor changes in the settings.py for improve security
+- Now we load csv files through Papaparse
 
 07/10/2015
 - Generate results files with the same name fixed
