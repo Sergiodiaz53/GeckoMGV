@@ -3,7 +3,8 @@
  Multigenome Visualizer
  Bitlab - Universidad de Málaga
  */
-var prevTable=[];
+var prevTable="";
+var currTable="";
 
 function saveCSV(){
     var anot=[],csvtab=[];
@@ -63,29 +64,39 @@ function showDivInfoInPopup(divID, page, name){
     var myWindow = window.open(page, name, windowFeatures);
     myWindow.dataFromParent = divText;
 }
-function showResults(filterText)
+function showResults(filterText,firstFilter)
 {
-    for(var fileNum=0;fileNum<lines.length;fileNum++){
-        var table = document.getElementById("csvInfoTable"+fileNum);
-        if(prevTable.length>fileNum)
-            table.replaceChild(prevTable[fileNum].cloneNode(true),table.childNodes[0]);
-    }
-    console.log("ha entrado");
-    if(filterText!="")
-    for(var fileNum=0;fileNum<lines.length;fileNum++){
-        var toFiltertemp = document.getElementById("csvInfoTable"+fileNum).childNodes[0];
-        prevTable[fileNum]=toFiltertemp.cloneNode(true);
-        var toFilter=toFiltertemp.childNodes;
-        for(var i=1;i<toFilter.length;i++){
-            if(!showingSelected)
-                if(toFilter[i].childNodes[0].innerHTML.indexOf("G")==0&&toFilter[i].childNodes[16].innerHTML.toLowerCase().indexOf(filterText.toLowerCase())==-1) {
-                    document.getElementById("csvInfoTable" + fileNum).childNodes[0].removeChild(toFilter[i]);
-                    //console.log("borrado");
-                    i--;
-                }
-        }
+    if(firstFilter&&prevTable!="")
+        document.getElementById("output").replaceChild(prevTable.cloneNode(true),document.getElementById("files-tab-content"));
+    if(filterText!=""){
+        prevTable=document.getElementById("files-tab-content").cloneNode(true);
+        search(filterText,1)
     }
 
+}
+
+function search(text){
+    text=text.trim();
+    if(text.indexOf(" ")>-1){
+        search(text.substring(0,text.indexOf(" ")));
+        setTimeout(search(text.substring(text.indexOf(" "),text.length)),50);
+        return;
+    }
+    for(var fileNum=0;fileNum<lines.length;fileNum++){
+            var toFilter = document.getElementById("csvInfoTable"+fileNum).childNodes[0].childNodes;
+            for(var i=1;i<toFilter.length;i++){
+                if(!showingSelected)
+                    if(toFilter[i].childNodes[0].innerHTML.indexOf("G")==0&&toFilter[i].childNodes[16].innerHTML.toLowerCase().indexOf(text.toLowerCase())==-1) {
+                        document.getElementById("csvInfoTable" + fileNum).childNodes[0].removeChild(toFilter[i]);
+                        i--;
+                    }
+            }
+        }
+        currTable=document.getElementById("files-tab-content").cloneNode(true);
+        if($("#"+text.toLowerCase()+"").length==0) {
+            $("#Annotations").append("<div class=\"checkbox\"><label> <input type=\"checkbox\" onclick= \"showResults(\'"+text.trim()+"\',false)\" id=\"" + text.toLowerCase() + "\" >" + text + "</label> </div>");
+            //filters.push(text);
+        }
 }
 
 function dialogFrags(){
@@ -123,6 +134,7 @@ function dialogFrags(){
             $detachedChildren.appendTo($dialogContainer);
         }
     });
+    prevTable=document.getElementById("files-tab-content").cloneNode(true);
 }
 
 function dialogAnnotations(){
