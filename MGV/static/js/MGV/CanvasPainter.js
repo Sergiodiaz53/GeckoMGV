@@ -1019,9 +1019,8 @@ function horizontalDrawLines(lines, i, xtotal, ytotal, rectsFilled,
 	yIni = (c.width * parseInt(lines[i][2]) / ytotal);
 	xFin = (c.width * parseInt(lines[i][3]) / xtotal);
 	yFin = (c.width * parseInt(lines[i][4]) / ytotal);
-	if(selectedLines.length>canvasNumber&&selectedLines[canvasNumber].indexOf(i)>-1)
+	if(selectedLines.length>canvasNumber&& selectedLines[canvasNumber]!=null&&selectedLines[canvasNumber].indexOf(i)>-1)
 			color=rgb(255,0,0);
-	console.log(i +" contains "+ selectedLines[canvasNumber].indexOf(i))
 	ctx.fillStyle = ctx.strokeStyle = color;
 
 	// Rect in sequence X
