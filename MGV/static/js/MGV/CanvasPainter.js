@@ -907,6 +907,7 @@ function drawLine(lines, i, xtotal, ytotal, mode, color, canvasNumber) {
             sel=true;
 		verticalDrawLines(lines, i, sel, color);
 	} else {
+
 		horizontalDrawLines(lines, i, xtotal, ytotal, mode, color, canvasNumber);
 	}
 }
@@ -1002,7 +1003,6 @@ function horizontalDrawLines(lines, i, xtotal, ytotal, rectsFilled,
 	} else {
 		var c = document.getElementById("myCanvas");
 	}
-
 	// Then, call its getContext() method (you must pass the string "2d" to the
 	// getContext() method):
 	var ctx = c.getContext("2d");
@@ -1018,7 +1018,9 @@ function horizontalDrawLines(lines, i, xtotal, ytotal, rectsFilled,
 	yIni = (c.width * parseInt(lines[i][2]) / ytotal);
 	xFin = (c.width * parseInt(lines[i][3]) / xtotal);
 	yFin = (c.width * parseInt(lines[i][4]) / ytotal);
-
+	if(selectedLines.length>canvasNumber&&selectedLines[canvasNumber].indexOf(i)>-1)
+			color=rgb(255,0,0);
+	console.log(i +" contains "+ selectedLines[canvasNumber].indexOf(i))
 	ctx.fillStyle = ctx.strokeStyle = color;
 
 	// Rect in sequence X
