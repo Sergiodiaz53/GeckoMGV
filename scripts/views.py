@@ -28,7 +28,8 @@ def executeService(request):
             idParamater = 'parameter'+str(i)
             args.append(request.POST.get(idParamater))
 
-        command = [service.path+request.POST.get('exeName')]
+        print os.path.join(settings.MEDIA_ROOT, service.path+request.POST.get('exeName'))
+        command = [os.path.join(settings.MEDIA_ROOT, service.path+request.POST.get('exeName'))]
         command.extend(args)
         output = subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0]
 

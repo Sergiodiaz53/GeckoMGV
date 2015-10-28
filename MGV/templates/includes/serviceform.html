@@ -5,7 +5,7 @@
     <div id="main" class="container center-block" role="main">
 
     		<div class="row row-centered">
-			    <div class="col-md-9 col-centered">
+			    <div class="col-md-10 col-centered">
                 <br/><br/><br/><br/><br/><br/>
                     <form id="serviceForm" action="{% url 'executeService' %}" method="POST">
                         {% csrf_token %}
@@ -19,8 +19,8 @@
 
                         <div class="control-group">
                             <label class="control-label" for="submit"></label>
-                            <div class="controls">
-                                <button type="submit" id="submit" name="submit" class="btn btn-primary">Enviar</button>
+                            <div class="controls" style="float:right; margin-top:10px">
+                                <button type="submit" id="submit" name="submit" class="btn btn-primary">Submit</button>
                             </div>
                         </div>
 
