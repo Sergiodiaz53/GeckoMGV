@@ -93,7 +93,7 @@ function createInstance() {
 		ctx.restore();
 
 		// Clear previous data
-		document.getElementById("output").innerHTML = "<div class=\"SearchTitle\" > <div class=\"SearchTitleFilterButton\"> <span>Filter:</span> <input type=\"text\" class=\"SearchFilter\" /> <button class=\"SearchButton\" onclick=\"showResults($(\'.SearchFilter\').val())\" ><span class=\"glyphicon glyphicon-search\"></span></button> </div> </div> <ul class='nav nav-tabs' id='files-tab'></ul>"
+		document.getElementById("output").innerHTML = "<div class=\"SearchTitle\" > <div class=\"SearchTitleFilterButton\"> <span>Filter:</span> <input type=\"text\" class=\"SearchFilter\" /> <button class=\"SearchButton\" onclick=\"showResults($(\'.SearchFilter\').val(),true)\" ><span class=\"glyphicon glyphicon-search\"></span></button> </div> </div> <ul class='nav nav-tabs' id='files-tab'></ul>"
 				+ " <div class='tab-content' id='files-tab-content'></div>";
 
 		document.getElementById("annotationsOutput").innerHTML = "<ul class='nav nav-tabs' id='annotations-tab'></ul>"
@@ -1099,7 +1099,7 @@ function showSelected(){
         showingSelected=true;
     }else{
         showingSelected=false;
-        redraw();
+        document.getElementById("files-tab-content").parentNode.replaceChild(currTable.cloneNode(true),document.getElementById("files-tab-content"));
     }
 }
 
