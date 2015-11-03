@@ -473,9 +473,9 @@ function createInstance() {
 				map = true;
 			}
 		}
-		for(var index=0;index<filterList.length;index++)
-			document.getElementById(filterList[index]).checked=false;
-		filterList=[];
+		for(var index=0;index<searchList.length;index++)
+			document.getElementById(searchList[index]).checked=false;
+		searchList=[];
 		prevTable=document.getElementById("files-tab-content").cloneNode(true);
 		console.timeEnd("reDraw()");
 	};
@@ -932,6 +932,57 @@ function resetDraw() {
 
 function returnMinValue(){
 	return minValue;
+}
+function annotationDrawLines(seq,start,end,point){
+    var c = document.getElementById("myCanvasLayer1");
+	var ctx = c.getContext("2d");
+    switch (seq){
+        case 'X':
+            pStartX=start;
+            pEndX=end;
+            pStartY=point;
+            pEndY=point+end-start;
+            break;
+        case 'Y':
+            pStartY=start;
+            pEndY=end;
+            pStartX=point;
+            pEndX=point+end-start;
+            break;
+        default:
+            return;
+    }
+	var xIni;
+	var xFin;
+	var yIni;
+	var yFin;
+
+    xIni = ((c.width * (parseInt(pStartX) / xtotal) - currentArea.x0) / (currentArea.x1 - currentArea.x0))
+			* c.width;
+	yIni = ((c.height * (parseInt(pStartY) / ytotal) - currentArea.y0) / (currentArea.y1 - currentArea.y0))
+			* c.height;
+	xFin = ((c.width * (parseInt(pEndX) / xtotal) - currentArea.x0) / (currentArea.x1 - currentArea.x0))
+			* c.width;
+	yFin = ((c.height * (parseInt(pEndY) / ytotal) - currentArea.y0) / (currentArea.y1 - currentArea.y0))
+			* c.height;
+
+
+	if((xFin-xIni < 0.1)&&(xFin-xIni>0)){
+		xFin = xIni + 0.1;
+	}
+
+	if((yFin-yIni < 0.1)&&(yFin-yIni >0)){
+		yFin = yIni +0.1 ;
+	}
+    ctx.beginPath();
+    ctx.clearRect(0,0,500,500);
+	ctx.moveTo(xIni, c.height);
+	ctx.lineTo(xIni, c.height - yIni);
+    ctx.moveTo(xFin, c.height);
+	ctx.lineTo(xFin, c.height - yFin);
+	ctx.lineWidth = 2;
+    ctx.strokeStyle = rgb(0, 0, 0);
+    ctx.stroke();
 }
 
 function verticalDrawLines(actualLines, i, fragment, color) {

@@ -5,7 +5,7 @@
  */
 var prevTable="";
 var currTable="";
-var filterList=[];
+var searchList=[];
 
 
 function saveCSV(){
@@ -68,8 +68,11 @@ function showDivInfoInPopup(divID, page, name){
 }
 function showResults(filterText,firstFilter)
 {
-    /*if(filterText)
-        $('.SearchFilter2').val("");*/
+    if(filterText)
+        if($('.SearchFilter2').val()!="")
+            $('.SearchFilter2').val("");
+        else
+            $('.SearchFilter').val("");
     if(firstFilter&&prevTable!="")
         document.getElementById("output").replaceChild(prevTable.cloneNode(true),document.getElementById("files-tab-content"));
     if(filterText!=""){
@@ -78,13 +81,13 @@ function showResults(filterText,firstFilter)
             search(filterText);
         else
             if(document.getElementById(filterText.trim().toLowerCase()).checked){
-                filterList.push(filterText.toLowerCase());
+                searchList.push(filterText.toLowerCase());
                 search(filterText);
             } else {
                 document.getElementById("output").replaceChild(prevTable.cloneNode(true),document.getElementById("files-tab-content"));
-                filterList.splice(filterList.indexOf(filterText.toLowerCase()),1);
-                for(var index= 0;index<filterList.length;index++)
-                    setTimeout(search(filterList[index]),5);
+                searchList.splice(searchList.indexOf(filterText.toLowerCase()),1);
+                for(var index= 0;index<searchList.length;index++)
+                    setTimeout(search(searchList[index]),5);
             }
 
     }
@@ -111,7 +114,7 @@ function search(text){
         currTable=document.getElementById("files-tab-content").cloneNode(true);
         if($("#"+text.toLowerCase()+"").length==0) {
             $("#Annotations").append("<div name=\"word\" class=\"checkbox\" ><label> <input type=\"checkbox\" onclick= \"showResults(\'"+text.trim()+"\',false)\" id=\"" + text.toLowerCase() + "\" checked >" + text + "</label> </div>");
-            filterList.push(text.toLowerCase());
+            searchList.push(text.toLowerCase());
         }
 }
 
