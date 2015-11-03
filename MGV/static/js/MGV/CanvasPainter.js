@@ -472,7 +472,10 @@ function createInstance() {
 				map = true;
 			}
 		}
-
+		for(var index=0;index<searchList.length;index++)
+			document.getElementById(searchList[index]).checked=false;
+		searchList=[];
+		prevTable=document.getElementById("files-tab-content").cloneNode(true);
 		console.timeEnd("reDraw()");
 	};
 
@@ -907,6 +910,7 @@ function drawLine(lines, i, xtotal, ytotal, mode, color, canvasNumber) {
             sel=true;
 		verticalDrawLines(lines, i, sel, color);
 	} else {
+
 		horizontalDrawLines(lines, i, xtotal, ytotal, mode, color, canvasNumber);
 	}
 }
@@ -1002,7 +1006,6 @@ function horizontalDrawLines(lines, i, xtotal, ytotal, rectsFilled,
 	} else {
 		var c = document.getElementById("myCanvas");
 	}
-
 	// Then, call its getContext() method (you must pass the string "2d" to the
 	// getContext() method):
 	var ctx = c.getContext("2d");
@@ -1018,7 +1021,8 @@ function horizontalDrawLines(lines, i, xtotal, ytotal, rectsFilled,
 	yIni = (c.width * parseInt(lines[i][2]) / ytotal);
 	xFin = (c.width * parseInt(lines[i][3]) / xtotal);
 	yFin = (c.width * parseInt(lines[i][4]) / ytotal);
-
+	if(selectedLines.length>canvasNumber&& selectedLines[canvasNumber]!=null&&selectedLines[canvasNumber].indexOf(i)>-1)
+			color=rgb(255,0,0);
 	ctx.fillStyle = ctx.strokeStyle = color;
 
 	// Rect in sequence X
@@ -1456,7 +1460,6 @@ function selectFrag(lines, position, evt) {
 				// Pendiente positiva
 				if ((x0 > x1) && (x0 < x2) && (y0 != y1) && y0!= y2) {
 					distance = calculateDistance(position,lines[j][i]);
-                    console.log(distance+" - "+x0+" - "+y0);
 					if (distance < 6&&filter(lines[j][i])) {
                         linefound = true;
 						arrayIndex = j;

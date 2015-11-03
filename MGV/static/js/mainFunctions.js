@@ -5,6 +5,8 @@
  */
 var prevTable="";
 var currTable="";
+var searchList=[];
+
 
 function saveCSV(){
     var anot=[],csvtab=[];
@@ -66,11 +68,25 @@ function showDivInfoInPopup(divID, page, name){
 }
 function showResults(filterText,firstFilter)
 {
+    if(filterText)
+        $('.SearchFilter2').val("");
     if(firstFilter&&prevTable!="")
         document.getElementById("output").replaceChild(prevTable.cloneNode(true),document.getElementById("files-tab-content"));
     if(filterText!=""){
-        prevTable=document.getElementById("files-tab-content").cloneNode(true);
-        search(filterText,1)
+        //prevTable=document.getElementById("files-tab-content").cloneNode(true);
+        if($("#"+filterText.toLowerCase()+"").length==0)
+            search(filterText);
+        else
+            if(document.getElementById(filterText.trim().toLowerCase()).checked){
+                searchList.push(filterText.toLowerCase());
+                search(filterText);
+            } else if(searchList.indexOf(filterText.toLowerCase())!=-1) {
+                document.getElementById("output").replaceChild(prevTable.cloneNode(true),document.getElementById("files-tab-content"));
+                searchList.splice(searchList.indexOf(filterText.toLowerCase()),1);
+                for(var index= 0;index<searchList.length;index++)
+                    setTimeout(search(searchList[index]),5);
+            }
+
     }
 
 }
@@ -79,7 +95,7 @@ function search(text){
     text=text.trim();
     if(text.indexOf(" ")>-1){
         search(text.substring(0,text.indexOf(" ")));
-        setTimeout(search(text.substring(text.indexOf(" "),text.length)),50);
+        setTimeout(search(text.substring(text.indexOf(" "),text.length)),10);
         return;
     }
     for(var fileNum=0;fileNum<lines.length;fileNum++){
@@ -94,8 +110,8 @@ function search(text){
         }
         currTable=document.getElementById("files-tab-content").cloneNode(true);
         if($("#"+text.toLowerCase()+"").length==0) {
-            $("#Annotations").append("<div class=\"checkbox\"><label> <input type=\"checkbox\" onclick= \"showResults(\'"+text.trim()+"\',false)\" id=\"" + text.toLowerCase() + "\" >" + text + "</label> </div>");
-            //filters.push(text);
+            $("#Annotations").append("<div name=\"word\" class=\"checkbox\" ><label> <input type=\"checkbox\" onclick= \"showResults(\'"+text.trim()+"\',false)\" id=\"" + text.toLowerCase() + "\" checked >" + text + "</label> </div>");
+            searchList.push(text.toLowerCase());
         }
 }
 
@@ -134,7 +150,6 @@ function dialogFrags(){
             $detachedChildren.appendTo($dialogContainer);
         }
     });
-    prevTable=document.getElementById("files-tab-content").cloneNode(true);
 }
 
 function dialogAnnotations(){
