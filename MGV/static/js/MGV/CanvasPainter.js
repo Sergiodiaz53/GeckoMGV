@@ -342,8 +342,9 @@ function createInstance() {
 								// console.time("paint()");
 								var numColor = (i) % 8;
 								color = rgb(R[x], G[x], B[x]);
-								drawLine(currentLines, i, xtotal, ytotal, mode, color, x);
-								//add2Table(i, table);
+								drawLine(currentLines, i, xtotal, ytotal, mode,
+										color, x);
+								add2Table(i, table);
 								auxLines.push(lines[i]);
 								// console.timeEnd("paint()");
 							} else {
