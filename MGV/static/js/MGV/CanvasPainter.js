@@ -473,7 +473,10 @@ function createInstance() {
 				map = true;
 			}
 		}
-
+		for(var index=0;index<searchList.length;index++)
+			document.getElementById(searchList[index]).checked=false;
+		searchList=[];
+		prevTable=document.getElementById("files-tab-content").cloneNode(true);
 		console.timeEnd("reDraw()");
 	};
 
@@ -1458,7 +1461,6 @@ function selectFrag(lines, position, evt) {
 				// Pendiente positiva
 				if ((x0 > x1) && (x0 < x2) && (y0 != y1) && y0!= y2) {
 					distance = calculateDistance(position,lines[j][i]);
-                    console.log(distance+" - "+x0+" - "+y0);
 					if (distance < 6&&filter(lines[j][i])) {
                         linefound = true;
 						arrayIndex = j;
