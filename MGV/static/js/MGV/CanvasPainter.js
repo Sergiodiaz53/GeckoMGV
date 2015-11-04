@@ -342,8 +342,9 @@ function createInstance() {
 								// console.time("paint()");
 								var numColor = (i) % 8;
 								color = rgb(R[x], G[x], B[x]);
-								drawLine(currentLines, i, xtotal, ytotal, mode, color, x);
-								//add2Table(i, table);
+								drawLine(currentLines, i, xtotal, ytotal, mode,
+										color, x);
+								add2Table(i, table);
 								auxLines.push(lines[i]);
 								// console.timeEnd("paint()");
 							} else {
@@ -932,6 +933,57 @@ function resetDraw() {
 function returnMinValue(){
 	return minValue;
 }
+function annotationDrawLines(seq,start,end,point){
+    var c = document.getElementById("myCanvasLayer1");
+	var ctx = c.getContext("2d");
+    switch (seq){
+        case 'X':
+            pStartX=start;
+            pEndX=end;
+            pStartY=point;
+            pEndY=point+end-start;
+            break;
+        case 'Y':
+            pStartY=start;
+            pEndY=end;
+            pStartX=point;
+            pEndX=point+end-start;
+            break;
+        default:
+            return;
+    }
+	var xIni;
+	var xFin;
+	var yIni;
+	var yFin;
+
+    xIni = ((c.width * (parseInt(pStartX) / xtotal) - currentArea.x0) / (currentArea.x1 - currentArea.x0))
+			* c.width;
+	yIni = ((c.height * (parseInt(pStartY) / ytotal) - currentArea.y0) / (currentArea.y1 - currentArea.y0))
+			* c.height;
+	xFin = ((c.width * (parseInt(pEndX) / xtotal) - currentArea.x0) / (currentArea.x1 - currentArea.x0))
+			* c.width;
+	yFin = ((c.height * (parseInt(pEndY) / ytotal) - currentArea.y0) / (currentArea.y1 - currentArea.y0))
+			* c.height;
+
+
+	if((xFin-xIni < 0.1)&&(xFin-xIni>0)){
+		xFin = xIni + 0.1;
+	}
+
+	if((yFin-yIni < 0.1)&&(yFin-yIni >0)){
+		yFin = yIni +0.1 ;
+	}
+    ctx.beginPath();
+    ctx.clearRect(0,0,500,500);
+	ctx.moveTo(xIni, c.height);
+	ctx.lineTo(xIni, c.height - yIni);
+    ctx.moveTo(xFin, c.height);
+	ctx.lineTo(xFin, c.height - yFin);
+	ctx.lineWidth = 2;
+    ctx.strokeStyle = rgb(0, 0, 0);
+    ctx.stroke();
+}
 
 function verticalDrawLines(actualLines, i, fragment, color) {
 
@@ -1460,6 +1512,7 @@ function selectFrag(lines, position, evt) {
 				// Pendiente positiva
 				if ((x0 > x1) && (x0 < x2) && (y0 != y1) && y0!= y2) {
 					distance = calculateDistance(position,lines[j][i]);
+                    console.log(distance+" - "+x0+" - "+y0);
 					if (distance < 6&&filter(lines[j][i])) {
                         linefound = true;
 						arrayIndex = j;

@@ -69,7 +69,10 @@ function showDivInfoInPopup(divID, page, name){
 function showResults(filterText,firstFilter)
 {
     if(filterText)
-        $('.SearchFilter2').val("");
+        if($('.SearchFilter2').val()!="")
+            $('.SearchFilter2').val("");
+        else
+            $('.SearchFilter').val("");
     if(firstFilter&&prevTable!="")
         document.getElementById("output").replaceChild(prevTable.cloneNode(true),document.getElementById("files-tab-content"));
     if(filterText!=""){
@@ -80,7 +83,7 @@ function showResults(filterText,firstFilter)
             if(document.getElementById(filterText.trim().toLowerCase()).checked){
                 searchList.push(filterText.toLowerCase());
                 search(filterText);
-            } else if(searchList.indexOf(filterText.toLowerCase())!=-1) {
+            } else {
                 document.getElementById("output").replaceChild(prevTable.cloneNode(true),document.getElementById("files-tab-content"));
                 searchList.splice(searchList.indexOf(filterText.toLowerCase()),1);
                 for(var index= 0;index<searchList.length;index++)

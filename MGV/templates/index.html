@@ -22,6 +22,7 @@
 						<canvas id="myCanvasGrid" width="600" height="550"></canvas>
 						<canvas id="myCanvas" width="500" height="500"></canvas>
 						<canvas id="myCanvasLayer1" width="500" height="500"> </canvas>
+                        <canvas id="myCanvasLayer2" width="500" height="500"> </canvas>
 					</div>
 				</div>
 
@@ -199,13 +200,13 @@
                             <div id="AnnotColapsed" class="panel-collapse collapse in">
 							<div class="panel-body">
 								<div class="row top-buffer btn-padding">
-                                    <form name="search" id="Annotations" >
+                                    <div id="Annotations">
                                         <div class="SearchTitleFilterButton">
                                             <span>Search:</span>
                                             <input type="text" class="SearchFilter2" />
                                             <button class="SearchButton" onclick="showResults($('.SearchFilter2').val(),true)"><span class="glyphicon glyphicon-search"></span></button>
                                         </div>
-                                    </form>
+                                    </div>
                                 </div>
 								</div>
 							</div>
