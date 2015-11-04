@@ -66,8 +66,10 @@ function showDivInfoInPopup(divID, page, name){
     var myWindow = window.open(page, name, windowFeatures);
     myWindow.dataFromParent = divText;
 }
+//Launch the search algorithm and initialize the search's enviroment
 function showResults(filterText,firstFilter)
 {
+    //Empty the textBoxes
     if(filterText)
         if($('.SearchFilter2').val()!="")
             $('.SearchFilter2').val("");
@@ -76,7 +78,6 @@ function showResults(filterText,firstFilter)
     if(firstFilter&&prevTable!="")
         document.getElementById("output").replaceChild(prevTable.cloneNode(true),document.getElementById("files-tab-content"));
     if(filterText!=""){
-        //prevTable=document.getElementById("files-tab-content").cloneNode(true);
         if($("#"+filterText.toLowerCase()+"").length==0)
             search(filterText);
         else
@@ -89,11 +90,12 @@ function showResults(filterText,firstFilter)
                 for(var index= 0;index<searchList.length;index++)
                     setTimeout(search(searchList[index]),5);
             }
-
     }
+    //Draw crossed lines to the found annotations
+    drawAnnotations();
 
 }
-
+//function which deletes from the table the annotations which doesn't match the search
 function search(text){
     text=text.trim();
     if(text.indexOf(" ")>-1){
@@ -115,6 +117,28 @@ function search(text){
         if($("#"+text.toLowerCase()+"").length==0) {
             $("#Annotations").append("<div name=\"word\" class=\"checkbox\" ><label> <input type=\"checkbox\" onclick= \"showResults(\'"+text.trim()+"\',false)\" id=\"" + text.toLowerCase() + "\" checked >" + text + "</label> </div>");
             searchList.push(text.toLowerCase());
+        }
+}
+//Draw crossed lines to the found annotations
+function drawAnnotations(){
+    document.getElementById("myCanvasLayer2").getContext("2d").clearRect(0,0,500,500);
+    for(var fileNum=0;fileNum<lines.length;fileNum++){
+        var toFilter = document.getElementById("csvInfoTable"+fileNum).childNodes[0].childNodes;
+        var xfrag=parseInt(toFilter[1].childNodes[1].innerHTML),yfrag=parseInt(toFilter[1].childNodes[2].innerHTML);
+            for(var i=2;i<toFilter.length;i++){
+                if(toFilter[i].childNodes[0].innerHTML.indexOf("G")==0) {
+                    var seq=toFilter[i].childNodes[0].innerHTML.charAt(1).toUpperCase();
+                    //Classify depending on the sequence
+                    var point=xfrag+(parseInt(toFilter[i].childNodes[2].innerHTML)-yfrag);
+                    if (seq=='X') {
+                        point = yfrag+(parseInt(toFilter[i].childNodes[1].innerHTML)-xfrag);
+                        annotationDrawLines(seq, toFilter[i].childNodes[1].innerHTML, toFilter[i].childNodes[3].innerHTML, point);
+                    }else
+                        annotationDrawLines(seq, toFilter[i].childNodes[2].innerHTML, toFilter[i].childNodes[4].innerHTML, point);
+                }else{
+                    var xfrag=parseInt(toFilter[i].childNodes[1].innerHTML),yfrag=parseInt(toFilter[i].childNodes[2].innerHTML);
+                }
+            }
         }
 }
 
