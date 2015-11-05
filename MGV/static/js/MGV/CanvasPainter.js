@@ -616,6 +616,7 @@ function createInstance() {
 				}
 
 				if ((area) && vertical&&!shiftSel) {
+                    document.getElementById("myCanvasLayer2").getContext("2d").clearRect(0,0,500,500);
 					$('#CSBPopover').hide();
                     if(startX>mouseX)
                         startX=[mouseX,mouseX=startX][0];
@@ -649,6 +650,7 @@ function createInstance() {
 					canvas.style.cursor = "default";
 
 					redraw();
+                    //drawAnnotations();
 				}
                 if(area&&vertical&&shiftSel) {
                      if(startX>mouseX)
@@ -878,7 +880,7 @@ function resetDraw() {
 		ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 		reset = true;
 		zoomBoard = false;
-
+        document.getElementById("myCanvasLayer2").getContext("2d").clearRect(0,0,500,500);
 		redraw();
 	}
 }
@@ -886,10 +888,13 @@ function resetDraw() {
 function returnMinValue(){
 	return minValue;
 }
-function annotationDrawLines(seq,start,end,point){
-    var c = document.getElementById("myCanvasLayer1");
-	var ctx = c.getContext("2d");
 
+//Draw the lines to the lines to the annotation point
+function annotationDrawLines(seq,start,end,point){
+    start=parseInt(start),end=parseInt(end),point=parseInt(point);
+    var c = document.getElementById("myCanvasLayer2");
+	var ctx = c.getContext("2d");
+    var pStartX,pStartY,pEndX,pEndY;
     switch (seq){
         case 'X':
             pStartX=start;
@@ -930,13 +935,19 @@ function annotationDrawLines(seq,start,end,point){
 		yFin = yIni +0.1 ;
 	}
     ctx.beginPath();
-    ctx.clearRect(0,0,500,500);
-	ctx.moveTo(xIni, c.height);
-	ctx.lineTo(xIni, c.height - yIni);
-    ctx.moveTo(xFin, c.height);
-	ctx.lineTo(xFin, c.height - yFin);
-	ctx.lineWidth = 2;
-    ctx.strokeStyle = rgb(0, 0, 0);
+    if(seq=='X'){
+        ctx.moveTo(xIni, c.height);
+        ctx.lineTo(xIni, c.height - yIni);
+        ctx.moveTo(xFin, c.height);
+        ctx.lineTo(xFin,c.height - yFin);
+    }else{
+        ctx.moveTo(0, c.height -yIni);
+        ctx.lineTo(xIni, c.height - yIni);
+        ctx.moveTo(0, c.height -yFin);
+        ctx.lineTo(xFin, c.height - yFin);
+    }
+	ctx.lineWidth = 0.2;
+    ctx.strokeStyle = rgba(0, 0, 0,0.7);
     ctx.stroke();
 }
 
