@@ -5,7 +5,7 @@
 	<div id="main" class="container center-block" role="main">
 
 		<div class="row row-centered">
-			<div class="col-md-8">
+			<div class="col-xs-12 col-sm-12 col-md-12 col-lg-7">
 				<div class="row row-centered my-container2">
 					<div>
 						<div id="fileName">
@@ -19,15 +19,15 @@
 
 					<!-- ---------- CANVAS -------------------- -->
 					<div id="canvasContainer" class="canvas-centered">
-						<canvas id="myCanvasGrid" width="600" height="550"></canvas>
-						<canvas id="myCanvas" width="500" height="500"></canvas>
-						<canvas id="myCanvasLayer1" width="500" height="500"> </canvas>
-                        <canvas id="myCanvasLayer2" width="500" height="500"> </canvas>
+						<canvas id="myCanvasGrid" class="img-responsive" width="600" height="550"></canvas>
+						<canvas id="myCanvas" class="img-responsive"  width="500" height="500"></canvas>
+						<canvas id="myCanvasLayer1" class="img-responsive"  width="500" height="500"> </canvas>
+                        <canvas id="myCanvasLayer2" class="img-responsive"  width="500" height="500"> </canvas>
 					</div>
 				</div>
 
 				<div class="row row-centered my-container2">
-					<div class="col-md-8 col-centered">
+					<div class="col-md-10 col-centered">
 						<div class="div-centered">
 							<div id="fileNameMAT">
 								Upload a Matrix file
@@ -40,9 +40,16 @@
 						</div>
 
 						<!-- ---------- CANVAS Matrix -------------------- -->
-						<div id="canvasContainerMatrix" class="div-centered">
-							<canvas id="myCanvasMatrix" width="500" height="100"> </canvas>
-						</div>
+                        <div class="tab-content">
+                            <div id="canvasContainerMatrix" class="div-centered tab-pane fade in active">
+                                <canvas id="myCanvasMatrix" class="img-responsive" width="500" height="100"> </canvas>
+                            </div>
+                        </div>
+
+                        <ul class="nav nav-pills nav-justified">
+                            <li class="active"><a data-toggle="tab" href="#canvasContainerMatrix">Matrix</a></li>
+                            <li><a data-toggle="tab" href="#menu1">Sequence</a></li>
+                        </ul>
 
 					</div>
 				</div>

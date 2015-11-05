@@ -486,8 +486,7 @@ function createInstance() {
 	window.addEventListener('keydown', function(evt) {
 
 		switch(evt.keyCode) {
-			case 16: //Shift: If you press the shift button you are allowed to draw an area to zoom.
-				//DEPRECATED. Now you can zoom by drawing a square with the mouse.
+			case 16:
 				canvas.style.cursor = "pointer";
 				shiftSel = true;
 				break;
@@ -520,22 +519,22 @@ function createInstance() {
 	}, false);
 
 	canvas
-			.addEventListener(
-					'mousedown',
-					function(evt) {
-						document.body.style.mozUserSelect = document.body.style.webkitUserSelect = document.body.style.userSelect = 'none';
-						lastX = evt.offsetX || (evt.pageX - canvas.offsetLeft);
-						lastY = evt.offsetY || (evt.pageY - canvas.offsetTop);
-						dragStart = ctx.transformedPoint(lastX, lastY);
-						dragged = false;
-						console.log("MouseDown")
-						mousedown = true;
-						startX = parseInt(evt.clientX - offsetX);
-						startY = parseInt(evt.clientY - offsetY);
+		.addEventListener(
+            'mousedown',
+            function(evt) {
+                document.body.style.mozUserSelect = document.body.style.webkitUserSelect = document.body.style.userSelect = 'none';
+                lastX = evt.offsetX || (evt.pageX - canvas.offsetLeft);
+                lastY = evt.offsetY || (evt.pageY - canvas.offsetTop);
+                dragStart = ctx.transformedPoint(lastX, lastY);
+                dragged = false;
+                console.log("MouseDown")
+                mousedown = true;
+                startX = parseInt(evt.clientX - offsetX);
+                startY = parseInt(evt.clientY - offsetY);
+            }, false);
 
-					}, false);
-
-	canvas.addEventListener('mouseup',
+	canvas
+        .addEventListener('mouseup',
 			function(evt) {
 				console.log("MouseUP");
 				mousedown = false;
@@ -545,7 +544,6 @@ function createInstance() {
                         selectFrag(lines, getMousePos(canvas, evt), evt);
                         selectedLines = [];
                     }else{
-                        //en pruebas
                         var linefound=false;
                         var arrayIndex=0;
                         var lineIndex=0;
@@ -595,47 +593,27 @@ function createInstance() {
                                 i++;
                             }
 		}
-                                    if(linefound&&filter(lines[arrayIndex][lineIndex])){
-                                        if(selectedLines[arrayIndex]==null)
-                                            selectedLines[arrayIndex]=[];
-                                        var index =-1;
-                                        if((index=selectedLines[arrayIndex].indexOf(lineIndex))>-1){
-                                            selectedLines[arrayIndex].splice(index, 1);
-                                            verticalDrawLines(lines[arrayIndex], lineIndex, false, rgb(R[arrayIndex],G[arrayIndex],B[arrayIndex]));
-                                        }else{
-                                            selectedLines[arrayIndex].push(lineIndex);
-                                            verticalDrawLines(lines[arrayIndex], lineIndex, true, null);
-                                        }
-                                    }
+                            if(linefound&&filter(lines[arrayIndex][lineIndex])){
+                                if(selectedLines[arrayIndex]==null)
+                                    selectedLines[arrayIndex]=[];
+                                var index =-1;
+                                if((index=selectedLines[arrayIndex].indexOf(lineIndex))>-1){
+                                    selectedLines[arrayIndex].splice(index, 1);
+                                    verticalDrawLines(lines[arrayIndex], lineIndex, false, rgb(R[arrayIndex],G[arrayIndex],B[arrayIndex]));
+                                }else{
+                                    selectedLines[arrayIndex].push(lineIndex);
+                                    verticalDrawLines(lines[arrayIndex], lineIndex, true, null);
+                                }
+                            }
                         }
                     }
                 }
 
 				if ((!selected) && vertical){
                     if(selectedLines.length==0)
-					redraw();
-					$('#CSBPopover').hide();
-					}
-				// Zooming in a concrete area
-				/*
-				 * if (area) { console.log("Scale: " + (startX / mouseX) + "," +
-				 * (startY / mouseY)); ctx.translate(originx, originy);
-				 * ctx.scale(scaleFactor, scaleFactor); ctx.translate( -( mouseX /
-				 * currentZoom + originx - mouseX / ( currentZoom * scaleFactor ) ), -(
-				 * mouseY / currentZoom + originy - mouseY / ( currentZoom *
-				 * scaleFactor ) ) );
-				 * 
-				 * originx = mouseX / currentZoom + originx - mouseX / (
-				 * currentZoom * scaleFactor ) originy = mouseY / currentZoom +
-				 * originy - mouseY / ( currentZoom * scaleFactor ) currentZoom *=
-				 * scaleFactor;
-				 * 
-				 * var layer1 = document.getElementById("myCanvasLayer1"); var
-				 * ctx1 = layer1.getContext("2d"); ctx1.clearRect(0, 0,
-				 * canvas.width, canvas.height);
-				 * 
-				 * redraw(); }
-				 */
+                        redraw();
+                    $('#CSBPopover').hide();
+				}
 
 				if ((area) && vertical&&!shiftSel) {
 					$('#CSBPopover').hide();
@@ -717,7 +695,8 @@ function createInstance() {
 
 			}, false);
 
-	canvas.addEventListener('mousemove', function(evt) {
+	canvas
+        .addEventListener('mousemove', function(evt) {
 
 			lastX = evt.offsetX || (evt.pageX - canvas.offsetLeft);
 			lastY = evt.offsetY || (evt.pageY - canvas.offsetTop);
@@ -728,20 +707,6 @@ function createInstance() {
 			}
 
 			dragged = true;
-			/*
-			 * if (dragStart && !area) {
-			 * 
-			 * canvas.style.cursor = "move";
-			 * 
-			 * var pt = ctx.transformedPoint(lastX, lastY); ctx.translate(pt.x -
-			 * dragStart.x, pt.y - dragStart.y);
-			 * 
-			 * //Track translating accX += parseInt(pt.x - dragStart.x); accY +=
-			 * parseInt(pt.y - dragStart.y); console.log("translatedX: " + accX + "
-			 * translatedy: " + accY);
-			 * 
-			 * redraw(); }
-			 */
 
 			if (area && mousedown && !squared) {
 
@@ -769,24 +734,12 @@ function createInstance() {
 			}
 	}, false);
 
-	/*
-	 * var zoom = function (clicks) { var pt = ctx.transformedPoint(lastX,
-	 * lastY); ctx.translate(pt.x, pt.y); var factor = Math.pow(scaleFactor,
-	 * clicks);
-	 * 
-	 * currentZoom *= factor; console.log("CurrentZoom: " + currentZoom);
-	 * 
-	 * ctx.scale(factor, factor); ctx.translate(-pt.x, -pt.y);
-	 * 
-	 * redraw(); }
-	 */
-
 	var handleScroll = function(evt) {
-		var delta = evt.wheelDelta ? evt.wheelDelta / 60
+		/*var delta = evt.wheelDelta ? evt.wheelDelta / 60
 				: evt.detail ? -evt.detail : 0;
 		if (delta)
 			zoom(delta);
-		return evt.preventDefault() && false;
+		return evt.preventDefault() && false;*/
 	};
 
 	canvas.addEventListener('DOMMouseScroll', handleScroll, false);
@@ -936,6 +889,7 @@ function returnMinValue(){
 function annotationDrawLines(seq,start,end,point){
     var c = document.getElementById("myCanvasLayer1");
 	var ctx = c.getContext("2d");
+
     switch (seq){
         case 'X':
             pStartX=start;
@@ -952,6 +906,7 @@ function annotationDrawLines(seq,start,end,point){
         default:
             return;
     }
+
 	var xIni;
 	var xFin;
 	var yIni;
@@ -1571,12 +1526,10 @@ function selectFrag(lines, position, evt) {
 
 				.css('left', (left + 20) + 'px');
 
-		var theHeight = $('#CSBPopover').height();
-		$('#CSBPopover').css('top', (top - (theHeight / 2) - 10) + 'px')
-
-		.popover({
-			html : true
-		}).show();
+		$('#CSBPopover').css('top', (top - ($('#CSBPopover').height() / 2) - 10) + 'px')
+                        .popover({
+                            html : true
+                        }).show();
 
 		if (selected)
 			redraw();
@@ -1616,13 +1569,13 @@ $('#viewSelect')
 						$("#myCanvasLayer1").show();
 						$("#myCanvasGrid").show();
 						$("#canvasContainer").css('width', '600px').css(
-								'height', '550px')
+								'height', '550px');
 						$("#myCanvas").css('background-color', 'transparent')
 								.css('position', 'absolute').css('margin-top',
 										'25px').css('margin-left', '50px');
 
 						for (x = 1; x < lines.length; x++) {
-							console.log("Generating horizontal canvas")
+							console.log("Generating horizontal canvas");
 							var canvasTemp = document.getElementById("myCanvas"
 									+ x);
 							canvasTemp.remove();
@@ -1637,14 +1590,14 @@ $('#viewSelect')
 						$("#myCanvasLayer1").hide();
 						$("#myCanvasGrid").hide();
 						$("#canvasContainer").css('width', 'auto').css(
-								'height', 'auto')
+								'height', 'auto');
 						$("#myCanvas").css('background-color', 'white').css(
 								'position', 'relative')
 								.css('margin-top', '0px').css('margin-left',
-										'0px')
+										'0px');
 
 						for (x = 1; x < lines.length; x++) {
-							console.log("Gener  ating horizontal canvas")
+							console.log("Generating horizontal canvas");
 							$("#canvasContainer")
 									.append(
 											"<canvas id='myCanvas"
