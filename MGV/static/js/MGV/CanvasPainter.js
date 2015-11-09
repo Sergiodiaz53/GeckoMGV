@@ -62,6 +62,7 @@ var B = [ 80, 43, 185, 34, 96, 15, 173, 133 ];
 // My Functions
 window.onload = function() {
 	createInstance();
+    $('#loading').hide();
 };
 
 function createInstance() {
@@ -85,6 +86,8 @@ function createInstance() {
 
 	redraw = function redraw() {
 		console.time("reDraw()");
+        $('#loading').show();
+        $('#myCanvas').hide();
 
 		// Clear the canvas
 		ctx.save();
@@ -477,6 +480,8 @@ function createInstance() {
 			document.getElementById(searchList[index]).checked=false;
 		searchList=[];
 		prevTable=document.getElementById("files-tab-content").cloneNode(true);
+        $('#loading').hide();
+        $('#myCanvas').show();
 		console.timeEnd("reDraw()");
 	};
 
@@ -683,6 +688,8 @@ function createInstance() {
                     $('#CSBPopover').hide();
                     var mode = document.option.tipo;
                     for (var x = 0; x < lines.length; x++) {
+                        if(selectedLines[x]==null)
+                            selectedLines[x]=[];
                         currentLines = lines[x].slice(0);
                         for (var i=0; i < currentLines.length; i++) {
                             if ((mode[0].checked && mode[0].value == currentLines[i][0])
@@ -703,8 +710,8 @@ function createInstance() {
                                 }
                                 if (paint) {
                                     verticalDrawLines(lines[x], i, true, null);
-                                    if(selectedLines[x]==null)
-                                        selectedLines[x]=[];
+                                    /*if(selectedLines[x]==null)
+                                        selectedLines[x]=[];*/
                                     if(selectedLines[x].indexOf(i)==-1)
                                         selectedLines[x].push(i);
                                 }
@@ -1135,12 +1142,8 @@ function horizontalDrawLines(lines, i, xtotal, ytotal, rectsFilled,
 }
 
 function showSelected(){
-    for (var x = 0; x < selectedLines.length; x++) {
-        console.log(x+"\n\n");
-        for(var j=0;j<selectedLines[x].length;j++)
-            console.log(selectedLines[x][j]);
-    }
     if(!showingSelected){
+        currTable=document.getElementById("files-tab-content").cloneNode(true);
         document.getElementById("annotationsOutput").innerHTML = "<ul class='nav nav-tabs' id='annotations-tab'></ul>"
 				+ "<div class='tab-content' id='annotations-tab-content'></div>";
         for (var x = 0; x < lines.length; x++) {
@@ -1626,6 +1629,7 @@ $('#viewSelect')
 				function() {
 					if (this.value == 'Traditional') {
 						$("#myCanvasLayer1").show();
+						$("#myCanvasLayer2").show();
 						$("#myCanvasGrid").show();
 						$("#canvasContainer").css('width', '600px').css(
 								'height', '550px')
@@ -1647,6 +1651,7 @@ $('#viewSelect')
 
 					if (this.value == 'Horizontal') {
 						$("#myCanvasLayer1").hide();
+						$("#myCanvasLayer2").hide();
 						$("#myCanvasGrid").hide();
 						$("#canvasContainer").css('width', 'auto').css(
 								'height', 'auto')

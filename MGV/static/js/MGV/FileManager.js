@@ -41,7 +41,6 @@ function handleFiles(files, type) {
     } else {
         alert('FileReader is not supported in this browser.');
     }
-
 }
 
 function getAsText(fileToRead, i) {
