@@ -34,20 +34,24 @@ def executeService(request):
         output = subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0]
 
         fileResult = createFile(request, output, request.POST.get('nameFileResult'))
-        return render(request, 'serviceResult.html', {'serviceName': request.POST.get('serviceName'), 'fileResult': fileResult, 'filePath': fileResult.file})
+        return render(request, 'serviceResult.html', {'serviceName': request.POST.get('serviceName'),
+                                                      'fileResult': fileResult, 'filePath': fileResult.file})
 
 
 def listServices(request):
     print "listServices_scripts"
     return Script.objects.all()
 
+
 def serviceInterface(request):
     if request.method == 'POST':
         service = Script.objects.get(exeName=request.POST.get('exeName'))
         files = listUserFiles(request)
-        myForm= getattr(forms, service.form)
-        form = myForm(user = request.user, request = request)
-        return render(request, 'serviceInterface.html', {'name': service.name, 'exeName': service.exeName, 'files': files, 'form': form})
+        auxform = getattr(forms, service.form)
+        form = auxform(user = request.user, request = request)
+        return render(request, 'serviceInterface.html', {'name': service.name, 'exeName': service.exeName,
+                                                         'files': files, 'form': form})
+
 
 def testForm(request):
     print request
