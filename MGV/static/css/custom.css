@@ -177,6 +177,13 @@ body {
     margin-left: 50px;
 }
 
+#loading-indicator {
+  position: relative;
+  left: 50%;
+  top: 50%;
+    z-index: 100;
+}
+
 #myCanvasLayer2 {
 
     background-color: transparent;

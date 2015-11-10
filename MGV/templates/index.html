@@ -2,10 +2,11 @@
 {%load staticfiles%}
 {%block content%}
 
+
 	<div id="main" class="container center-block" role="main">
 
 		<div class="row row-centered">
-			<div class="col-xs-12 col-sm-12 col-md-12 col-lg-7">
+			<div class="col-xs-12 col-sm-12 col-md-12 col-lg-8">
 				<div class="row row-centered my-container2">
 					<div>
 						<div id="fileName">
@@ -19,6 +20,7 @@
 
 					<!-- ---------- CANVAS -------------------- -->
 					<div id="canvasContainer" class="canvas-centered">
+                        <img src="{% static "css/images/loading.gif" %}" id="loading-indicator" style="display:none" />
 						<canvas id="myCanvasGrid" class="img-responsive" width="600" height="550"></canvas>
 						<canvas id="myCanvas" class="img-responsive"  width="500" height="500"></canvas>
 						<canvas id="myCanvasLayer1" class="img-responsive"  width="500" height="500"> </canvas>
@@ -40,16 +42,9 @@
 						</div>
 
 						<!-- ---------- CANVAS Matrix -------------------- -->
-                        <div class="tab-content">
-                            <div id="canvasContainerMatrix" class="div-centered tab-pane fade in active">
-                                <canvas id="myCanvasMatrix" class="img-responsive" width="500" height="100"> </canvas>
-                            </div>
+                        <div id="canvasContainerMatrix" class="div-centered tab-pane fade in active">
+                            <canvas id="myCanvasMatrix" class="img-responsive" width="500" height="100"> </canvas>
                         </div>
-
-                        <ul class="nav nav-pills nav-justified">
-                            <li class="active"><a data-toggle="tab" href="#canvasContainerMatrix">Matrix</a></li>
-                            <li><a data-toggle="tab" href="#menu1">Sequence</a></li>
-                        </ul>
 
 					</div>
 				</div>
@@ -198,6 +193,7 @@
 						</div>
 					</div>
 				</div>
+			</div>
                 <div class="row row-centered">
 					<div class="col-xs-9 col-sm-9 col-centered">
 						<div class="panel panel-primary">
@@ -220,7 +216,6 @@
 						</div>
 					</div>
 				</div>
-			</div>
 		</div>
 	</div>
 

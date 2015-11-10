@@ -65,6 +65,7 @@ window.onload = function() {
 };
 
 function createInstance() {
+    var loadingGif = $('#loading-indicator');
 	canvasMatrix = document.getElementById("myCanvasMatrix");
 	canvas = document.getElementById("myCanvas");
 	canvasMap = document.getElementById("myMap");
@@ -81,11 +82,11 @@ function createInstance() {
 		ctxMap.clearRect(0, 0, canvasMap.width, canvasMap.height);
 		ctxMap.strokeRect(RectInMap.x, RectInMap.y, RectInMap.tamx,
 				RectInMap.tamy);
-	}
+	};
 
 	redraw = function redraw() {
+        loadingGif.show();
 		console.time("reDraw()");
-
 		// Clear the canvas
 		ctx.save();
 		ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -467,7 +468,7 @@ function createInstance() {
 
 			redrawMap();
 
-			if (!map) {
+			if ((x == (lines.length-1)) && (map == false)) {
 				var mapimage = document.getElementById("mapimage");
 				mapimage.src = canvas.toDataURL("image/png");
 				map = true;
@@ -478,6 +479,7 @@ function createInstance() {
 		searchList=[];
 		prevTable=document.getElementById("files-tab-content").cloneNode(true);
 		console.timeEnd("reDraw()");
+        loadingGif.hide();
 	};
 
 	var lastX = canvas.width / 2, lastY = canvas.height / 2;
@@ -797,8 +799,8 @@ function createInstance() {
 			RectInMap.y = e.pageY - mapoffset.top - mouseInRect.y;
 			redrawMap();
 		}
-	}
-
+	};
+    loadingGif.hide();
 }
 
 function filter(line) {
@@ -934,20 +936,23 @@ function annotationDrawLines(seq,start,end,point){
 	if((yFin-yIni < 0.1)&&(yFin-yIni >0)){
 		yFin = yIni +0.1 ;
 	}
+
     ctx.beginPath();
+
     if(seq=='X'){
         ctx.moveTo(xIni, c.height);
-        ctx.lineTo(xIni, c.height - yIni);
+        ctx.lineTo(xIni, c.height - 5);
         ctx.moveTo(xFin, c.height);
-        ctx.lineTo(xFin,c.height - yFin);
+        ctx.lineTo(xFin,c.height - 5);
     }else{
         ctx.moveTo(0, c.height -yIni);
-        ctx.lineTo(xIni, c.height - yIni);
+        ctx.lineTo(5, c.height - yIni);
         ctx.moveTo(0, c.height -yFin);
-        ctx.lineTo(xFin, c.height - yFin);
+        ctx.lineTo(5, c.height - yFin);
     }
-	ctx.lineWidth = 0.2;
-    ctx.strokeStyle = rgba(0, 0, 0,0.7);
+
+	ctx.lineWidth = 2;
+    ctx.strokeStyle = rgba(51,122,183,0.7);
     ctx.stroke();
 }
 
