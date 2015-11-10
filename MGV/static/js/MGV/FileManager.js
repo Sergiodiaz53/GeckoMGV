@@ -26,11 +26,13 @@ function CSVHeader (headers) {
 
 
 function handleFiles(files, type) {
-    $('#loading-indicator').show();
+    if (files.length!=0)
+        $('#loading-indicator').show();
     console.log("HanldeFiles");
     console.time("ReadingFile()");
     // Check for the various File API support.
     if (window.FileReader) {
+        lines=[];
         // FileReader are supported.
         if(files.length>1)
             multigenome=true;
@@ -93,8 +95,7 @@ function processData(csv, i) {
         Papa.parse(csv, {
             worker: true,
             complete: function (results) {
-                var ind = lines.length;
-                lines[ind] = results.data;
+                lines[i] = results.data;
                 reset = true;
                 fileHeader = [];
 
