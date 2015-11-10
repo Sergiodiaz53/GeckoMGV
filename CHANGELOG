@@ -1,3 +1,9 @@
+10/11/2015
+- Fixed map bug
+- Loading icon added
+- Papaparse use web-workers now
+- Annotations paint modified
+
 04/11/2015
 -A search will directly paint crossed lines to their possition on the sequence
 
