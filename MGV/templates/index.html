@@ -2,10 +2,11 @@
 {%load staticfiles%}
 {%block content%}
 
+
 	<div id="main" class="container center-block" role="main">
 
 		<div class="row row-centered">
-			<div class="col-md-8">
+			<div class="col-xs-12 col-sm-12 col-md-12 col-lg-8">
 				<div class="row row-centered my-container2">
 					<div>
 						<div id="fileName">
@@ -19,16 +20,16 @@
 
 					<!-- ---------- CANVAS -------------------- -->
 					<div id="canvasContainer" class="canvas-centered">
-						<canvas id="myCanvasGrid" width="600" height="550"></canvas>
-						<canvas id="myCanvas" width="500" height="500"></canvas>
-						<canvas id="myCanvasLayer1" width="500" height="500"> </canvas>
-                        <div id="loading" ></div>
-                        <canvas id="myCanvasLayer2" width="500" height="500"> </canvas>
+                        <img src="{% static "css/images/loading.gif" %}" id="loading-indicator" style="display:none" />
+						<canvas id="myCanvasGrid" class="img-responsive" width="600" height="550"></canvas>
+						<canvas id="myCanvas" class="img-responsive"  width="500" height="500"></canvas>
+						<canvas id="myCanvasLayer1" class="img-responsive"  width="500" height="500"> </canvas>
+                        <canvas id="myCanvasLayer2" class="img-responsive"  width="500" height="500"> </canvas>
 					</div>
 				</div>
 
 				<div class="row row-centered my-container2">
-					<div class="col-md-8 col-centered">
+					<div class="col-md-10 col-centered">
 						<div class="div-centered">
 							<div id="fileNameMAT">
 								Upload a Matrix file
@@ -41,9 +42,9 @@
 						</div>
 
 						<!-- ---------- CANVAS Matrix -------------------- -->
-						<div id="canvasContainerMatrix" class="div-centered">
-							<canvas id="myCanvasMatrix" width="500" height="100"> </canvas>
-						</div>
+                        <div id="canvasContainerMatrix" class="div-centered tab-pane fade in active">
+                            <canvas id="myCanvasMatrix" class="img-responsive" width="500" height="100"> </canvas>
+                        </div>
 
 					</div>
 				</div>
@@ -192,6 +193,7 @@
 						</div>
 					</div>
 				</div>
+			</div>
                 <div class="row row-centered">
 					<div class="col-xs-9 col-sm-9 col-centered">
 						<div class="panel panel-primary">
@@ -204,8 +206,8 @@
                                     <div id="Annotations">
                                         <div class="SearchTitleFilterButton">
                                             <span>Search:</span>
-                                            <input type="text" class="SearchFilter2" />
-                                            <button class="SearchButton" onclick="showResults($('.SearchFilter2').val(),true)"><span class="glyphicon glyphicon-search"></span></button>
+                                            <input type="text" class="SearchFilter2" onkeypress="if (event.keyCode == 13) document.getElementById('btnSearch').click()" />
+                                            <button id= "btnSearch" class="SearchButton" onclick="showResults($('.SearchFilter2').val(),true)"><span class="glyphicon glyphicon-search"></span></button>
                                         </div>
                                     </div>
                                 </div>
@@ -214,7 +216,6 @@
 						</div>
 					</div>
 				</div>
-			</div>
 		</div>
 	</div>
 
