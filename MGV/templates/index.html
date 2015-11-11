@@ -206,8 +206,8 @@
                                     <div id="Annotations">
                                         <div class="SearchTitleFilterButton">
                                             <span>Search:</span>
-                                            <input type="text" class="SearchFilter2" />
-                                            <button class="SearchButton" onclick="showResults($('.SearchFilter2').val(),true)"><span class="glyphicon glyphicon-search"></span></button>
+                                            <input type="text" class="SearchFilter2" onkeypress="if (event.keyCode == 13) document.getElementById('btnSearch').click()" />
+                                            <button id= "btnSearch" class="SearchButton" onclick="showResults($('.SearchFilter2').val(),true)"><span class="glyphicon glyphicon-search"></span></button>
                                         </div>
                                     </div>
                                 </div>
