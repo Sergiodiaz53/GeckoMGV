@@ -9,6 +9,7 @@ var fileHeader = [];
 var fileInfo=[];
 var multigenome;
 
+
 //My Objectsx
 function CSVHeader (headers) {
     this.seqXFilename = headers[1];
@@ -64,8 +65,6 @@ function getAsText(fileToRead, i) {
     reader.onerror = errorHandler;
     // Read file into memory as UTF-8
     reader.readAsText(fileToRead);
-    //animateprogress ("#html5", 100);
-
 }
 
 function loadHandler(event, i) {
@@ -76,14 +75,13 @@ function loadHandler(event, i) {
 
 function processData(csv, i) {
 
-    console.log("ProcessData: " + i)
+    console.log("ProcessData: " + i);
 
     if (fileType == 'csv') {
         var title = fileName;
         if (multigenome)
             title = "Multigenome comparison";
         document.getElementById("fileName").innerHTML = title;
-        ;
 
         //InfoPopover = File info popover ()
         $(function () {
@@ -91,22 +89,17 @@ function processData(csv, i) {
         });
 
         Papa.parse(csv, {
-            worker: true,
+            worker: false,
             complete: function (results) {
                 var ind = lines.length;
                 lines[ind] = results.data;
                 reset = true;
                 fileHeader = [];
-
-                console.timeEnd("ReadingFile()");
-
                 map = false;
                 redraw();
                 $('#loading-indicator').hide();
             }
         });
-
-
 
     } else if (fileType == 'mvn') {
         var title = fileNameMVN;

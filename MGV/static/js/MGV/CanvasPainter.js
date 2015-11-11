@@ -64,8 +64,169 @@ window.onload = function() {
 	createInstance();
 };
 
+function clearCanvas(canvasName) {
+    var canvas = document.getElementById(canvasName);
+    var ctx = canvas.getContext('2d');
+
+	// Clear the canvas
+	ctx.save();
+	ctx.setTransform(1, 0, 0, 1, 0, 0);
+	ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+	ctx.restore();
+}
+
+function storeFileHeader(currentLines, numFile) {
+    console.time("CreateFileHeader()");
+
+    var headers = new Array([]);
+
+    var table2 = document.createElement("table");
+    table2.className = "table table-striped";
+    table2.id = "csvInfoTable2-" + numFile;
+
+	// Insert file header
+    var row = table2.insertRow(-1);
+    row.className = "hiddenRow";
+    var auxLine = currentLines[0].toString().split(":");
+    var firstNameCell = row.insertCell(-1);
+    firstNameCell.appendChild(document
+                .createTextNode(auxLine[0]));
+
+	var row = table2.insertRow(-1);
+    row.className = "hiddenRow";
+    auxLine = currentLines[1].toString().split(":");
+    var firstNameCell = row.insertCell(-1);
+    firstNameCell.appendChild(document
+                .createTextNode(auxLine[0].toString()));
+
+    for (var i = 2; i <= headerSize; i++) {
+        var row = table2.insertRow(-1);
+        var auxLine = currentLines[i].toString().split(":");
+        if (auxLine.length == 1) {
+            auxLine = currentLines[i].toString().split(",")
+        }
+
+        headers.push(auxLine[1].substr(0, auxLine[1].length));
+
+        var firstNameCell = row.insertCell(-1);
+        firstNameCell.appendChild(document
+                    .createTextNode(auxLine[0]));
+
+        var firstNameCell = row.insertCell(-1);
+        firstNameCell.appendChild(document
+                    .createTextNode(auxLine[1].substr(0,
+                auxLine[1].length)));
+    }
+
+    var row = table2.insertRow(-1);
+    row.className = "hiddenRow";
+    auxLine = currentLines[13].toString().split(":");
+    var firstNameCell = row.insertCell(-1);
+    firstNameCell.appendChild(document
+                .createTextNode(auxLine[0].toString()));
+
+    var row = table2.insertRow(-1);
+    row.className = "hiddenRow";
+    auxLine = currentLines[14].toString().split(":");
+
+    if (auxLine.length == 1) {
+        auxLine = currentLines[14].toString().split(",")
+    }
+
+    var firstNameCell = row.insertCell(-1);
+    firstNameCell.appendChild(document
+                .createTextNode(auxLine[0].toString()));
+    var firstNameCell = row.insertCell(-1);
+    firstNameCell.appendChild(document
+                .createTextNode(auxLine[1].toString()));
+
+    var row = table2.insertRow(-1);
+    row.className = "hiddenRow";
+    auxLine = currentLines[15].toString().split(":");
+    var firstNameCell = row.insertCell(-1);
+    firstNameCell.appendChild(document
+                .createTextNode(auxLine[0].toString()));
+
+    console.log("X: " + numFile + "Headers: " + headers);
+
+    fileHeader[numFile] = new CSVHeader(headers);
+
+    document.getElementById("fileName").innerHTML += '<button id="infoPopover'
+							+ numFile
+							+ '" type="button" class="btn btn-warning btn-xs btn-padding" '
+                            + 'data-container="body" data-toggle="popover" title ="'
+                            +headers[1].substr(0,headers[1].length-6)+" - "
+                            +headers[2].substr(0,headers[2].length-6)
+                            +' "data-placement="right" data-html="true" data-content="<b> X Sequence length: </b>'
+							+ fileHeader[numFile].seqXLength
+							+ '</br> <b> Y Sequence length: </b>'
+							+ fileHeader[numFile].seqYLength + '">?</button>';
+    if(lines.length>1)
+        document.getElementById("infoPopover"+numFile).style.background=rgb(R[numFile],G[numFile],B[numFile]);
+    $('[data-toggle="popover"]').popover();
+    fileInfo[numFile]=table2;
+    console.timeEnd("CreateFileHeader()");
+}
+
+function loadHorizontalView(){
+
+    //change the main canvas to horizontal
+    if (canvas.height != 250)
+        canvas.height = 250;
+    if (canvas.width != 700)
+        canvas.width = 700;
+    var ctx = canvas.getContext('2d');
+
+
+    //Paint genome lines
+    var padding = 50;
+    ctx.beginPath();
+    ctx.moveTo(0, padding / 2);
+    ctx.lineTo(canvas.width, padding / 2);
+    ctx.moveTo(0, canvas.height - padding / 2);
+    ctx.lineTo(canvas.width, canvas.height - padding / 2);
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = "rgb(0,0,0)";
+    ctx.fill();
+    ctx.stroke();
+    /*
+    Create canvas for each genome comparison in horizontal
+    */
+
+    for (var numCanvas = 1; numCanvas < lines.length; numCanvas++) {
+        var canvasTemp = document
+            .getElementById("myCanvas" + numCanvas);
+        var ctxTemp = canvasTemp.getContext("2d");
+
+        ctxTemp.beginPath();
+        ctxTemp.moveTo(0, padding / 2);
+        ctxTemp.lineTo(canvas.width, padding / 2);
+        ctxTemp.moveTo(0, canvas.height - padding / 2);
+        ctxTemp.lineTo(canvas.width, canvas.height - padding / 2);
+        ctxTemp.lineWidth = 4;
+
+        ctxTemp.strokeStyle = "rgb(0,0,0)";
+
+        ctxTemp.fill();
+        ctxTemp.stroke();
+
+    }
+}
+
+
+function resetZoom(){
+    currentArea.x0 = 0;
+    currentArea.y0 = 0;
+    currentArea.x1 = canvas.width;
+    currentArea.y1 = canvas.height;
+    scaleX = 1;
+    scaleY = 1;
+    reset = false;
+}
+
 function createInstance() {
     var loadingGif = $('#loading-indicator');
+
 	canvasMatrix = document.getElementById("myCanvasMatrix");
 	canvas = document.getElementById("myCanvas");
 	canvasMap = document.getElementById("myMap");
@@ -87,22 +248,21 @@ function createInstance() {
 	redraw = function redraw() {
         loadingGif.show();
 		console.time("reDraw()");
-		// Clear the canvas
-		ctx.save();
-		ctx.setTransform(1, 0, 0, 1, 0, 0);
-		ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-		ctx.restore();
 
-		// Clear previous data
+        clearCanvas("myCanvas");
+
+		// Clear previous data in HTML
 		document.getElementById("output").innerHTML = "<div class=\"SearchTitle\" > <div class=\"SearchTitleFilterButton\"> <span>Filter:</span> <input type=\"text\" class=\"SearchFilter\" /> <button class=\"SearchButton\" onclick=\"showResults($(\'.SearchFilter\').val(),true)\" ><span class=\"glyphicon glyphicon-search\"></span></button> </div> </div> <ul class='nav nav-tabs' id='files-tab'></ul>"
 				+ " <div class='tab-content' id='files-tab-content'></div>";
 
 		document.getElementById("annotationsOutput").innerHTML = "<ul class='nav nav-tabs' id='annotations-tab'></ul>"
 				+ "<div class='tab-content' id='annotations-tab-content'></div>";
 
-		for (var x = 0; x < lines.length; x++) {
+		for (var numFile = 0; numFile < lines.length; numFile++) {
 
-			currentLines = lines[x].slice(0);
+            console.log("Round: "+numFile);
+
+			currentLines = lines[numFile].slice(0);
 
 			if (currentLines) {
 
@@ -110,11 +270,11 @@ function createInstance() {
 
 				var table = document.createElement("table");
 				table.className = "table table-condensed";
-				table.id = "csvInfoTable" + x;
+				table.id = "csvInfoTable" + numFile;
 
 				var annotationTable = document.createElement("table");
 				annotationTable.className = "table table-condensed table-striped";
-				annotationTable.id = "csvAnnotationTable" + x;
+				annotationTable.id = "csvAnnotationTable" + numFile;
 
 				var row = annotationTable.insertRow(-1);
 				//console.log("Line: "+lines[0]);
@@ -128,151 +288,19 @@ function createInstance() {
 
 				// Store the file header
 				if (fileHeader.length < lines.length) {
-					console.time("CreateFileHeader()");
-
-					var headers = new Array([]);
-
-					var table2 = document.createElement("table");
-					table2.className = "table table-striped";
-					table2.id = "csvInfoTable2-" + x;
-
-					// Insert file header
-					var row = table2.insertRow(-1);
-					row.className = "hiddenRow"
-					var auxLine = currentLines[0].toString().split(":");
-					var firstNameCell = row.insertCell(-1);
-					firstNameCell.appendChild(document
-							.createTextNode(auxLine[0]));
-
-					var row = table2.insertRow(-1);
-					row.className = "hiddenRow"
-					auxLine = currentLines[1].toString().split(":");
-					var firstNameCell = row.insertCell(-1);
-					firstNameCell.appendChild(document
-							.createTextNode(auxLine[0].toString()));
-
-					for (var i = 2; i <= headerSize; i++) {
-						var row = table2.insertRow(-1);
-						var auxLine = currentLines[i].toString().split(":");
-						if (auxLine.length == 1) {
-							auxLine = currentLines[i].toString().split(",")
-						}
-
-						headers.push(auxLine[1].substr(0, auxLine[1].length));
-
-						var firstNameCell = row.insertCell(-1);
-						firstNameCell.appendChild(document
-								.createTextNode(auxLine[0]));
-
-						var firstNameCell = row.insertCell(-1);
-						firstNameCell.appendChild(document
-								.createTextNode(auxLine[1].substr(0,
-										auxLine[1].length)));
-					}
-
-					var row = table2.insertRow(-1);
-					row.className = "hiddenRow"
-					auxLine = currentLines[13].toString().split(":");
-					var firstNameCell = row.insertCell(-1);
-					firstNameCell.appendChild(document
-							.createTextNode(auxLine[0].toString()));
-
-					var row = table2.insertRow(-1);
-					row.className = "hiddenRow"
-					auxLine = currentLines[14].toString().split(":");
-
-					if (auxLine.length == 1) {
-						auxLine = currentLines[14].toString().split(",")
-					}
-
-					var firstNameCell = row.insertCell(-1);
-					firstNameCell.appendChild(document
-							.createTextNode(auxLine[0].toString()));
-					var firstNameCell = row.insertCell(-1);
-					firstNameCell.appendChild(document
-							.createTextNode(auxLine[1].toString()));
-
-					var row = table2.insertRow(-1);
-					row.className = "hiddenRow"
-					auxLine = currentLines[15].toString().split(":");
-					var firstNameCell = row.insertCell(-1);
-					firstNameCell.appendChild(document
-							.createTextNode(auxLine[0].toString()));
-
-					console.log("X: " + x + "Headers: " + headers);
-
-					fileHeader[x] = new CSVHeader(headers);
-
-					document.getElementById("fileName").innerHTML += ' <button id="infoPopover'
-							+ x
-							+ '" type="button" class="btn btn-warning btn-xs btn-padding" data-container="body" data-toggle="popover" title ="'+headers[1].substr(0,headers[1].length-6)+" - "+headers[2].substr(0,headers[2].length-6)+' "data-placement="right" data-html="true" data-content="<b> X Sequence length: </b>'
-							+ fileHeader[x].seqXLength
-							+ '</br> <b> Y Sequence length: </b>'
-							+ fileHeader[x].seqYLength + '">?</button>';
-                    if(lines.length>1)
-                        document.getElementById("infoPopover"+x).style.background=rgb(R[x],G[x],B[x]);
-					$('[data-toggle="popover"]').popover();
-					console.timeEnd("CreateFileHeader()");
-
-                    fileInfo[x]=table2;
-
+                    storeFileHeader(currentLines, numFile);
 				}
 
-				// Get xyLenght
 				if (!xtotal || !ytotal || reset) {
-					currentArea.x0 = 0;
-					currentArea.y0 = 0;
-					currentArea.x1 = canvas.width;
-					currentArea.y1 = canvas.height;
-					scaleX = 1;
-					scaleY = 1;
-					reset = false;
+                    resetZoom();
 				}
 
 				xtotal = fileHeader[0].seqXLength;
 				ytotal = fileHeader[0].seqYLength;
 
 				if (!vertical) {
-					// Without the if the zoom is not working
-					if (canvas.height != 250)
-						canvas.height = 250;
-					if (canvas.width != 700)
-						canvas.width = 700;
-					var padding = 50;
-					ctx.beginPath();
-					ctx.moveTo(0, padding / 2);
-					ctx.lineTo(canvas.width, padding / 2);
-					ctx.moveTo(0, canvas.height - padding / 2);
-					ctx.lineTo(canvas.width, canvas.height - padding / 2);
-					ctx.lineWidth = 4;
-
-					ctx.strokeStyle = "rgb(0,0,0)";
-
-					ctx.fill();
-					ctx.stroke();
-
-					for (y = 1; y < lines.length; y++) {
-						var canvasTemp = document
-								.getElementById("myCanvas" + y);
-						var ctxTemp = canvasTemp.getContext("2d");
-
-						ctxTemp.beginPath();
-						ctxTemp.moveTo(0, padding / 2);
-						ctxTemp.lineTo(canvas.width, padding / 2);
-						ctxTemp.moveTo(0, canvas.height - padding / 2);
-						ctxTemp.lineTo(canvas.width, canvas.height - padding
-								/ 2);
-						ctxTemp.lineWidth = 4;
-
-						ctxTemp.strokeStyle = "rgb(0,0,0)";
-
-						ctxTemp.fill();
-						ctxTemp.stroke();
-
-					}
-
-				} else {
-					// Without the if the zoom is not working
+                    loadHorizontalView();
+                } else {
 					if (canvas.height != 500)
 						canvas.height = 500;
 					if (canvas.width != 500)
@@ -281,17 +309,17 @@ function createInstance() {
 
 				// Draw Grid
 				if (board) {
-					console.time("DrawBoard()");
-					drawBoard(vertical);
-					console.timeEnd("DrawBoard()");
+                    if(vertical){
+                        drawBoard(board, vertical, "myCanvasGrid");
+                    } else {
+                        if(numFile!=0){
+                            drawBoard(board, vertical, "myCanvas"+numFile);
+                        } else {
+                            drawBoard(board, vertical, "myCanvas");
+                        }
+                    }
 				} else {
-					var canvasGrid = document.getElementById("myCanvasGrid");
-					var ctxGrid = canvasGrid.getContext("2d");
-					ctxGrid.save();
-					ctxGrid.setTransform(1, 0, 0, 1, 0, 0);
-					ctxGrid.clearRect(0, 0, ctxGrid.canvas.width,
-							ctxGrid.canvas.height);
-					ctxGrid.restore();
+                     if(vertical) clearCanvas("myCanvasGrid");
 				}
 
 				for (i = fragsStarts; i < currentLines.length; i++) {
@@ -342,18 +370,18 @@ function createInstance() {
 							if (paint == true) {
 								// console.time("paint()");
 								var numColor = (i) % 8;
-								color = rgb(R[x], G[x], B[x]);
+								color = rgb(R[numFile], G[numFile], B[numFile]);
 								drawLine(currentLines, i, xtotal, ytotal, mode,
-										color, x);
+										color, numFile);
 								add2Table(i, table);
 								auxLines.push(lines[i]);
 								// console.timeEnd("paint()");
 							} else {
 								color = rgba(189, 195, 199, 0.7);
 								drawLine(currentLines, i, xtotal, ytotal, mode,
-										color, x);
+										color, numFile);
 								drawLine(currentLines, i, xtotal, ytotal, mode,
-										color, x);
+										color, numFile);
 							}
 						}
 					} else {
@@ -425,34 +453,34 @@ function createInstance() {
 				// currentLines = auxLines.slice(0);
 
 				$("#files-tab").append(
-						"<li><a href='#file" + x + "' data-toggle='tab'>File "
-								+ x + "</a></li>");
+						"<li><a href='#file" + numFile + "' data-toggle='tab'>File "
+								+ numFile + "</a></li>");
 				$("#annotations-tab")
 						.append(
-								"<li><a href='#fileAnnotation" + x
-										+ "' data-toggle='tab'>File " + x
+								"<li><a href='#fileAnnotation" + numFile
+										+ "' data-toggle='tab'>File " + numFile
 										+ "</a></li>");
 
 				var auxDiv = document.createElement("div");
 				var auxAnnotationsDiv = document.createElement("div");
 
-				if (x == 0) {
+				if (numFile == 0) {
 					auxDiv.className = "tab-pane active";
-					auxDiv.id = "file" + x;
+					auxDiv.id = "file" + numFile;
 					auxAnnotationsDiv.className = "tab-pane active";
-					auxAnnotationsDiv.id = "fileAnnotation" + x;
+					auxAnnotationsDiv.id = "fileAnnotation" + numFile;
 				} else {
 					auxDiv.className = "tab-pane";
-					auxDiv.id = "file" + x;
+					auxDiv.id = "file" + numFile;
 					auxAnnotationsDiv.className = "tab-pane";
-					auxAnnotationsDiv.id = "fileAnnotation" + x;
+					auxAnnotationsDiv.id = "fileAnnotation" + numFile;
 				}
 
-				auxDiv.appendChild(fileInfo[x]);
+				auxDiv.appendChild(fileInfo[numFile]);
 				auxDiv.appendChild(table);
 				$("#files-tab-content").append(auxDiv);
 
-				auxAnnotationsDiv.appendChild(fileInfo[x]);
+				auxAnnotationsDiv.appendChild(fileInfo[numFile]);
 				auxAnnotationsDiv.appendChild(annotationTable);
 				$("#annotations-tab-content").append(auxAnnotationsDiv);
 
@@ -468,7 +496,7 @@ function createInstance() {
 
 			redrawMap();
 
-			if ((x == (lines.length-1)) && (map == false)) {
+			if ((numFile == (lines.length-1)) && (map == false)) {
 				var mapimage = document.getElementById("mapimage");
 				mapimage.src = canvas.toDataURL("image/png");
 				map = true;
@@ -1328,96 +1356,84 @@ function trackTransforms(ctx) {
 	}
 }
 
-function drawBoard(vertical) {
-	if (vertical) {
-		var canvasGrid = document.getElementById("myCanvasGrid");
-		var ctx = canvasGrid.getContext("2d");
-		var width = canvas.width;
-		var height = canvas.height;
+function drawBoard(board, vertical, canvasName) {
+    var canvasGrid = document.getElementById(canvasName);
+    if(board) {
+        var ctx = canvasGrid.getContext("2d");
+        var width = canvas.width;
+        var height = canvas.height;
+        if (vertical) {
+            clearCanvas(canvasName);
 
-		ctx.save();
-		ctx.setTransform(1, 0, 0, 1, 0, 0);
-		ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-		ctx.restore();
+            ctx.font = "bold 20px sans-serif";
+            ctx.fillText("Grid size: 500x500px, Step: 100px", 0, -23);
 
-		ctx.font = "bold 20px sans-serif";
-		ctx.fillText("Grid size: 500x500px, Step: 100px", 0, -23);
+            var stepVertical = Math.round((currentArea.x1 - currentArea.x0) / 5);
+            var stepV = currentArea.x0;
 
-		var stepVertical = Math.round((currentArea.x1 - currentArea.x0) / 5)
-		var stepV = currentArea.x0;
-		console.log("StepVertical: " + stepVertical)
+            if (stepVertical != 0) {
 
-		if (stepVertical != 0) {
+                for (var x = 50; x <= 550; x += 100) {
+                    ctx.font = "bold 12px sans-serif";
+                    // var aux = (((x - currentArea.x0) / (currentArea.x1 -
+                    // currentArea.x0)) * width);
+                    var correctPositionX = ((stepV) * parseInt(fileHeader[0].seqXLength))
+                            / width;
+                    correctPositionX = Math.round(correctPositionX);
+                    ctx.fillText(correctPositionX.toString(), x - 20, height + 45);
+                    ctx.moveTo(x, 25);
+                    ctx.lineTo(x, height + 25);
+                    stepV += stepVertical;
+                }
 
-			for (var x = 50; x <= 550; x += 100) {
-				ctx.font = "bold 12px sans-serif";
-				// var aux = (((x - currentArea.x0) / (currentArea.x1 -
-				// currentArea.x0)) * width);
-				var correctPositionX = ((stepV) * parseInt(fileHeader[0].seqXLength))
-						/ width;
-				correctPositionX = Math.round(correctPositionX);
-				ctx.fillText(correctPositionX.toString(), x - 20, height + 45);
-				ctx.moveTo(x, 25);
-				ctx.lineTo(x, height + 25);
-				stepV += stepVertical;
-			}
+                var stepHorizontal = Math.round((currentArea.y1 - currentArea.y0) / 5);
+                var stepH = currentArea.y0;
 
-			var stepHorizontal = Math
-					.round((currentArea.y1 - currentArea.y0) / 5)
-			var stepH = currentArea.y0;
+                if (vertical) {
 
-			if (vertical) {
+                    for (var y = 25; y <= 525; y += 100) {
+                        ctx.font = "bold 12px sans-serif";
+                        // var auxy = (((y - currentArea.y0) / (currentArea.y1 -
+                        // currentArea.y0)) * height);
+                        var correctPositionY = ((stepH) * parseInt(fileHeader[0].seqYLength))
+                                / height;
+                        correctPositionY = Math.round(correctPositionY);
+                        ctx.fillText(correctPositionY.toString(), 5, height
+                                - (y - 55));
+                        ctx.moveTo(50, y);
+                        ctx.lineTo(width + 50, y);
+                        stepH += stepHorizontal;
+                    }
+                }
 
-				for (var y = 25; y <= 525; y += 100) {
-					ctx.font = "bold 12px sans-serif";
-					// var auxy = (((y - currentArea.y0) / (currentArea.y1 -
-					// currentArea.y0)) * height);
-					var correctPositionY = ((stepH) * parseInt(fileHeader[0].seqYLength))
-							/ height;
-					correctPositionY = Math.round(correctPositionY);
-					ctx.fillText(correctPositionY.toString(), 5, height
-							- (y - 55));
-					ctx.moveTo(50, y);
-					ctx.lineTo(width + 50, y);
-					stepH += stepHorizontal;
-				}
-			}
+                ctx.strokeStyle = "#ddd";
+                ctx.stroke();
+		    }
+        } else {
+            var stepVertical = width / 10;
+            var stepV = 0;
 
-			ctx.strokeStyle = "#ddd";
-			ctx.stroke();
-		}
-	} else {
-		// Find the canvas document
-		var c = document.getElementById("myCanvas");
+            for (var x = 0; x <= width; x += stepVertical) {
+                ctx.font = "bold 12px sans-serif";
+                // var aux = (((x - currentArea.x0) / (currentArea.x1 -
+                // currentArea.x0)) * width);
+                var correctPositionX = ((stepV) * parseInt(fileHeader[0].seqXLength))
+                        / width;
+                correctPositionX = Math.round(correctPositionX);
+                ctx.fillText(correctPositionX.toString(), x + 20, height - 10);
+                ctx.moveTo(x, 25);
+                ctx.lineTo(x, height - 25);
+                stepV += stepVertical;
+            }
 
-		// Then, call its getContext() method (you must pass the string "2d" to
-		// the getContext() method):
-		var ctx = c.getContext("2d");
-		var width = c.width;
-		var height = c.height;
-
-		var stepVertical = width / 10
-		var stepV = 0;
-
-		for (var x = 0; x <= width; x += stepVertical) {
-			ctx.font = "bold 12px sans-serif";
-			// var aux = (((x - currentArea.x0) / (currentArea.x1 -
-			// currentArea.x0)) * width);
-			var correctPositionX = ((stepV) * parseInt(fileHeader[0].seqXLength))
-					/ width;
-			correctPositionX = Math.round(correctPositionX);
-			ctx.fillText(correctPositionX.toString(), x + 20, height - 10);
-			ctx.moveTo(x, 25);
-			ctx.lineTo(x, height - 25);
-			stepV += stepVertical;
-		}
-
-		ctx.strokeStyle = "#000000";
-		ctx.stroke();
-
-	}
-
+            ctx.strokeStyle = "#000000";
+            ctx.stroke();
+	    }
+    } else {
+        clearCanvas(canvasName);
+    }
 }
+
 function calculateDistance(position,frag){
     var distance = 0;
 	var aux, aux2;
