@@ -208,6 +208,9 @@
                                             <span>Search:</span>
                                             <input type="text" class="SearchFilter2" onkeypress="if (event.keyCode == 13) document.getElementById('btnSearch').click()" />
                                             <button id= "btnSearch" class="SearchButton" onclick="showResults($('.SearchFilter2').val(),true)"><span class="glyphicon glyphicon-search"></span></button>
+                                            <form action="{\% url services_view %}" method="POST">
+    <input id="submit" type="button" value="Click" />
+</form>
                                         </div>
                                     </div>
                                 </div>
