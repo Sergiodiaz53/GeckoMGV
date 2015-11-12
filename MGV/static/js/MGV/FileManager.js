@@ -8,9 +8,10 @@
 var fileHeader = [];
 var fileInfo=[];
 var multigenome;
+var parseCount;
 
 
-//My Objectsx
+//My Objects
 function CSVHeader (headers) {
     this.seqXFilename = headers[1];
     this.seqYFilename = headers[2];
@@ -27,11 +28,17 @@ function CSVHeader (headers) {
 
 
 function handleFiles(files, type) {
-    if (files.length!=0)
+
+    if (files.length!=0) {
         $('#loading-indicator').show();
-    console.log("HanldeFiles");
+    }
+
+    console.log("HandleFiles");
     console.time("ReadingFile()");
     // Check for the various File API support.
+
+    parseCount = files.length;
+
     if (window.FileReader) {
         lines=[];
         // FileReader are supported.
@@ -47,13 +54,14 @@ function handleFiles(files, type) {
 }
 
 function getAsText(fileToRead, i) {
-    console.log("GetAsText:"+i)
+    console.log("GetAsText:"+i);
     var reader = new FileReader();
     // Handle errors load
     reader.onload = function (event, index) {
         index = i;
         loadHandler(event, index)
     };
+
     if(fileType=='csv'){
         fileName = fileToRead.name;
         fileName = fileName.substring(0, fileName.length-4);
@@ -70,14 +78,14 @@ function getAsText(fileToRead, i) {
 }
 
 function loadHandler(event, i) {
-    console.log("LoadHandler: "+i)
+    console.log("LoadHandler: "+i);
     var csv = event.target.result;
     processData(csv, i);
 }
 
-function processData(csv, i) {
+function processData(csv, index) {
 
-    console.log("ProcessData: " + i);
+    console.log("ProcessData: " + index);
 
     if (fileType == 'csv') {
         var title = fileName;
@@ -90,15 +98,24 @@ function processData(csv, i) {
             $("#infoPopover").popover();
         });
 
+        $('#loading-indicator').show();
         Papa.parse(csv, {
-            worker: false,
+            worker: true,
             complete: function (results) {
-                lines[i] = results.data;
+                parseCount--;
+                lines[index] = results.data;
                 reset = true;
                 fileHeader = [];
                 map = false;
-                redraw();
+
+                if(parseCount==0){
+                    redraw();
+                }
                 $('#loading-indicator').hide();
+            },
+            error: function(err,reason){
+                alert(err);
+                alert(reason);
             }
         });
 
@@ -158,7 +175,7 @@ function processData(csv, i) {
         }
 
         // Recovery lines
-        lines[i] = JSON.parse(JSON.stringify(auxLines));
+        lines[index] = JSON.parse(JSON.stringify(auxLines));
         reset = true;
         fileHeader = [];
 
