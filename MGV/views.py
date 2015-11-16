@@ -45,7 +45,7 @@ def executeService_view(request):
 
 def clustal_omega(request):
     params={}
-    params['sequence']="AAACGTGATC"
+    params['sequence']=">\natcgtatcgatcg\n>\natcgatcgattca"
     params['mbediteration'] = True
     params['guidetreeout'] = True
     params['dismatout'] = True
@@ -53,15 +53,17 @@ def clustal_omega(request):
     params['mbed'] = True
     jobid = serviceRun("sabega@uma.es", "Test", params)
     # Base URL for service
-    baseUrl = 'http://www.ebi.ac.uk/Tools/services/rest/clustalo'
+    '''baseUrl = 'http://www.ebi.ac.uk/Tools/services/rest/clustalo'
     requestUrl = baseUrl + '/parameters'
     xmlDoc = restRequest(requestUrl)
     doc = ET.fromstring(xmlDoc)
     inner=""
     for char in doc.findall('id'):
         inner+=char.text+" "
-    now="dead"
-    html = "<html><body>It is now \"%s\"</body></html>" %inner
+    clientPoll(jobid)
+    inner=serviceGetResultTypes(jobid)[0].findall('identifier')[0].text'''
+    inner=getResult(jobid)
+    html = "<html><body><tt>%s</tt></body></html>" %inner.replace('\n','<br>').replace(' ','&ensp;')
     return HttpResponse(html);
 
 def restRequest(url):
@@ -109,7 +111,7 @@ def serviceRun(email, title, params):
         req = urllib2.Request(requestUrl, None, http_headers)
         # Make the submission (HTTP POST).
         reqH = urllib2.urlopen(req, requestData.encode(encoding='utf_8', errors='strict'),30)
-        jobId = str(reqH.read(), 'utf-8')
+        jobId = str(reqH.read())
         reqH.close()
     except urllib2.HTTPError as ex:
         # Trap exception and output the document to get error message.
@@ -148,8 +150,8 @@ def serviceGetResultTypes(jobId):
     baseUrl = 'http://www.ebi.ac.uk/Tools/services/rest/clustalo'
     requestUrl = baseUrl + '/resulttypes/' + jobId
     xmlDoc = restRequest(requestUrl)
-    doc = ET.parse(xmlDoc)
-    return 0 #doc['type':]
+    doc = ET.fromstring(xmlDoc)
+    return doc.findall('type')
 
 def serviceGetResult(jobId, type_):
     baseUrl = 'http://www.ebi.ac.uk/Tools/services/rest/clustalo'
@@ -164,12 +166,13 @@ def getResult(jobId):
     resultTypes = serviceGetResultTypes(jobId)
     for resultType in resultTypes:
         # Derive the filename for the result
-        filename = jobId + '.' + str(resultType['identifier']) + '.' + str(resultType['fileSuffix'])
+        filename = jobId + '.' + str(resultType.findall('identifier')[0].text) + '.' + str(resultType.findall('fileSuffix')[0].text)
         # Get the result
-        result = serviceGetResult(jobId, str(resultType['identifier']))
-        if(str(resultType['mediaType']) == "image/png"
-            or str(resultType['mediaType']) == "image/jpeg"
-            or str(resultType['mediaType']) == "application/gzip"):
+        result = serviceGetResult(jobId, 'aln-clustal')
+        mediaType=str(resultType.findall('mediaType')[0].text)
+        if(mediaType == "image/png"
+            or mediaType == "image/jpeg"
+            or mediaType == "application/gzip"):
             fmode= 'wb'
         else:
             fmode='w'
@@ -179,3 +182,4 @@ def getResult(jobId):
         fh.write(result)
         fh.close()
         print (filename)
+        return(result)
