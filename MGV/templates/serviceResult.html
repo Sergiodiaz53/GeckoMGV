@@ -13,7 +13,7 @@
 
                         <form id="viewFileForm" role="form" action="{% url 'fileViewer_view' %}" method="POST">
                                 {% csrf_token %}
-                                <input type="text" class="hidden" name="filename" value="{{ filePath }}">
+                                <input type="text" class="hidden" name="filename" value="{{ file.name }}">
                                 <img src="{% static "css/images/fileIcon.png" %}" class="submitableImage">
                         </form>
 
