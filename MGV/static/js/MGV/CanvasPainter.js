@@ -1018,7 +1018,6 @@ function verticalDrawLines(actualLines, i, fragment, color) {
 		yFin = yIni +0.1 ;
 	}
 
-    s
 	//console.log((actualLines[i][1])+" = "+xIni+"; "+(actualLines[i][2])+" = "+yIni+(actualLines[i][3])+" = "+xFin+"; "+(actualLines[i][4])+" = "+yFin);
 
 	ctx.beginPath();
