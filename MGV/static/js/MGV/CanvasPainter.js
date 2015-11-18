@@ -488,9 +488,15 @@ function createInstance() {
 			$('.hiddenRow').hide();
 
 			RectInMap.x = Math.min(currentArea.x0, currentArea.x1) * 2 / 5;
-			RectInMap.y = (500 - Math.max(currentArea.y0, currentArea.y1)) * 2 / 5;
+			RectInMap.y = (canvas.width - Math.max(currentArea.y0, currentArea.y1)) * 2 / 5;
 			RectInMap.tamx = Math.abs(currentArea.x0 - currentArea.x1) * 2 / 5;
 			RectInMap.tamy = Math.abs(currentArea.y0 - currentArea.y1) * 2 / 5;
+
+			if(RectInMap.tamx < 5 || RectInMap.tamy < 5) {
+				RectInMap.tamx = 5; RectInMap.tamy = 5;
+			}
+
+			console.log("Map: "+RectInMap.x+", "+RectInMap.y+", "+RectInMap.tamx+", "+RectInMap.tamy);
 
 			redrawMap();
 
@@ -913,10 +919,6 @@ function resetDraw() {
         document.getElementById("myCanvasLayer2").getContext("2d").clearRect(0,0,500,500);
 		redraw();
 	}
-}
-
-function returnMinValue(){
-	return minValue;
 }
 
 //Draw the lines to the lines to the annotation point
@@ -1360,53 +1362,62 @@ function drawBoard(board, vertical, canvasName) {
         var width = canvas.width;
         var height = canvas.height;
         if (vertical) {
-            clearCanvas(canvasName);
+			clearCanvas(canvasName);
 
-            ctx.font = "bold 20px sans-serif";
-            ctx.fillText("Grid size: 500x500px, Step: 100px", 0, -23);
+            //ctx.font = "bold 20px sans-serif";
+            //ctx.fillText("Grid size: 500x500px, Step: 100px", 0, -23);
 
-            var stepVertical = Math.round((currentArea.x1 - currentArea.x0) / 5);
+            var stepVertical = (currentArea.x1 - currentArea.x0) / 5;
             var stepV = currentArea.x0;
 
-            if (stepVertical != 0) {
+			for (var x = 50; x <= 550; x += 100) {
+				ctx.font = "bold 12px sans-serif";
+				var correctPositionX = ((stepV) * parseInt(fileHeader[0].seqXLength)) / width;
 
-                for (var x = 50; x <= 550; x += 100) {
-                    ctx.font = "bold 12px sans-serif";
-                    // var aux = (((x - currentArea.x0) / (currentArea.x1 -
-                    // currentArea.x0)) * width);
-                    var correctPositionX = ((stepV) * parseInt(fileHeader[0].seqXLength))
-                            / width;
-                    correctPositionX = Math.round(correctPositionX);
-                    ctx.fillText(correctPositionX.toString(), x - 20, height + 45);
-                    ctx.moveTo(x, 25);
-                    ctx.lineTo(x, height + 25);
-                    stepV += stepVertical;
-                }
+				//Round to thousands if not so much zoom
+				if(scaleX > 0.20) {
+					correctPositionX = Math.round(correctPositionX/1000)*1000;
+				} else {
+					correctPositionX = Math.round(correctPositionX);
+				}
+				ctx.fillText(correctPositionX.toString(), x - 20, height + 45);
+				ctx.moveTo(x, 25);
+				ctx.lineTo(x, height + 25);
+				stepV += stepVertical;
+			}
 
-                var stepHorizontal = Math.round((currentArea.y1 - currentArea.y0) / 5);
-                var stepH = currentArea.y0;
+			var stepHorizontal = Math.round((currentArea.y1 - currentArea.y0) / 5);
+			var stepH = currentArea.y0;
 
-                if (vertical) {
+			if (vertical) {
 
-                    for (var y = 25; y <= 525; y += 100) {
-                        ctx.font = "bold 12px sans-serif";
-                        // var auxy = (((y - currentArea.y0) / (currentArea.y1 -
-                        // currentArea.y0)) * height);
-                        var correctPositionY = ((stepH) * parseInt(fileHeader[0].seqYLength))
-                                / height;
-                        correctPositionY = Math.round(correctPositionY);
-                        ctx.fillText(correctPositionY.toString(), 5, height
+				var stepHorizontal = (currentArea.y1 - currentArea.y0) / 5;
+				var stepH = currentArea.y0;
+
+				for (var y = 25; y <= 525; y += 100) {
+					ctx.font = "bold 12px sans-serif";
+					var correctPositionY = ((stepH) * parseInt(fileHeader[0].seqYLength)) / height;
+
+					//Round to thousands if not so much zoom
+					if(scaleX > 0.20) {
+						correctPositionY = Math.round(correctPositionY/1000)*1000;
+					} else {
+						correctPositionY = Math.round(correctPositionY);
+					}
+					
+					correctPositionY = Math.round(correctPositionY);
+					ctx.fillText(correctPositionY.toString(), 5, height
                                 - (y - 55));
-                        ctx.moveTo(50, y);
-                        ctx.lineTo(width + 50, y);
-                        stepH += stepHorizontal;
-                    }
-                }
+					ctx.moveTo(50, y);
+					ctx.lineTo(width + 50, y);
+					stepH += stepHorizontal;
+				}
+			}
 
-                ctx.strokeStyle = "#ddd";
-                ctx.stroke();
-		    }
+			ctx.strokeStyle = "#ddd";
+			ctx.stroke();
         } else {
+			console.log("Track 1");
             var stepVertical = width / 10;
             var stepV = 0;
 
