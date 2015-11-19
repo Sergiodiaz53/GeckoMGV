@@ -49,7 +49,6 @@ def openFile(user, file):
     if user.is_authenticated():
         auxfile = open(str(file.file), 'r')
         content = auxfile.read()
-        print content
         auxfile.close()
         return content
 

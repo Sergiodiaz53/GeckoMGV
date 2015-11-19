@@ -496,7 +496,7 @@ function createInstance() {
 				RectInMap.tamx = 5; RectInMap.tamy = 5;
 			}
 
-			console.log("Map: "+RectInMap.x+", "+RectInMap.y+", "+RectInMap.tamx+", "+RectInMap.tamy);
+			//console.log("Map: "+RectInMap.x+", "+RectInMap.y+", "+RectInMap.tamx+", "+RectInMap.tamy);
 
 			redrawMap();
 
