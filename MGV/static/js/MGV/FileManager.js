@@ -26,6 +26,25 @@ function CSVHeader (headers) {
     this.totalFragments = headers[11];
 }
 
+function loadFileFromServer(){
+
+    $.ajax({
+        type:"GET",
+        url:"/loadFileFromServer/",
+        data: {
+            'filename': 'myfile2.csv' // from form
+        },
+        success: function(content){
+            fileType = 'csv';
+            fileName = "ServerTest";
+            multigenome = false;
+            parseCount = 1;
+            processData(content,0);
+        }
+    });
+    return false; //<---- move it here
+}
+
 
 function handleFiles(files, type) {
 
@@ -88,6 +107,7 @@ function processData(csv, index) {
     console.log("ProcessData: " + index);
 
     if (fileType == 'csv') {
+
         var title = fileName;
         if (multigenome)
             title = "Multigenome comparison";

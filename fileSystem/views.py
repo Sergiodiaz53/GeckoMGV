@@ -45,6 +45,17 @@ def deleteFile(request):
     return userFile.objects.filter(user=request.user)
 
 
+def openFile(user, file):
+    if user.is_authenticated():
+        auxfile = open(str(file.file), 'r')
+        content = auxfile.read()
+        print content
+        auxfile.close()
+        return content
+
+
+
+
 def listUserFiles(request):
     if request.user.is_authenticated():
         files = userFile.objects.filter(user=request.user)
