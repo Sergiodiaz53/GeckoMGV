@@ -27,6 +27,13 @@
                         </div>
                     </div>
                 </div>
+                <div id='createFile' class="col-md-2 col-centered">
+                    <form role="form" action="{% url 'createFile_view' %}" method="POST">
+                                {% csrf_token %}
+                                <input type="text" class="hidden" name="filename" value="">
+                                <button type="submit" class="btn btn-success glyphicon glyphicon-plus-sign"> New</button>
+                    </form>
+                </div>
             </div>
 
             <div class="row row-centered">

@@ -71,6 +71,9 @@ def deleteFile_view(request):
     files = deleteFile(request)
     return render(request, 'filemanager.html', {'form': form, 'files': files})
 
+def createFile_view(request):
+    createFile(request,"","newFile")
+    return fileManager_view(request)
 
 def fileViewer_view(request):
     if request.user.is_authenticated():

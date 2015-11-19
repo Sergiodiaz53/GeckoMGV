@@ -1404,7 +1404,7 @@ function drawBoard(board, vertical, canvasName) {
 					} else {
 						correctPositionY = Math.round(correctPositionY);
 					}
-					
+
 					correctPositionY = Math.round(correctPositionY);
 					ctx.fillText(correctPositionY.toString(), 5, height
                                 - (y - 55));
