@@ -26,21 +26,45 @@ function CSVHeader (headers) {
     this.totalFragments = headers[11];
 }
 
-function loadFileFromServer(){
-
+function loadFileFromServer($fileName){
+    BootstrapDialog.closeAll();
     $.ajax({
         type:"GET",
         url:"/loadFileFromServer/",
         data: {
-            'filename': 'myfile2.csv' // from form
+            'filename': $fileName // from form
         },
         success: function(content){
             fileType = 'csv';
-            fileName = "ServerTest";
+            fileName = $fileName;
             multigenome = false;
             parseCount = 1;
             processData(content,0);
         }
+    });
+    return false; //<---- move it here
+}
+
+function getFilesListFromServer(){
+
+    $.ajax({
+        type:"GET",
+        url:"/getFileList/",
+        success: function(response){
+
+                BootstrapDialog.show({
+                    title: 'Select file from Server',
+                    message:function(dialog) {
+                        var content = '<table class="table table-striped">';
+                        for (i in response) {
+                            content += '<thead><tr><th class="clickable" onclick="loadFileFromServer('+"'"+response[i]+"'"+')"><span class="glyphicon glyphicon-file"></span> '+response[i]+'</th></tr></thead>';
+                        }
+                        content += '</table>';
+                        dialog.setSize(BootstrapDialog.SIZE_SMALL);
+                        return content;
+                    }
+                })
+            }
     });
     return false; //<---- move it here
 }

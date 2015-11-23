@@ -35,6 +35,10 @@ body {
     cursor: pointer;
 }
 
+.clickable {
+    cursor: pointer;
+}
+
 .computerOutput {
     font-family: "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;
 }

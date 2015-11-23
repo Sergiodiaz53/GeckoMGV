@@ -5,6 +5,7 @@ from customAuth.views import *
 from scripts.views import *
 from fileSystem.forms import *
 from fileSystem.views import *
+
 from django.http import JsonResponse
 import json
 
@@ -40,12 +41,22 @@ def services_view(request):
     print list
     return render(request, 'services.html', {'services': list})
 
+
 @csrf_exempt
 def loadFileFromServer(request):
     file = userFile.objects.get(user = request.user, filename=request.GET.get('filename'))
     content = openFile(request.user,file)
     return HttpResponse(content, content_type="text/plain")
 
+
+@csrf_exempt
+def getFileList(request):
+    fileNames = []
+    for file in listUserFiles(request):
+        if file.filename[-3:] == 'csv':
+            fileNames.append(file.filename)
+    response = JsonResponse(fileNames, safe=False)
+    return HttpResponse(response, content_type="application/json")
 
 def executeService_view(request):
     output = executeService(request)

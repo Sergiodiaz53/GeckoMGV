@@ -9,4 +9,5 @@ urlpatterns = patterns(
         url(r'^login', views.login_view, name='login_view'),
         url(r'^logout', views.logout_view, name='logout_view'),
         url(r'^loadFileFromServer', views.loadFileFromServer, name='loadFileFromServer'),
+        url(r'^getFileList', views.getFileList, name='getFileList'),
 )
