@@ -213,7 +213,6 @@ function loadHorizontalView(){
     }
 }
 
-
 function resetZoom(){
     currentArea.x0 = 0;
     currentArea.y0 = 0;
@@ -227,7 +226,6 @@ function resetZoom(){
 function createInstance() {
     var loadingGif = $('#loading-indicator');
 
-	canvasMatrix = document.getElementById("myCanvasMatrix");
 	canvas = document.getElementById("myCanvas");
 	canvasMap = document.getElementById("myMap");
 	canvasOffset = $("#myCanvas").offset();
