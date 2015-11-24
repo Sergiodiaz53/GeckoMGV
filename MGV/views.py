@@ -44,6 +44,6 @@ def executeService_view(request):
     return render(request, 'serviceResult.html', {'output': output})
 
 def clustal_omega(request):
-    html=co.clustal_omega(request)
-    return HttpResponse(html);
+    content=co.clustal_omega(request)
+    return render(request, 'MSAvisualizer.html', {'content': content})
 

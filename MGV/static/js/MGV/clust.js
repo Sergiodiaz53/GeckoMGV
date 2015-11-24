@@ -6,9 +6,9 @@
 function drawMSA(string){
     var msa = require("msa");
 
-
-    var menuDiv = document.createElement('menu');
-    var msaDiv = document.createElement('msa');
+    var clustal=require("biojs-io-clustal");
+    var menuDiv = document.getElementById('menu');
+    var msaDiv = document.getElementById('msa');
     var opts = {
       el: msaDiv
     };
@@ -30,8 +30,8 @@ function drawMSA(string){
     var m = msa(opts);
 
     gg = m;
-    m.u.file.parseText(string);
-
+    var seqs=clustal.parse(string)
+    m.seqs.reset(seqs)
     var defMenu = new msa.menu.defaultmenu({
     el: menuDiv,
     msa: m

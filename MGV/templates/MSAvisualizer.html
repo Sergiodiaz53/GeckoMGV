@@ -1,0 +1,15 @@
+{%extends "includes/basic.html" %}
+{%block content%}
+<script src="https://s3-eu-west-1.amazonaws.com/biojs/msa/latest/msa.js"></script>
+<link type=text/css rel=stylesheet href=https://s3-eu-west-1.amazonaws.com/biojs/msa/latest/msa.css />
+<script type="text/javascript">
+    function draw(){
+        var myVar="{{ content | escapejs }}"
+        drawMSA(myVar);
+        $("#canv_0").remove()
+    }
+    window.onload=draw();
+</script>
+<div id='menu'></div>
+<div id='msa'><button onclick=""></button></div>
+{%endblock%}
