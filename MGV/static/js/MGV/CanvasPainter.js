@@ -236,7 +236,7 @@ function createLayer(numLayer){
 		$("#canvasContainer").append(newLayer);
 
 		var newLayerBoxElement =
-				$('<input type="checkbox" class="switchLayer" id="checklayer'+numLayer+'"checked="checked" value="'+numLayer+'"/> Layer '+numLayer+'</input>');
+				$('<input type="checkbox" class="switchLayer" id="checklayer'+numLayer+'"checked="checked" value="'+numLayer+'"/> '+$("#fileName").text().substring(0, $("#fileName").text().indexOf("."))+'</input>');
 
 		var row = $("<tr>");
 		var column = row.append( $("<td>").append(newLayerBoxElement));
@@ -344,9 +344,6 @@ function createInstance() {
 
 			if (currentLines) {
 
-				var currentCanvas = createLayer(numFile);
-				var currentCtx = currentCanvas.getContext('2d');
-
 				var mode = document.option.tipo;
 
 				var table = document.createElement("table");
@@ -381,6 +378,9 @@ function createInstance() {
 
 				var linesToPaint = [];
 				var filteredLines = [];
+
+				var currentCanvas = createLayer(numFile);
+				var currentCtx = currentCanvas.getContext('2d');
 
 				for (i = fragsStarts; i < currentLines.length; i++) {
 
