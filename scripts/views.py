@@ -56,3 +56,4 @@ def serviceInterface(request):
 def testForm(request):
     print request
     return HttpResponse("OK", content_type="text/plain")
+

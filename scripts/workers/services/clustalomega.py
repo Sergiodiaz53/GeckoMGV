@@ -2,10 +2,10 @@ __author__ = 'sabega'
 from scripts.workers.EBI import EBI
 
 
-def clustal_omega(request):
+def clustal_omega(request,seq1,seq2):
     baseUrl='http://www.ebi.ac.uk/Tools/services/rest/clustalo'
     params={}
-    params['sequence']=">\natcgtatcgatcg\n>\natcgatcgattca"
+    params['sequence']=">\n"+seq1+"\n>\n"+seq2
     params['mbediteration'] = True
     params['guidetreeout'] = True
     params['dismatout'] = True
