@@ -162,6 +162,15 @@ body {
     margin-bottom: 25px;
 }
 
+.canvasLayer{
+    background-color: transparent;
+    border:1px solid #000000;
+    position: absolute;
+    margin-top: 25px;
+    margin-left: 50px;
+    z-index:1;
+}
+
 #myCanvas {
     background-color: transparent;
     border:1px solid #000000;
@@ -188,6 +197,11 @@ body {
     z-index: 100;
 }
 
+#layersBox{
+    max-height: 10%;
+    overflow-y: scroll;
+}
+
 #myCanvasLayer2 {
 
     background-color: transparent;
@@ -199,7 +213,7 @@ body {
 }
 
 #myCanvasGrid {
-    background-color: white ;
+    background-color: white;
     border:1px solid #000000;
     position: absolute;
     z-index: 1;

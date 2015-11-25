@@ -39,7 +39,7 @@ function loadFileFromServer($fileName){
             fileName = $fileName;
             multigenome = false;
             parseCount = 1;
-            processData(content,0);
+            processData(content,lines.length);
         }
     });
     return false; //<---- move it here

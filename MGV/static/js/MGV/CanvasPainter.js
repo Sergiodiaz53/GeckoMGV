@@ -223,6 +223,72 @@ function resetZoom(){
     reset = false;
 }
 
+function createLayer(numLayer){
+	var idLayer = "layer"+numLayer;
+	if($("#" + idLayer).length == 0) {
+		console.log("Creating layer");
+		//If layer doesn't exist
+		var newLayer =
+				$('<canvas/>',{'class':'canvasLayer img-responsive', 'id': idLayer}).prop({
+                    width: 500,
+                    height: 500
+                });
+		$("#canvasContainer").append(newLayer);
+
+		var newLayerBoxElement =
+				$('<input type="checkbox" class="switchLayer" id="checklayer'+numLayer+'"checked="checked" value="'+numLayer+'"/> Layer '+numLayer+'</input>');
+
+		var row = $("<tr>");
+		var column = row.append( $("<td>").append(newLayerBoxElement));
+		$('#layersTable').last().append(row);
+
+		$(newLayerBoxElement).change(function() {
+			 if ($(this).is(':checked')) {
+				 $('#'+idLayer).show();
+			 } else {
+				 $('#'+idLayer).hide();
+			 }
+		});
+	}
+	return $("#"+idLayer)[0];
+}
+
+function drawLinesInLayer(linesToPaint, canvasLayer, numFile, color){
+	var currentCtx = canvasLayer.getContext('2d');
+
+	currentCtx.beginPath();
+	for (var x in linesToPaint){
+		line = linesToPaint[x];
+
+		var xIni = ((canvasLayer.width * (parseInt(lines[numFile][line][1]) / xtotal) - currentArea.x0) / (currentArea.x1 - currentArea.x0))
+				* canvasLayer.width;
+		var yIni = ((canvasLayer.height * (parseInt(lines[numFile][line][2]) / ytotal) - currentArea.y0) / (currentArea.y1 - currentArea.y0))
+				* canvasLayer.height;
+		var xFin = ((canvasLayer.width * (parseInt(lines[numFile][line][3]) / xtotal) - currentArea.x0) / (currentArea.x1 - currentArea.x0))
+				* canvasLayer.width;
+		var yFin = ((canvasLayer.height * (parseInt(lines[numFile][line][4]) / ytotal) - currentArea.y0) / (currentArea.y1 - currentArea.y0))
+				* canvasLayer.height;
+
+
+		if((xFin-xIni < 0.1)&&(xFin-xIni>0)){
+			xFin = xIni + 0.1;
+		}
+
+		if((yFin-yIni < 0.1)&&(yFin-yIni >0)){
+			yFin = yIni +0.1 ;
+		}
+
+		//console.log((lines[numFile][line][1])+" = "+xIni+"; "+(lines[numFile][line][2])+" = "+yIni+(lines[numFile][line][3])+" = "+xFin+"; "+(lines[numFile][line][4])+" = "+yFin);
+
+		currentCtx.moveTo(xIni, canvasLayer.height - yIni);
+		currentCtx.lineTo(xFin, canvasLayer.height - yFin);
+	}
+	currentCtx.closePath();
+	currentCtx.lineWidth = 2;
+	currentCtx.strokeStyle = color;
+	currentCtx.stroke();
+}
+
 function createInstance() {
     var loadingGif = $('#loading-indicator');
 
@@ -247,7 +313,22 @@ function createInstance() {
         loadingGif.show();
 		console.time("reDraw()");
 
-        clearCanvas("myCanvas");
+		// Draw Grid
+		/*
+		if (board) {
+			if(vertical){
+				drawBoard(board, vertical, "myCanvasGrid");
+			} else {
+				if(numFile!=0){
+					drawBoard(board, vertical, "myCanvas"+numFile);
+				} else {
+					drawBoard(board, vertical, "myCanvas");
+				}
+			}
+		} else {
+			if(vertical) clearCanvas("myCanvasGrid");
+		}
+		*/
 
 		// Clear previous data in HTML
 		document.getElementById("output").innerHTML = "<div class=\"SearchTitle\" > <div class=\"SearchTitleFilterButton\"> <span>Filter:</span> <input type=\"text\" class=\"SearchFilter\" /> <button class=\"SearchButton\" onclick=\"showResults($(\'.SearchFilter\').val(),true)\" ><span class=\"glyphicon glyphicon-search\"></span></button> </div> </div> <ul class='nav nav-tabs' id='files-tab'></ul>"
@@ -257,12 +338,14 @@ function createInstance() {
 				+ "<div class='tab-content' id='annotations-tab-content'></div>";
 
 		for (var numFile = 0; numFile < lines.length; numFile++) {
-
             console.log("Round: "+numFile);
 
 			currentLines = lines[numFile].slice(0);
 
 			if (currentLines) {
+
+				var currentCanvas = createLayer(numFile);
+				var currentCtx = currentCanvas.getContext('2d');
 
 				var mode = document.option.tipo;
 
@@ -296,29 +379,8 @@ function createInstance() {
 				xtotal = fileHeader[0].seqXLength;
 				ytotal = fileHeader[0].seqYLength;
 
-				if (!vertical) {
-                    loadHorizontalView();
-                } else {
-					if (canvas.height != 500)
-						canvas.height = 500;
-					if (canvas.width != 500)
-						canvas.width = 500;
-				}
-
-				// Draw Grid
-				if (board) {
-                    if(vertical){
-                        drawBoard(board, vertical, "myCanvasGrid");
-                    } else {
-                        if(numFile!=0){
-                            drawBoard(board, vertical, "myCanvas"+numFile);
-                        } else {
-                            drawBoard(board, vertical, "myCanvas");
-                        }
-                    }
-				} else {
-                     if(vertical) clearCanvas("myCanvasGrid");
-				}
+				var linesToPaint = [];
+				var filteredLines = [];
 
 				for (i = fragsStarts; i < currentLines.length; i++) {
 
@@ -333,7 +395,6 @@ function createInstance() {
 							var firstNameCell = row.insertCell(-1);
 							firstNameCell.appendChild(document
 									.createTextNode(lines[0][16][j]));
-
 							// }
 						}
 					}
@@ -367,19 +428,10 @@ function createInstance() {
 
 							if (paint == true) {
 								// console.time("paint()");
-								var numColor = (i) % 8;
-								color = rgb(R[numFile], G[numFile], B[numFile]);
-								drawLine(currentLines, i, xtotal, ytotal, mode,
-										color, numFile);
-								add2Table(i, table);
-								auxLines.push(lines[i]);
+								linesToPaint.push(i);
 								// console.timeEnd("paint()");
 							} else {
-								color = rgba(189, 195, 199, 0.7);
-								drawLine(currentLines, i, xtotal, ytotal, mode,
-										color, numFile);
-								drawLine(currentLines, i, xtotal, ytotal, mode,
-										color, numFile);
+								filteredLines.push(i);
 							}
 						}
 					} else {
@@ -447,8 +499,9 @@ function createInstance() {
 						}
 					}
 				}
-
-				// currentLines = auxLines.slice(0);
+				clearCanvas(currentCanvas.id);
+				drawLinesInLayer(linesToPaint,currentCanvas,numFile,rgb(R[numFile], G[numFile], B[numFile]));
+				drawLinesInLayer(filteredLines,currentCanvas,numFile,rgba(189, 195, 199, 0.7));
 
 				$("#files-tab").append(
 						"<li><a href='#file" + numFile + "' data-toggle='tab'>File "
