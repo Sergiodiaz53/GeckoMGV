@@ -149,7 +149,6 @@ function processData(csv, index) {
                 parseCount--;
                 lines[index] = results.data;
                 reset = true;
-                fileHeader = [];
                 map = false;
 
                 if(parseCount==0){

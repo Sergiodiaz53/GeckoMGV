@@ -313,29 +313,16 @@ function createInstance() {
         loadingGif.show();
 		console.time("reDraw()");
 
-		// Draw Grid
-		/*
-		if (board) {
-			if(vertical){
-				drawBoard(board, vertical, "myCanvasGrid");
-			} else {
-				if(numFile!=0){
-					drawBoard(board, vertical, "myCanvas"+numFile);
-				} else {
-					drawBoard(board, vertical, "myCanvas");
-				}
-			}
-		} else {
-			if(vertical) clearCanvas("myCanvasGrid");
-		}
-		*/
-
 		// Clear previous data in HTML
 		document.getElementById("output").innerHTML = "<div class=\"SearchTitle\" > <div class=\"SearchTitleFilterButton\"> <span>Filter:</span> <input type=\"text\" class=\"SearchFilter\" /> <button class=\"SearchButton\" onclick=\"showResults($(\'.SearchFilter\').val(),true)\" ><span class=\"glyphicon glyphicon-search\"></span></button> </div> </div> <ul class='nav nav-tabs' id='files-tab'></ul>"
 				+ " <div class='tab-content' id='files-tab-content'></div>";
 
 		document.getElementById("annotationsOutput").innerHTML = "<ul class='nav nav-tabs' id='annotations-tab'></ul>"
 				+ "<div class='tab-content' id='annotations-tab-content'></div>";
+
+
+		// Draw Grid
+		drawBoard(board, vertical, "myCanvasGrid");
 
 		for (var numFile = 0; numFile < lines.length; numFile++) {
             console.log("Round: "+numFile);
@@ -368,6 +355,8 @@ function createInstance() {
 				if (fileHeader.length < lines.length) {
                     storeFileHeader(currentLines, numFile);
 				}
+
+				console.log(fileHeader[numFile].totalFragments+" --> "+numFile);
 
 				if (!xtotal || !ytotal || reset) {
                     resetZoom();
@@ -1340,7 +1329,7 @@ HSBToRGB = function(hsb) {
 		}
 	}
 	return rgb(Math.round(mirgb.r), Math.round(mirgb.g), Math.round(mirgb.b));
-}
+};
 
 // Adds ctx.getTransform() - returns an SVGMatrix
 // Adds ctx.transformedPoint(x,y) - returns an SVGPoint
@@ -1410,12 +1399,15 @@ function trackTransforms(ctx) {
 
 function drawBoard(board, vertical, canvasName) {
     var canvasGrid = document.getElementById(canvasName);
+
     if(board) {
         var ctx = canvasGrid.getContext("2d");
         var width = canvas.width;
         var height = canvas.height;
         if (vertical) {
 			clearCanvas(canvasName);
+
+			console.log("hola");
 
             //ctx.font = "bold 20px sans-serif";
             //ctx.fillText("Grid size: 500x500px, Step: 100px", 0, -23);
@@ -1470,7 +1462,6 @@ function drawBoard(board, vertical, canvasName) {
 			ctx.strokeStyle = "#ddd";
 			ctx.stroke();
         } else {
-			console.log("Track 1");
             var stepVertical = width / 10;
             var stepV = 0;
 
