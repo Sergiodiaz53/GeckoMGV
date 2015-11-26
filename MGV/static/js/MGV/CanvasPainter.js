@@ -147,8 +147,6 @@ function storeFileHeader(currentLines, numFile) {
     firstNameCell.appendChild(document
                 .createTextNode(auxLine[0].toString()));
 
-    console.log("X: " + numFile + "Headers: " + headers);
-
     fileHeader[numFile] = new CSVHeader(headers);
 
     document.getElementById("fileName").innerHTML += '<button id="infoPopover'
@@ -223,8 +221,10 @@ function resetZoom(){
     reset = false;
 }
 
-function createLayer(numLayer){
+function createComparisonLayer(numLayer){
 	var idLayer = "layer"+numLayer;
+	var idMapimageLayer = "Maplayer"+numLayer;
+
 	if($("#" + idLayer).length == 0) {
 		console.log("Creating layer");
 		//If layer doesn't exist
@@ -236,7 +236,7 @@ function createLayer(numLayer){
 		$("#canvasContainer").append(newLayer);
 
 		var newLayerBoxElement =
-				$('<input type="checkbox" class="switchLayer" id="checklayer'+numLayer+'"checked="checked" value="'+numLayer+'"/> '+$("#fileName").text().substring(0, $("#fileName").text().indexOf("."))+'</input>');
+				$('<input type="checkbox" class="switchLayer" id="checklayer'+numLayer+'"checked="checked" value="'+numLayer+'"/> '+fileNames[numLayer]+'</input>');
 
 		var row = $("<tr>");
 		var column = row.append( $("<td>").append(newLayerBoxElement));
@@ -245,11 +245,28 @@ function createLayer(numLayer){
 		$(newLayerBoxElement).change(function() {
 			 if ($(this).is(':checked')) {
 				 $('#'+idLayer).show();
+				 $('#'+idMapimageLayer).show()
+						 .removeAttr('style');
 			 } else {
 				 $('#'+idLayer).hide();
+				 $('#'+idMapimageLayer).hide();
 			 }
 		});
 	}
+	return $("#"+idLayer)[0];
+}
+
+function createMapimageLayer(numLayer) {
+
+	var idLayer = "Maplayer"+numLayer;
+
+	var newLayer =
+			$('<img/>',{'class':'mapimage', 'id': idLayer}).prop({
+				width: 202,
+				height: 202
+			});
+	$("#canvasMapContainer").prepend(newLayer);
+
 	return $("#"+idLayer)[0];
 }
 
@@ -356,8 +373,6 @@ function createInstance() {
                     storeFileHeader(currentLines, numFile);
 				}
 
-				console.log(fileHeader[numFile].totalFragments+" --> "+numFile);
-
 				if (!xtotal || !ytotal || reset) {
                     resetZoom();
 				}
@@ -368,7 +383,7 @@ function createInstance() {
 				var linesToPaint = [];
 				var filteredLines = [];
 
-				var currentCanvas = createLayer(numFile);
+				var currentCanvas = createComparisonLayer(numFile);
 				var currentCtx = currentCanvas.getContext('2d');
 
 				for (i = fragsStarts; i < currentLines.length; i++) {
@@ -489,8 +504,8 @@ function createInstance() {
 					}
 				}
 				clearCanvas(currentCanvas.id);
-				drawLinesInLayer(linesToPaint,currentCanvas,numFile,rgb(R[numFile], G[numFile], B[numFile]));
-				drawLinesInLayer(filteredLines,currentCanvas,numFile,rgba(189, 195, 199, 0.7));
+				drawLinesInLayer(linesToPaint,currentCanvas,numFile,rgba(R[numFile], G[numFile], B[numFile], 0.7));
+				drawLinesInLayer(filteredLines,currentCanvas,numFile,rgba(189, 195, 199, 0.5));
 
 				$("#files-tab").append(
 						"<li><a href='#file" + numFile + "' data-toggle='tab'>File "
@@ -542,10 +557,10 @@ function createInstance() {
 
 			redrawMap();
 
-			if ((numFile == (lines.length-1)) && (map == false)) {
-				var mapimage = document.getElementById("mapimage");
-				mapimage.src = canvas.toDataURL("image/png");
-				map = true;
+			if ((numFile <= (lines.length-1)) && (map == false)) {
+				var mapimage = createMapimageLayer(numFile);
+				mapimage.src = currentCanvas.toDataURL("image/png");
+				if(numFile==lines.length-1) map = true;
 			}
 		}
 		for(var index=0;index<searchList.length;index++)
@@ -965,6 +980,8 @@ function resetDraw() {
 
 //Draw the lines to the lines to the annotation point
 function annotationDrawLines(seq,start,end,point){
+
+	console.log("Drawing Annotations");
     start=parseInt(start),end=parseInt(end),point=parseInt(point);
     var c = document.getElementById("myCanvasLayer2");
 	var ctx = c.getContext("2d");

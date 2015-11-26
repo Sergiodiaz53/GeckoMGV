@@ -12,8 +12,8 @@
                     <div id="toolmenu">
                         <div class="row row-centered top-buffer">
                             <button type="button" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Load frags from server" onclick ="getFilesListFromServer()"><span class="glyphicon glyphicon-floppy-save"></span></button>
-                            <button type="button" class="btn btn-primary btn-file" data-toggle="tooltip" data-placement="bottom" title="Load frags from local"><input type="file" multiple="true" onchange="handleFiles(this.files,'csv')" accept=".csv"><span class="glyphicon glyphicon-floppy-disk"></span></button>
-                            <button type="button" class="btn btn-primary btn-file" data-toggle="tooltip" data-placement="bottom" title="Load Matrix from local"><input type="file" multiple="true" onchange="handleFiles(this.files,'mat')" accept=".MAT"><span class="glyphicon glyphicon-th"></span></button>
+                            <span class="btn btn-primary btn-file glyphicon glyphicon-floppy-disk" data-toggle="tooltip" data-placement="bottom" title="Load frags from local" ><input type="file" multiple="true" onchange="handleFiles(this.files,'csv')" accept=".csv"></span>
+                            <span class="btn btn-primary btn-file glyphicon glyphicon-th" data-toggle="tooltip" data-placement="bottom" title="Load Matrix from local" ><input type="file" multiple="false" onchange="handleFiles(this.files,'mat')" accept=".MAT"></span>
                             <button type="button" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Return to initial view" onclick="resetDraw()"><span class="glyphicon glyphicon-step-backward"></span></button>
                             <button type="button" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Draw grid" onclick="activateBoard()"><span class="glyphicon glyphicon-screenshot"></span></button>
                             <button type="button" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="CSB & Frag info" onclick="dialogFrags()"><span class="glyphicon glyphicon-info-sign"></span></button>
@@ -91,7 +91,6 @@
                             <div id="MapColapsed" class="panel-collapse collapse in">
                                 <div class="panel-body ">
                                         <div id="canvasMapContainer" class="div-centered row-centered top-buffer">
-                                            <img id="mapimage" width="202" height="202"/>
                                             <canvas id="myMap" width="200" height="200"></canvas>
                                     </div>
                                 </div>

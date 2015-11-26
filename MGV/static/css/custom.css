@@ -226,7 +226,7 @@ body {
     z-index:2;
 }
 
-#mapimage{
+.mapimage{
     position:absolute;
     z-index:1;
 }

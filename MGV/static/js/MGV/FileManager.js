@@ -6,6 +6,7 @@
 
 //Global Variables
 var fileHeader = [];
+var fileNames = [];
 var fileInfo=[];
 var multigenome;
 var parseCount;
@@ -36,7 +37,7 @@ function loadFileFromServer($fileName){
         },
         success: function(content){
             fileType = 'csv';
-            fileName = $fileName;
+            fileNames[lines.length] = $fileName;
             multigenome = false;
             parseCount = 1;
             processData(content,lines.length);
@@ -83,13 +84,13 @@ function handleFiles(files, type) {
     parseCount = files.length;
 
     if (window.FileReader) {
-        lines=[];
         // FileReader are supported.
         if(files.length>1)
             multigenome=true;
         for(var i=0; i <files.length; i++) {
             fileType = type;
-            getAsText(files[i],i);
+            console.log("I: "+i+" lines.length: "+lines.length);
+            getAsText(files[i],lines.length+i);
         }
     } else {
         alert('FileReader is not supported in this browser.');
@@ -98,16 +99,12 @@ function handleFiles(files, type) {
 
 function getAsText(fileToRead, i) {
     console.log("GetAsText:"+i);
-    var reader = new FileReader();
-    // Handle errors load
-    reader.onload = function (event, index) {
-        index = i;
-        loadHandler(event, index)
-    };
 
+    var reader = new FileReader();
     if(fileType=='csv'){
-        fileName = fileToRead.name;
-        fileName = fileName.substring(0, fileName.length-4);
+        fileNames[i] = fileToRead.name;
+        fileNames[i]  = fileNames[i].substring(0, fileNames[i].length-4);
+        console.log("I: "+i+" fileName"+fileNames[i]);
     } else if (fileType=='mat') {
         fileNameMAT = fileToRead.name;
         fileNameMAT = fileNameMAT.substring(0, fileNameMAT.length-10);
@@ -115,6 +112,14 @@ function getAsText(fileToRead, i) {
         fileNameMVN = fileToRead.name;
         fileNameMVN = fileNameMVN.substring(0, fileNameMVN.length-4)
     }
+
+    // Handle errors load
+    reader.onload = function (event, index) {
+        index = i;
+        loadHandler(event, index)
+    };
+
+
     reader.onerror = errorHandler;
     // Read file into memory as UTF-8
     reader.readAsText(fileToRead);
@@ -131,11 +136,8 @@ function processData(csv, index) {
     console.log("ProcessData: " + index);
 
     if (fileType == 'csv') {
-
-        var title = fileName;
-        if (multigenome)
-            title = "Multigenome comparison";
-        document.getElementById("fileName").innerHTML = title;
+        console.log("I: "+index+" fileName"+fileNames[index]);
+        document.getElementById("fileName").innerHTML = fileNames[index];
 
         //InfoPopover = File info popover ()
         $(function () {
