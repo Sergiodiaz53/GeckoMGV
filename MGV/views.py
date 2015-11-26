@@ -5,6 +5,11 @@ from customAuth.views import *
 from scripts.views import *
 from fileSystem.forms import *
 from fileSystem.views import *
+from scripts.workers.EBI import EBI
+from scripts.workers.services import clustalomega as co
+from scripts.forms import drawMSAComp
+
+
 
 from django.http import JsonResponse
 import json
@@ -61,3 +66,15 @@ def getFileList(request):
 def executeService_view(request):
     output = executeService(request)
     return render(request, 'serviceResult.html', {'output': output})
+
+def clustal_omega(request):
+    if request.method=='POST':
+        form = drawMSAComp(request.POST)
+        if form.is_valid():
+            seq1=form.cleaned_data['seq1']
+            seq2=form.cleaned_data['seq2']
+            content=co.clustal_omega(request,seq1,seq2)
+            return render(request, 'MSAvisualizer.html', {'content': content})
+    else:
+        form=drawMSAComp()
+        return render(request, 'MSAvisualizer.html', {'form': form})

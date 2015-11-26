@@ -10,4 +10,5 @@ urlpatterns = patterns(
         url(r'^logout', views.logout_view, name='logout_view'),
         url(r'^loadFileFromServer', views.loadFileFromServer, name='loadFileFromServer'),
         url(r'^getFileList', views.getFileList, name='getFileList'),
+        url(r'^test',views.clustal_omega,name='clustal_omega'),
 )

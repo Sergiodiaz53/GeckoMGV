@@ -1,4 +1,5 @@
 from django import forms
+from .models import models
 from django.contrib.auth import get_user_model
 from scripts.models import *
 from fileSystem.views import *
@@ -13,6 +14,11 @@ class RegisterService(forms.ModelForm):
 class ExecuteService(forms.Form):
     class Meta:
         fields = ["name", "args"]
+
+class drawMSAComp(forms.Form):
+    seq1=forms.CharField(label='Sequence2', max_length=100)
+    seq2=forms.CharField(label='Sequence1', max_length=100)
+
 
 class kmersForm(forms.Form):
     parameter1 = forms.ChoiceField(label="Filename", widget=forms.Select(attrs={'class':'selector','id': 'Filename'}))
