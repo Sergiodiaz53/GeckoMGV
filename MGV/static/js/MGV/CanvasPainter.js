@@ -221,39 +221,36 @@ function resetZoom(){
     reset = false;
 }
 
-function createComparisonLayer(numLayer){
-	var idLayer = "layer"+numLayer;
-	var idMapimageLayer = "Maplayer"+numLayer;
+function createVerticalComparisonLayer(numLayer){
+	var idVerticalLayer = "layer"+numLayer;
 
-	if($("#" + idLayer).length == 0) {
-		console.log("Creating layer");
+	if($("#" + idVerticalLayer).length == 0) {
+
 		//If layer doesn't exist
-		var newLayer =
-				$('<canvas/>',{'class':'canvasLayer img-responsive', 'id': idLayer}).prop({
+		var newVerticalLayer =
+				$('<canvas/>',{'class':'canvasLayer img-responsive', 'id': idVerticalLayer}).prop({
                     width: 500,
                     height: 500
                 });
-		$("#canvasContainer").append(newLayer);
-
-		var newLayerBoxElement =
-				$('<input type="checkbox" class="switchLayer" id="checklayer'+numLayer+'"checked="checked" value="'+numLayer+'"/> '+fileNames[numLayer]+'</input>');
-
-		var row = $("<tr>");
-		var column = row.append( $("<td>").append(newLayerBoxElement));
-		$('#layersTable').last().append(row);
-
-		$(newLayerBoxElement).change(function() {
-			 if ($(this).is(':checked')) {
-				 $('#'+idLayer).show();
-				 $('#'+idMapimageLayer).show()
-						 .removeAttr('style');
-			 } else {
-				 $('#'+idLayer).hide();
-				 $('#'+idMapimageLayer).hide();
-			 }
-		});
+		$("#canvasContainer").append(newVerticalLayer);
+		createComparisonCheck(numLayer);
 	}
-	return $("#"+idLayer)[0];
+
+	return $("#"+idVerticalLayer)[0];
+}
+
+function createHorizontalComparisonLayer(numLayer){
+	var idHorizontalLayer = "hlayer"+numLayer;
+
+	if($("#" + idHorizontalLayer).length == 0) {
+		var newHorizontalLayer =
+				$('<canvas/>',{'class':'horizontalCanvasLayer img-responsive', 'id': idHorizontalLayer}).prop({
+                    width: 500,
+                    height: 200
+                });
+		$("#horizontalCanvasContainer").append(newHorizontalLayer);
+	}
+	return $("#"+idHorizontalLayer)[0];
 }
 
 function createMapimageLayer(numLayer) {
@@ -270,12 +267,38 @@ function createMapimageLayer(numLayer) {
 	return $("#"+idLayer)[0];
 }
 
-function drawLinesInLayer(linesToPaint, canvasLayer, numFile, color){
+function createComparisonCheck(numLayer){
+	var idVerticalLayer = "layer"+numLayer;
+	var idHorizontalLayer = "hlayer"+numLayer;
+	var idMapimageLayer = "Maplayer"+numLayer;
+
+	var newLayerBoxElement =
+				$('<input type="checkbox" class="switchLayer" id="checklayer'+numLayer+'"checked="checked" value="'+numLayer+'"/> '+fileNames[numLayer]+'</input>');
+
+	var row = $("<tr>");
+	var column = row.append( $("<td>").append(newLayerBoxElement));
+	$('#layersTable').last().append(row);
+
+	$(newLayerBoxElement).change(function() {
+		if ($(this).is(':checked')) {
+			$('#'+idVerticalLayer).show();
+			$('#'+idHorizontalLayer).show();
+			$('#'+idMapimageLayer).show()
+					.removeAttr('style');
+		} else {
+			$('#'+idVerticalLayer).hide();
+			$('#'+idHorizontalLayer).hide();
+			$('#'+idMapimageLayer).hide();
+		}
+	});
+}
+
+function drawVerticalLinesInVerticalLayer(linesToPaint, canvasLayer, numFile, color){
 	var currentCtx = canvasLayer.getContext('2d');
 
 	currentCtx.beginPath();
 	for (var x in linesToPaint){
-		line = linesToPaint[x];
+		var line = linesToPaint[x];
 
 		var xIni = ((canvasLayer.width * (parseInt(lines[numFile][line][1]) / xtotal) - currentArea.x0) / (currentArea.x1 - currentArea.x0))
 				* canvasLayer.width;
@@ -304,6 +327,93 @@ function drawLinesInLayer(linesToPaint, canvasLayer, numFile, color){
 	currentCtx.lineWidth = 2;
 	currentCtx.strokeStyle = color;
 	currentCtx.stroke();
+}
+
+function drawHorizontalLinesinHorizontalLayer(linesToPaint, canvasLayer, numFile, color) {
+
+	var currentCtx = canvasLayer.getContext('2d');
+	var padding = 50;
+
+	currentCtx.beginPath();
+	for (var x in linesToPaint) {
+
+		var line = linesToPaint[x];
+
+		var xIni = (canvasLayer.width * parseInt(lines[numFile][line][1]) / xtotal);
+		var yIni = (canvasLayer.width * parseInt(lines[numFile][line][2]) / ytotal);
+		var xFin = (canvasLayer.width * parseInt(lines[numFile][line][3]) / xtotal);
+		var yFin = (canvasLayer.width * parseInt(lines[numFile][line][4]) / ytotal);
+
+		drawLine(xIni,xFin,yIni,yFin);
+	}
+
+	currentCtx.closePath();
+	currentCtx.lineWidth = 2;
+	currentCtx.fillStyle = currentCtx.strokeStyle = color;
+	currentCtx.fill();
+	currentCtx.stroke();
+
+	function drawLine(xIni, xFin, yIni, yFin) {
+		// Rect in sequence X
+		roundRect(currentCtx, xIni, 0, xFin - xIni, padding / 2);
+
+		var halfX = xIni + ((xFin - xIni) / 2);
+		var halfY = yIni + ((yFin - yIni) / 2);
+		currentCtx.moveTo(halfX, padding / 2);
+		currentCtx.lineTo(halfX, padding);
+		currentCtx.moveTo(halfX, padding);
+		currentCtx.lineTo(halfY, canvasLayer.height - padding);
+
+
+		// Rect in sequence Y
+		var rectYHeight;
+		if (yFin < yIni) {
+			rectYHeight = canvasLayer.height - padding / 2;
+			currentCtx.moveTo(halfY, canvasLayer.height - padding / 2);
+			currentCtx.lineTo(halfY, canvasLayer.height - padding);
+		} else {
+			rectYHeight = canvasLayer.height - padding;
+		}
+
+		roundRect(currentCtx, yIni, rectYHeight, yFin - yIni, padding / 2);
+	}
+
+}
+
+/**
+ * Draws a rounded rectangle using the current state of the canvas. If you omit
+ * the last three params, it will draw a rectangle outline with a 5 pixel border
+ * radius
+ *
+ * @param {CanvasRenderingContext2D}
+ *            ctx
+ * @param {Number}
+ *            x The top left x coordinate
+ * @param {Number}
+ *            y The top left y coordinate
+ * @param {Number}
+ *            width The width of the rectangle
+ * @param {Number}
+ *            height The height of the rectangle
+ * @param {Number}
+ *            radius The corner radius. Defaults to 5;
+ * @param {Boolean}
+ *            fill Whether to fill the rectangle. Defaults to false.
+ * @param {Boolean}
+ *            stroke Whether to stroke the rectangle. Defaults to true.
+ */
+function roundRect(currentCtx, x, y, width, height, radius, fill) {
+	var	radius = 5;
+
+	currentCtx.moveTo(x + radius, y);
+	currentCtx.lineTo(x + width - radius, y);
+	currentCtx.quadraticCurveTo(x + width, y, x + width, y + radius);
+	currentCtx.lineTo(x + width, y + height - radius);
+	currentCtx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+	currentCtx.lineTo(x + radius, y + height);
+	currentCtx.quadraticCurveTo(x, y + height, x, y + height - radius);
+	currentCtx.lineTo(x, y + radius);
+	currentCtx.quadraticCurveTo(x, y, x + radius, y);
 }
 
 function createInstance() {
@@ -339,7 +449,7 @@ function createInstance() {
 
 
 		// Draw Grid
-		drawBoard(board, vertical, "myCanvasGrid");
+		drawGrid(board, vertical, "myCanvasGrid");
 
 		for (var numFile = 0; numFile < lines.length; numFile++) {
             console.log("Round: "+numFile);
@@ -382,9 +492,10 @@ function createInstance() {
 
 				var linesToPaint = [];
 				var filteredLines = [];
+				var CSBLines = [];
 
-				var currentCanvas = createComparisonLayer(numFile);
-				var currentCtx = currentCanvas.getContext('2d');
+				var currentVerticalCanvas = createVerticalComparisonLayer(numFile);
+				var currentHorizontalCanvas = createHorizontalComparisonLayer(numFile);
 
 				for (i = fragsStarts; i < currentLines.length; i++) {
 
@@ -405,6 +516,10 @@ function createInstance() {
 
 					if (currentLines[i][0] != 'GX'
 							&& currentLines[i][0] != 'GY') {
+
+						if(currentLines[i][0]=='CSB') {
+							CSBLines.push(i);
+						}
 
 						if ((mode[0].checked && mode[0].value == currentLines[i][0])
 								|| (mode[1].checked && mode[1].value == currentLines[i][0])
@@ -503,9 +618,15 @@ function createInstance() {
 						}
 					}
 				}
-				clearCanvas(currentCanvas.id);
-				drawLinesInLayer(linesToPaint,currentCanvas,numFile,rgba(R[numFile], G[numFile], B[numFile], 0.7));
-				drawLinesInLayer(filteredLines,currentCanvas,numFile,rgba(189, 195, 199, 0.5));
+
+				//Draw in vertical layer
+				clearCanvas(currentVerticalCanvas.id);
+				drawVerticalLinesInVerticalLayer(linesToPaint,currentVerticalCanvas,numFile,rgba(R[numFile], G[numFile], B[numFile], 0.7));
+				drawVerticalLinesInVerticalLayer(filteredLines,currentVerticalCanvas,numFile,rgba(189, 195, 199, 0.5));
+
+				//Draw in horizontal layer
+				drawHorizontalLinesinHorizontalLayer(linesToPaint, currentHorizontalCanvas, numFile, rgba(R[numFile], G[numFile], B[numFile], 1));
+				drawHorizontalLinesinHorizontalLayer(filteredLines, currentHorizontalCanvas, numFile, rgba(189, 195, 199, 0.5));
 
 				$("#files-tab").append(
 						"<li><a href='#file" + numFile + "' data-toggle='tab'>File "
@@ -559,7 +680,7 @@ function createInstance() {
 
 			if ((numFile <= (lines.length-1)) && (map == false)) {
 				var mapimage = createMapimageLayer(numFile);
-				mapimage.src = currentCanvas.toDataURL("image/png");
+				mapimage.src = currentVerticalCanvas.toDataURL("image/png");
 				if(numFile==lines.length-1) map = true;
 			}
 		}
@@ -952,18 +1073,6 @@ function filter(line) {
 
 }
 
-function drawLine(lines, i, xtotal, ytotal, mode, color, canvasNumber) {
-	if (vertical) {
-        var sel=false;
-        if(selectedLines.length>canvasNumber&&selectedLines[canvasNumber].indexOf(i)>-1)
-            sel=true;
-		verticalDrawLines(lines, i, sel, color);
-	} else {
-
-		horizontalDrawLines(lines, i, xtotal, ytotal, mode, color, canvasNumber);
-	}
-}
-
 function resetDraw() {
 	if ((canvas) && (vertical)) {
 		$('#CSBPopover').hide();
@@ -1045,142 +1154,6 @@ function annotationDrawLines(seq,start,end,point){
     ctx.stroke();
 }
 
-function verticalDrawLines(actualLines, i, fragment, color) {
-
-	// Find the canvas document
-	var c = document.getElementById("myCanvas");
-
-	// Then, call its getContext() method (you must pass the string "2d" to the
-	// getContext() method):
-	var ctx = c.getContext("2d");
-
-	var xIni;
-	var xFin;
-	var yIni;
-	var yFin;
-
-	xIni = ((c.width * (parseInt(actualLines[i][1]) / xtotal) - currentArea.x0) / (currentArea.x1 - currentArea.x0))
-			* c.width;
-	yIni = ((c.height * (parseInt(actualLines[i][2]) / ytotal) - currentArea.y0) / (currentArea.y1 - currentArea.y0))
-			* c.height;
-	xFin = ((c.width * (parseInt(actualLines[i][3]) / xtotal) - currentArea.x0) / (currentArea.x1 - currentArea.x0))
-			* c.width;
-	yFin = ((c.height * (parseInt(actualLines[i][4]) / ytotal) - currentArea.y0) / (currentArea.y1 - currentArea.y0))
-			* c.height;
-
-
-	if((xFin-xIni < 0.1)&&(xFin-xIni>0)){
-		xFin = xIni + 0.1;
-	}
-
-	if((yFin-yIni < 0.1)&&(yFin-yIni >0)){
-		yFin = yIni +0.1 ;
-	}
-
-	//console.log((actualLines[i][1])+" = "+xIni+"; "+(actualLines[i][2])+" = "+yIni+(actualLines[i][3])+" = "+xFin+"; "+(actualLines[i][4])+" = "+yFin);
-
-	ctx.beginPath();
-	ctx.moveTo(xIni, c.height - yIni);
-	ctx.lineTo(xFin, c.height - yFin);
-	ctx.lineWidth = 2;
-
-	// if NOT CSB:
-
-	var mode = document.option.tipo;
-
-	if (actualLines[i][0] == 'CSB') {
-		if (mode[2].checked&&!fragment) {
-			ctx.strokeStyle = rgb(0, 150, 0);
-		} else if(fragment){
-            ctx.strokeStyle = rgb(255, 0, 0);
-        }else{
-			ctx.strokeStyle = color;
-		}
-	} else {
-		if (fragment) {
-            ctx.strokeStyle = rgb(255, 0, 0);
-		} else {
-			ctx.strokeStyle = color;
-		}
-	}
-
-	ctx.stroke();
-
-}
-
-function horizontalDrawLines(lines, i, xtotal, ytotal, rectsFilled,
-		rectsStroked, canvasNumber) {
-
-	// Find the canvas document
-	if (canvasNumber != 0) {
-		var c = document.getElementById("myCanvas" + canvasNumber);
-	} else {
-		var c = document.getElementById("myCanvas");
-	}
-	// Then, call its getContext() method (you must pass the string "2d" to the
-	// getContext() method):
-	var ctx = c.getContext("2d");
-
-	var xIni;
-	var xFin;
-	var yIni;
-	var yFin;
-
-	var padding = 50;
-
-	xIni = (c.width * parseInt(lines[i][1]) / xtotal);
-	yIni = (c.width * parseInt(lines[i][2]) / ytotal);
-	xFin = (c.width * parseInt(lines[i][3]) / xtotal);
-	yFin = (c.width * parseInt(lines[i][4]) / ytotal);
-	if(selectedLines.length>canvasNumber&& selectedLines[canvasNumber]!=null&&selectedLines[canvasNumber].indexOf(i)>-1)
-			color=rgb(255,0,0);
-	ctx.fillStyle = ctx.strokeStyle = color;
-
-	// Rect in sequence X
-	roundRect(ctx, xIni, 0, xFin - xIni, padding / 2, 2, rectsFilled,
-			rectsStroked);
-	/*
-	 * if(rectsFilled){ ctx.rect(xIni,0,xFin-xIni,padding); ctx.fill();
-	 * ctx.stroke(); } else { ctx.lineWidth=3;
-	 * ctx.strokeRect(xIni,0,xFin-xIni,padding); }
-	 */
-
-	var halfX = xIni + ((xFin - xIni) / 2);
-	var halfY = yIni + ((yFin - yIni) / 2);
-	ctx.beginPath();
-	ctx.moveTo(halfX, padding / 2);
-	ctx.lineTo(halfX, padding);
-	ctx.moveTo(halfX, padding);
-	ctx.lineTo(halfY, c.height - padding);
-	ctx.lineWidth = 1;
-	ctx.stroke();
-	/*
-	 * ctx.beginPath(); ctx.moveTo(xIni,padding);
-	 * ctx.lineTo(yIni,c.height-padding); ctx.moveTo(xFin,padding);
-	 * ctx.lineTo(yFin,c.height-padding); ctx.lineWidth=1; ctx.stroke();
-	 */
-
-	// Rect in sequence Y
-	var rectYHeight;
-	if (yFin < yIni) {
-		rectYHeight = c.height - padding / 2;
-		ctx.beginPath();
-		ctx.moveTo(halfY, c.height - padding / 2);
-		ctx.lineTo(halfY, c.height - padding);
-		ctx.stroke();
-	} else {
-		rectYHeight = c.height - padding;
-	}
-	roundRect(ctx, yIni, rectYHeight, yFin - yIni, padding / 2, 2, rectsFilled,
-			rectsStroked);
-	// ctx.lineWidth=3;
-	// ctx.strokeRect(yIni,c.height-padding,yFin-yIni,padding);
-	// ctx.lineWidth=1;
-	// ctx.fill();
-	// ctx.stroke();
-
-}
-
 function showSelected(){
     if(!showingSelected){
         currTable=document.getElementById("files-tab-content").cloneNode(true);
@@ -1212,54 +1185,6 @@ function showSelected(){
         showingSelected=false;
         document.getElementById("files-tab-content").parentNode.replaceChild(currTable.cloneNode(true),document.getElementById("files-tab-content"));
     }
-}
-
-/**
- * Draws a rounded rectangle using the current state of the canvas. If you omit
- * the last three params, it will draw a rectangle outline with a 5 pixel border
- * radius
- * 
- * @param {CanvasRenderingContext2D}
- *            ctx
- * @param {Number}
- *            x The top left x coordinate
- * @param {Number}
- *            y The top left y coordinate
- * @param {Number}
- *            width The width of the rectangle
- * @param {Number}
- *            height The height of the rectangle
- * @param {Number}
- *            radius The corner radius. Defaults to 5;
- * @param {Boolean}
- *            fill Whether to fill the rectangle. Defaults to false.
- * @param {Boolean}
- *            stroke Whether to stroke the rectangle. Defaults to true.
- */
-function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
-	if (typeof stroke == "undefined") {
-		stroke = true;
-	}
-	if (typeof radius === "undefined") {
-		radius = 5;
-	}
-	ctx.beginPath();
-	ctx.moveTo(x + radius, y);
-	ctx.lineTo(x + width - radius, y);
-	ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
-	ctx.lineTo(x + width, y + height - radius);
-	ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-	ctx.lineTo(x + radius, y + height);
-	ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
-	ctx.lineTo(x, y + radius);
-	ctx.quadraticCurveTo(x, y, x + radius, y);
-	ctx.closePath();
-	if (stroke) {
-		ctx.stroke();
-	}
-	if (fill) {
-		ctx.fill();
-	}
 }
 
 function chooseColor(likeness) {
@@ -1414,7 +1339,7 @@ function trackTransforms(ctx) {
 	}
 }
 
-function drawBoard(board, vertical, canvasName) {
+function drawGrid(board, vertical, canvasName) {
     var canvasGrid = document.getElementById(canvasName);
 
     if(board) {
@@ -1432,7 +1357,7 @@ function drawBoard(board, vertical, canvasName) {
             var stepVertical = (currentArea.x1 - currentArea.x0) / 5;
             var stepV = currentArea.x0;
 
-			for (var x = 50; x <= 550; x += 100) {
+			for (var x = canvasGrid.width/10; x <= canvasGrid.width; x += canvasGrid.width/5) {
 				ctx.font = "bold 12px sans-serif";
 				var correctPositionX = ((stepV) * parseInt(fileHeader[0].seqXLength)) / width;
 
@@ -1443,8 +1368,8 @@ function drawBoard(board, vertical, canvasName) {
 					correctPositionX = Math.round(correctPositionX);
 				}
 				ctx.fillText(correctPositionX.toString(), x - 20, height + 45);
-				ctx.moveTo(x, 25);
-				ctx.lineTo(x, height + 25);
+				ctx.moveTo(x, canvasGrid.width/20);
+				ctx.lineTo(x, canvasGrid.height - canvasGrid.width/15);
 				stepV += stepVertical;
 			}
 
@@ -1456,7 +1381,7 @@ function drawBoard(board, vertical, canvasName) {
 				var stepHorizontal = (currentArea.y1 - currentArea.y0) / 5;
 				var stepH = currentArea.y0;
 
-				for (var y = 25; y <= 525; y += 100) {
+				for (var y = canvasGrid.width/20; y <= canvasGrid.width; y += canvasGrid.width/5) {
 					ctx.font = "bold 12px sans-serif";
 					var correctPositionY = ((stepH) * parseInt(fileHeader[0].seqYLength)) / height;
 
@@ -1470,8 +1395,8 @@ function drawBoard(board, vertical, canvasName) {
 					correctPositionY = Math.round(correctPositionY);
 					ctx.fillText(correctPositionY.toString(), 5, height
                                 - (y - 55));
-					ctx.moveTo(50, y);
-					ctx.lineTo(width + 50, y);
+					ctx.moveTo(canvasGrid.width/10, y);
+					ctx.lineTo(canvasGrid.width - canvasGrid.width/10, y);
 					stepH += stepHorizontal;
 				}
 			}
@@ -1660,55 +1585,3 @@ function activateBoard() {
 		redraw();
 	}
 }
-
-$('#viewSelect')
-		.change(
-				function() {
-					if (this.value == 'Traditional') {
-						$("#myCanvasLayer1").show();
-						$("#myCanvasLayer2").show();
-						$("#myCanvasGrid").show();
-						$("#canvasContainer").css('width', '600px').css(
-								'height', '550px');
-						$("#myCanvas").css('background-color', 'transparent')
-								.css('position', 'absolute').css('margin-top',
-										'25px').css('margin-left', '50px');
-
-						for (x = 1; x < lines.length; x++) {
-							console.log("Generating horizontal canvas");
-							var canvasTemp = document.getElementById("myCanvas"
-									+ x);
-							canvasTemp.remove();
-						}
-
-						vertical = true;
-						redraw();
-						zoomBoard = false;
-					}
-
-					if (this.value == 'Horizontal') {
-						$("#myCanvasLayer1").hide();
-						$("#myCanvasLayer2").hide();
-						$("#myCanvasGrid").hide();
-						$("#canvasContainer").css('width', 'auto').css(
-								'height', 'auto');
-						$("#myCanvas").css('background-color', 'white').css(
-								'position', 'relative')
-								.css('margin-top', '0px').css('margin-left',
-										'0px');
-
-						for (x = 1; x < lines.length; x++) {
-							console.log("Generating horizontal canvas");
-							$("#canvasContainer")
-									.append(
-											"<canvas id='myCanvas"
-													+ x
-													+ "' class='horizontalCanvas' width='700' height='250'></canvas>")
-						}
-
-						vertical = false;
-						redraw();
-						zoomBoard = false;
-					}
-
-				});
