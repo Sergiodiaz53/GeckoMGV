@@ -1,0 +1,23 @@
+{%extends "includes/basic.html" %}
+{%block content%}
+<script src="https://s3-eu-west-1.amazonaws.com/biojs/msa/latest/msa.js"></script>
+<link type=text/css rel=stylesheet href=https://s3-eu-west-1.amazonaws.com/biojs/msa/latest/msa.css />
+<div id='menu'></div>
+<div id='msa'></div>
+<form action="/test/" method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Submit" id="suButton"/>
+</form>
+<script type="text/javascript">
+    function draw(){
+        var myVar="{{ content | escapejs }}"
+        drawMSA(myVar);
+        $("#canv_0").remove()
+    }
+    if(document.getElementById("id_seq1")==null){
+        $(document).ready(draw());
+        document.getElementById("suButton").style.display='none'
+    }
+</script>
+{%endblock%}

@@ -7,7 +7,6 @@ var prevTable="";
 var currTable="";
 var searchList=[];
 
-
 function saveCSV(){
     var anot=[],csvtab=[];
     for(var x=0;x<lines.length;x++) {
@@ -191,3 +190,7 @@ function dialogAnnotations(){
         }
     });
 }
+
+    $( document ).ready(function() {
+        $('[data-toggle="tooltip"]').tooltip();
+    });

@@ -1,4 +1,5 @@
 from django import forms
+from .models import models
 from django.contrib.auth import get_user_model
 from scripts.models import *
 from fileSystem.views import *
@@ -14,6 +15,11 @@ class ExecuteService(forms.Form):
     class Meta:
         fields = ["name", "args"]
 
+class drawMSAComp(forms.Form):
+    seq1=forms.CharField(label='Sequence2', max_length=100)
+    seq2=forms.CharField(label='Sequence1', max_length=100)
+
+
 class kmersForm(forms.Form):
     parameter1 = forms.ChoiceField(label="Filename", widget=forms.Select(attrs={'class':'selector','id': 'Filename'}))
     parameter2 = forms.CharField(label='K', max_length=1, widget=forms.TextInput(attrs={'id': 'K'}))
@@ -24,7 +30,7 @@ class kmersForm(forms.Form):
         self.user = kwargs.pop('user', None)
         self.request = kwargs.pop('request', None)
         super(kmersForm, self).__init__(*args, **kwargs)
-        self.fields['parameter1'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="Filename", widget=forms.Select(attrs={'class':'selector','id': 'Filename'}))
+        self.fields['parameter1'] = forms.ChoiceField(choices=[(file.file.name, file.filename)  for file in userFile.objects.filter(user=self.user)], label="Filename", widget=forms.Select(attrs={'class':'selector','id': 'Filename'}))
 
 class csb2csvForm(forms.Form):
     parameter1 = forms.ChoiceField(label="CSB file", widget=forms.Select(attrs={'class':'selector','id': 'CSBfile'}))
@@ -35,8 +41,8 @@ class csb2csvForm(forms.Form):
         self.user = kwargs.pop('user', None)
         self.request = kwargs.pop('request', None)
         super(csb2csvForm, self).__init__(*args, **kwargs)
-        self.fields['parameter1'] = forms.ChoiceField(choices=[(file.file.name, file.file.name) for file in userFile.objects.filter(user=self.user)], label="CSB file", widget=forms.Select(attrs={'class':'selector','id': 'CSBfile'}))
-        self.fields['parameter2'] = forms.ChoiceField(choices=[(file.file.name, file.file.name) for file in userFile.objects.filter(user=self.user)], label="Master file", widget=forms.Select(attrs={'class':'selector','id': 'Masterfile'}))
+        self.fields['parameter1'] = forms.ChoiceField(choices=[(file.file.name, file.filename)  for file in userFile.objects.filter(user=self.user)], label="CSB file", widget=forms.Select(attrs={'class':'selector','id': 'CSBfile'}))
+        self.fields['parameter2'] = forms.ChoiceField(choices=[(file.file.name, file.filename)  for file in userFile.objects.filter(user=self.user)], label="Master file", widget=forms.Select(attrs={'class':'selector','id': 'Masterfile'}))
 
 class extractSeqFromFragsForm(forms.Form):
     parameter1 = forms.ChoiceField(label="frags file", widget=forms.Select(attrs={'class':'selector','id': 'fragsFile'}))
@@ -50,8 +56,8 @@ class extractSeqFromFragsForm(forms.Form):
         self.user = kwargs.pop('user', None)
         self.request = kwargs.pop('request', None)
         super(extractSeqFromFragsForm, self).__init__(*args, **kwargs)
-        self.fields['parameter1'] = forms.ChoiceField(choices=[(file.file.name, file.file.name) for file in userFile.objects.filter(user=self.user)], label="frags file", widget=forms.Select(attrs={'class':'selector','id': 'fragsFile'}))
-        self.fields['parameter2'] = forms.ChoiceField(choices=[(file.file.name, file.file.name) for file in userFile.objects.filter(user=self.user)], label="X Fasta file", widget=forms.Select(attrs={'class':'selector','id': 'xFastaFile'}))
-        self.fields['parameter3'] = forms.ChoiceField(choices=[(file.file.name, file.file.name) for file in userFile.objects.filter(user=self.user)], label="Y Fasta file", widget=forms.Select(attrs={'class':'selector','id': 'yFastaFile'}))
-        self.fields['parameter4'] = forms.ChoiceField(choices=[(file.file.name, file.file.name) for file in userFile.objects.filter(user=self.user)], label="Y-reversed Fasta file", widget=forms.Select(attrs={'class':'selector','id': 'yReversedFastaFile'}))
-        self.fields['parameter5'] = forms.ChoiceField(choices=[(file.file.name, file.file.name) for file in userFile.objects.filter(user=self.user)], label="Output FragFile", widget=forms.Select(attrs={'class':'selector','id': 'outputFragFile'}))
+        self.fields['parameter1'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="frags file", widget=forms.Select(attrs={'class':'selector','id': 'fragsFile'}))
+        self.fields['parameter2'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="X Fasta file", widget=forms.Select(attrs={'class':'selector','id': 'xFastaFile'}))
+        self.fields['parameter3'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="Y Fasta file", widget=forms.Select(attrs={'class':'selector','id': 'yFastaFile'}))
+        self.fields['parameter4'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="Y-reversed Fasta file", widget=forms.Select(attrs={'class':'selector','id': 'yReversedFastaFile'}))
+        self.fields['parameter5'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="Output FragFile", widget=forms.Select(attrs={'class':'selector','id': 'outputFragFile'}))
