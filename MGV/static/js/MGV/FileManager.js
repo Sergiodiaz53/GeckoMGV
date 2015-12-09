@@ -6,11 +6,13 @@
 
 //Global Variables
 var fileHeader = [];
+var fileNames = [];
 var fileInfo=[];
 var multigenome;
+var parseCount;
 
 
-//My Objectsx
+//My Objects
 function CSVHeader (headers) {
     this.seqXFilename = headers[1];
     this.seqYFilename = headers[2];
@@ -25,21 +27,70 @@ function CSVHeader (headers) {
     this.totalFragments = headers[11];
 }
 
+function loadFileFromServer($fileName){
+    BootstrapDialog.closeAll();
+    $.ajax({
+        type:"GET",
+        url:"/loadFileFromServer/",
+        data: {
+            'filename': $fileName // from form
+        },
+        success: function(content){
+            fileType = 'csv';
+            fileNames[lines.length] = $fileName;
+            multigenome = false;
+            parseCount = 1;
+            processData(content,lines.length);
+        }
+    });
+    return false; //<---- move it here
+}
+
+function getFilesListFromServer(){
+
+    $.ajax({
+        type:"GET",
+        url:"/getFileList/",
+        success: function(response){
+
+                BootstrapDialog.show({
+                    title: 'Select file from Server',
+                    message:function(dialog) {
+                        var content = '<table class="table table-striped">';
+                        for (i in response) {
+                            content += '<thead><tr><th class="clickable" onclick="loadFileFromServer('+"'"+response[i]+"'"+')"><span class="glyphicon glyphicon-file"></span> '+response[i]+'</th></tr></thead>';
+                        }
+                        content += '</table>';
+                        dialog.setSize(BootstrapDialog.SIZE_SMALL);
+                        return content;
+                    }
+                })
+            }
+    });
+    return false; //<---- move it here
+}
+
 
 function handleFiles(files, type) {
-    if (files.length!=0)
+
+    if (files.length!=0) {
         $('#loading-indicator').show();
-    console.log("HanldeFiles");
+    }
+
+    console.log("HandleFiles");
     console.time("ReadingFile()");
     // Check for the various File API support.
+
+    parseCount = files.length;
+
     if (window.FileReader) {
-        lines=[];
         // FileReader are supported.
         if(files.length>1)
             multigenome=true;
         for(var i=0; i <files.length; i++) {
             fileType = type;
-            getAsText(files[i],i);
+            console.log("I: "+i+" lines.length: "+lines.length);
+            getAsText(files[i],lines.length+i);
         }
     } else {
         alert('FileReader is not supported in this browser.');
@@ -47,16 +98,13 @@ function handleFiles(files, type) {
 }
 
 function getAsText(fileToRead, i) {
-    console.log("GetAsText:"+i)
+    console.log("GetAsText:"+i);
+
     var reader = new FileReader();
-    // Handle errors load
-    reader.onload = function (event, index) {
-        index = i;
-        loadHandler(event, index)
-    };
     if(fileType=='csv'){
-        fileName = fileToRead.name;
-        fileName = fileName.substring(0, fileName.length-4);
+        fileNames[i] = fileToRead.name;
+        fileNames[i]  = fileNames[i].substring(0, fileNames[i].length-4);
+        console.log("I: "+i+" fileName"+fileNames[i]);
     } else if (fileType=='mat') {
         fileNameMAT = fileToRead.name;
         fileNameMAT = fileNameMAT.substring(0, fileNameMAT.length-10);
@@ -64,41 +112,55 @@ function getAsText(fileToRead, i) {
         fileNameMVN = fileToRead.name;
         fileNameMVN = fileNameMVN.substring(0, fileNameMVN.length-4)
     }
+
+    // Handle errors load
+    reader.onload = function (event, index) {
+        index = i;
+        loadHandler(event, index)
+    };
+
+
     reader.onerror = errorHandler;
     // Read file into memory as UTF-8
     reader.readAsText(fileToRead);
 }
 
 function loadHandler(event, i) {
-    console.log("LoadHandler: "+i)
+    console.log("LoadHandler: "+i);
     var csv = event.target.result;
     processData(csv, i);
 }
 
-function processData(csv, i) {
+function processData(csv, index) {
 
-    console.log("ProcessData: " + i);
+    console.log("ProcessData: " + index);
 
     if (fileType == 'csv') {
-        var title = fileName;
-        if (multigenome)
-            title = "Multigenome comparison";
-        document.getElementById("fileName").innerHTML = title;
+        console.log("I: "+index+" fileName"+fileNames[index]);
+        document.getElementById("fileName").innerHTML = fileNames[index];
 
         //InfoPopover = File info popover ()
         $(function () {
             $("#infoPopover").popover();
         });
 
+        $('#loading-indicator').show();
         Papa.parse(csv, {
-            worker: false,
+            worker: true,
             complete: function (results) {
-                lines[i] = results.data;
+                parseCount--;
+                lines[index] = results.data;
                 reset = true;
-                fileHeader = [];
                 map = false;
-                redraw();
+
+                if(parseCount==0){
+                    redraw();
+                }
                 $('#loading-indicator').hide();
+            },
+            error: function(err,reason){
+                alert(err);
+                alert(reason);
             }
         });
 
@@ -158,7 +220,7 @@ function processData(csv, i) {
         }
 
         // Recovery lines
-        lines[i] = JSON.parse(JSON.stringify(auxLines));
+        lines[index] = JSON.parse(JSON.stringify(auxLines));
         reset = true;
         fileHeader = [];
 

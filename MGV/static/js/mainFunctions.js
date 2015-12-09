@@ -39,7 +39,7 @@ function saveCSV(){
         outputTable.appendChild(anot[x]);
         output.appendChild(outputTable);
         console.log(document.getElementById("output"+x));
-        var fileName = lines[x][2][0].split(":")[1].trim()+"-"+lines[x][3][0].split(":")[1].trim();
+        var fileName = lines[x][2][0].split(":")[1].trim().split(".")[0]+"-"+lines[x][3][0].split(":")[1].trim().split(".")[0]+".csv";
         console.log("downloading "+fileName);
         CSV.begin("#output"+x).download(fileName).go();
         $('#infoModal').modal('toggle');
@@ -190,3 +190,7 @@ function dialogAnnotations(){
         }
     });
 }
+
+    $( document ).ready(function() {
+        $('[data-toggle="tooltip"]').tooltip();
+    });

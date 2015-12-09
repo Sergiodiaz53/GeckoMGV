@@ -33,6 +33,18 @@ def executeService(request):
         command.extend(args)
         output = subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0]
 
+
+        #Read console output line by line example
+        """
+        p = Popen(command, stdout=PIPE, bufsize=1)
+        with p.stdout:
+            for line in iter(p.stdout.readline, b''):
+                print line,
+        p.wait() # wait for the subprocess to exit
+
+        """
+
+
         fileResult = createFile(request, output, request.POST.get('nameFileResult'))
         return render(request, 'serviceResult.html', {'serviceName': request.POST.get('serviceName'),
                                                       'fileResult': fileResult, 'filePath': fileResult.file})

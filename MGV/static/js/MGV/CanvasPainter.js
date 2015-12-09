@@ -147,8 +147,6 @@ function storeFileHeader(currentLines, numFile) {
     firstNameCell.appendChild(document
                 .createTextNode(auxLine[0].toString()));
 
-    console.log("X: " + numFile + "Headers: " + headers);
-
     fileHeader[numFile] = new CSVHeader(headers);
 
     document.getElementById("fileName").innerHTML += '<button id="infoPopover'
@@ -213,7 +211,6 @@ function loadHorizontalView(){
     }
 }
 
-
 function resetZoom(){
     currentArea.x0 = 0;
     currentArea.y0 = 0;
@@ -224,10 +221,94 @@ function resetZoom(){
     reset = false;
 }
 
+function createComparisonLayer(numLayer){
+	var idLayer = "layer"+numLayer;
+	var idMapimageLayer = "Maplayer"+numLayer;
+
+	if($("#" + idLayer).length == 0) {
+		console.log("Creating layer");
+		//If layer doesn't exist
+		var newLayer =
+				$('<canvas/>',{'class':'canvasLayer img-responsive', 'id': idLayer}).prop({
+                    width: 500,
+                    height: 500
+                });
+		$("#canvasContainer").append(newLayer);
+
+		var newLayerBoxElement =
+				$('<input type="checkbox" class="switchLayer" id="checklayer'+numLayer+'"checked="checked" value="'+numLayer+'"/> '+fileNames[numLayer]+'</input>');
+
+		var row = $("<tr>");
+		var column = row.append( $("<td>").append(newLayerBoxElement));
+		$('#layersTable').last().append(row);
+
+		$(newLayerBoxElement).change(function() {
+			 if ($(this).is(':checked')) {
+				 $('#'+idLayer).show();
+				 $('#'+idMapimageLayer).show()
+						 .removeAttr('style');
+			 } else {
+				 $('#'+idLayer).hide();
+				 $('#'+idMapimageLayer).hide();
+			 }
+		});
+	}
+	return $("#"+idLayer)[0];
+}
+
+function createMapimageLayer(numLayer) {
+
+	var idLayer = "Maplayer"+numLayer;
+
+	var newLayer =
+			$('<img/>',{'class':'mapimage', 'id': idLayer}).prop({
+				width: 202,
+				height: 202
+			});
+	$("#canvasMapContainer").prepend(newLayer);
+
+	return $("#"+idLayer)[0];
+}
+
+function drawLinesInLayer(linesToPaint, canvasLayer, numFile, color){
+	var currentCtx = canvasLayer.getContext('2d');
+
+	currentCtx.beginPath();
+	for (var x in linesToPaint){
+		line = linesToPaint[x];
+
+		var xIni = ((canvasLayer.width * (parseInt(lines[numFile][line][1]) / xtotal) - currentArea.x0) / (currentArea.x1 - currentArea.x0))
+				* canvasLayer.width;
+		var yIni = ((canvasLayer.height * (parseInt(lines[numFile][line][2]) / ytotal) - currentArea.y0) / (currentArea.y1 - currentArea.y0))
+				* canvasLayer.height;
+		var xFin = ((canvasLayer.width * (parseInt(lines[numFile][line][3]) / xtotal) - currentArea.x0) / (currentArea.x1 - currentArea.x0))
+				* canvasLayer.width;
+		var yFin = ((canvasLayer.height * (parseInt(lines[numFile][line][4]) / ytotal) - currentArea.y0) / (currentArea.y1 - currentArea.y0))
+				* canvasLayer.height;
+
+
+		if((xFin-xIni < 0.1)&&(xFin-xIni>0)){
+			xFin = xIni + 0.1;
+		}
+
+		if((yFin-yIni < 0.1)&&(yFin-yIni >0)){
+			yFin = yIni +0.1 ;
+		}
+
+		//console.log((lines[numFile][line][1])+" = "+xIni+"; "+(lines[numFile][line][2])+" = "+yIni+(lines[numFile][line][3])+" = "+xFin+"; "+(lines[numFile][line][4])+" = "+yFin);
+
+		currentCtx.moveTo(xIni, canvasLayer.height - yIni);
+		currentCtx.lineTo(xFin, canvasLayer.height - yFin);
+	}
+	currentCtx.closePath();
+	currentCtx.lineWidth = 2;
+	currentCtx.strokeStyle = color;
+	currentCtx.stroke();
+}
+
 function createInstance() {
     var loadingGif = $('#loading-indicator');
 
-	canvasMatrix = document.getElementById("myCanvasMatrix");
 	canvas = document.getElementById("myCanvas");
 	canvasMap = document.getElementById("myMap");
 	canvasOffset = $("#myCanvas").offset();
@@ -249,8 +330,6 @@ function createInstance() {
         loadingGif.show();
 		console.time("reDraw()");
 
-        clearCanvas("myCanvas");
-
 		// Clear previous data in HTML
 		document.getElementById("output").innerHTML = "<div class=\"SearchTitle\" > <div class=\"SearchTitleFilterButton\"> <span>Filter:</span> <input type=\"text\" class=\"SearchFilter\" /> <button class=\"SearchButton\" onclick=\"showResults($(\'.SearchFilter\').val(),true)\" ><span class=\"glyphicon glyphicon-search\"></span></button> </div> </div> <ul class='nav nav-tabs' id='files-tab'></ul>"
 				+ " <div class='tab-content' id='files-tab-content'></div>";
@@ -258,8 +337,11 @@ function createInstance() {
 		document.getElementById("annotationsOutput").innerHTML = "<ul class='nav nav-tabs' id='annotations-tab'></ul>"
 				+ "<div class='tab-content' id='annotations-tab-content'></div>";
 
-		for (var numFile = 0; numFile < lines.length; numFile++) {
 
+		// Draw Grid
+		drawBoard(board, vertical, "myCanvasGrid");
+
+		for (var numFile = 0; numFile < lines.length; numFile++) {
             console.log("Round: "+numFile);
 
 			currentLines = lines[numFile].slice(0);
@@ -298,29 +380,11 @@ function createInstance() {
 				xtotal = fileHeader[0].seqXLength;
 				ytotal = fileHeader[0].seqYLength;
 
-				if (!vertical) {
-                    loadHorizontalView();
-                } else {
-					if (canvas.height != 500)
-						canvas.height = 500;
-					if (canvas.width != 500)
-						canvas.width = 500;
-				}
+				var linesToPaint = [];
+				var filteredLines = [];
 
-				// Draw Grid
-				if (board) {
-                    if(vertical){
-                        drawBoard(board, vertical, "myCanvasGrid");
-                    } else {
-                        if(numFile!=0){
-                            drawBoard(board, vertical, "myCanvas"+numFile);
-                        } else {
-                            drawBoard(board, vertical, "myCanvas");
-                        }
-                    }
-				} else {
-                     if(vertical) clearCanvas("myCanvasGrid");
-				}
+				var currentCanvas = createComparisonLayer(numFile);
+				var currentCtx = currentCanvas.getContext('2d');
 
 				for (i = fragsStarts; i < currentLines.length; i++) {
 
@@ -335,7 +399,6 @@ function createInstance() {
 							var firstNameCell = row.insertCell(-1);
 							firstNameCell.appendChild(document
 									.createTextNode(lines[0][16][j]));
-
 							// }
 						}
 					}
@@ -369,19 +432,10 @@ function createInstance() {
 
 							if (paint == true) {
 								// console.time("paint()");
-								var numColor = (i) % 8;
-								color = rgb(R[numFile], G[numFile], B[numFile]);
-								drawLine(currentLines, i, xtotal, ytotal, mode,
-										color, numFile);
-								add2Table(i, table);
-								auxLines.push(lines[i]);
+								linesToPaint.push(i);
 								// console.timeEnd("paint()");
 							} else {
-								color = rgba(189, 195, 199, 0.7);
-								drawLine(currentLines, i, xtotal, ytotal, mode,
-										color, numFile);
-								drawLine(currentLines, i, xtotal, ytotal, mode,
-										color, numFile);
+								filteredLines.push(i);
 							}
 						}
 					} else {
@@ -449,8 +503,9 @@ function createInstance() {
 						}
 					}
 				}
-
-				// currentLines = auxLines.slice(0);
+				clearCanvas(currentCanvas.id);
+				drawLinesInLayer(linesToPaint,currentCanvas,numFile,rgba(R[numFile], G[numFile], B[numFile], 0.7));
+				drawLinesInLayer(filteredLines,currentCanvas,numFile,rgba(189, 195, 199, 0.5));
 
 				$("#files-tab").append(
 						"<li><a href='#file" + numFile + "' data-toggle='tab'>File "
@@ -490,16 +545,22 @@ function createInstance() {
 			$('.hiddenRow').hide();
 
 			RectInMap.x = Math.min(currentArea.x0, currentArea.x1) * 2 / 5;
-			RectInMap.y = (500 - Math.max(currentArea.y0, currentArea.y1)) * 2 / 5;
+			RectInMap.y = (canvas.width - Math.max(currentArea.y0, currentArea.y1)) * 2 / 5;
 			RectInMap.tamx = Math.abs(currentArea.x0 - currentArea.x1) * 2 / 5;
 			RectInMap.tamy = Math.abs(currentArea.y0 - currentArea.y1) * 2 / 5;
 
+			if(RectInMap.tamx < 5 || RectInMap.tamy < 5) {
+				RectInMap.tamx = 5; RectInMap.tamy = 5;
+			}
+
+			//console.log("Map: "+RectInMap.x+", "+RectInMap.y+", "+RectInMap.tamx+", "+RectInMap.tamy);
+
 			redrawMap();
 
-			if ((numFile == (lines.length-1)) && (map == false)) {
-				var mapimage = document.getElementById("mapimage");
-				mapimage.src = canvas.toDataURL("image/png");
-				map = true;
+			if ((numFile <= (lines.length-1)) && (map == false)) {
+				var mapimage = createMapimageLayer(numFile);
+				mapimage.src = currentCanvas.toDataURL("image/png");
+				if(numFile==lines.length-1) map = true;
 			}
 		}
 		for(var index=0;index<searchList.length;index++)
@@ -917,12 +978,10 @@ function resetDraw() {
 	}
 }
 
-function returnMinValue(){
-	return minValue;
-}
-
 //Draw the lines to the lines to the annotation point
 function annotationDrawLines(seq,start,end,point){
+
+	console.log("Drawing Annotations");
     start=parseInt(start),end=parseInt(end),point=parseInt(point);
     var c = document.getElementById("myCanvasLayer2");
 	var ctx = c.getContext("2d");
@@ -1017,7 +1076,7 @@ function verticalDrawLines(actualLines, i, fragment, color) {
 	if((yFin-yIni < 0.1)&&(yFin-yIni >0)){
 		yFin = yIni +0.1 ;
 	}
-	
+
 	//console.log((actualLines[i][1])+" = "+xIni+"; "+(actualLines[i][2])+" = "+yIni+(actualLines[i][3])+" = "+xFin+"; "+(actualLines[i][4])+" = "+yFin);
 
 	ctx.beginPath();
@@ -1287,7 +1346,7 @@ HSBToRGB = function(hsb) {
 		}
 	}
 	return rgb(Math.round(mirgb.r), Math.round(mirgb.g), Math.round(mirgb.b));
-}
+};
 
 // Adds ctx.getTransform() - returns an SVGMatrix
 // Adds ctx.transformedPoint(x,y) - returns an SVGPoint
@@ -1357,57 +1416,68 @@ function trackTransforms(ctx) {
 
 function drawBoard(board, vertical, canvasName) {
     var canvasGrid = document.getElementById(canvasName);
+
     if(board) {
         var ctx = canvasGrid.getContext("2d");
         var width = canvas.width;
         var height = canvas.height;
         if (vertical) {
-            clearCanvas(canvasName);
+			clearCanvas(canvasName);
 
-            ctx.font = "bold 20px sans-serif";
-            ctx.fillText("Grid size: 500x500px, Step: 100px", 0, -23);
+			console.log("hola");
 
-            var stepVertical = Math.round((currentArea.x1 - currentArea.x0) / 5);
+            //ctx.font = "bold 20px sans-serif";
+            //ctx.fillText("Grid size: 500x500px, Step: 100px", 0, -23);
+
+            var stepVertical = (currentArea.x1 - currentArea.x0) / 5;
             var stepV = currentArea.x0;
 
-            if (stepVertical != 0) {
+			for (var x = 50; x <= 550; x += 100) {
+				ctx.font = "bold 12px sans-serif";
+				var correctPositionX = ((stepV) * parseInt(fileHeader[0].seqXLength)) / width;
 
-                for (var x = 50; x <= 550; x += 100) {
-                    ctx.font = "bold 12px sans-serif";
-                    // var aux = (((x - currentArea.x0) / (currentArea.x1 -
-                    // currentArea.x0)) * width);
-                    var correctPositionX = ((stepV) * parseInt(fileHeader[0].seqXLength))
-                            / width;
-                    correctPositionX = Math.round(correctPositionX);
-                    ctx.fillText(correctPositionX.toString(), x - 20, height + 45);
-                    ctx.moveTo(x, 25);
-                    ctx.lineTo(x, height + 25);
-                    stepV += stepVertical;
-                }
+				//Round to thousands if not so much zoom
+				if(scaleX > 0.20) {
+					correctPositionX = Math.round(correctPositionX/1000)*1000;
+				} else {
+					correctPositionX = Math.round(correctPositionX);
+				}
+				ctx.fillText(correctPositionX.toString(), x - 20, height + 45);
+				ctx.moveTo(x, 25);
+				ctx.lineTo(x, height + 25);
+				stepV += stepVertical;
+			}
 
-                var stepHorizontal = Math.round((currentArea.y1 - currentArea.y0) / 5);
-                var stepH = currentArea.y0;
+			var stepHorizontal = Math.round((currentArea.y1 - currentArea.y0) / 5);
+			var stepH = currentArea.y0;
 
-                if (vertical) {
+			if (vertical) {
 
-                    for (var y = 25; y <= 525; y += 100) {
-                        ctx.font = "bold 12px sans-serif";
-                        // var auxy = (((y - currentArea.y0) / (currentArea.y1 -
-                        // currentArea.y0)) * height);
-                        var correctPositionY = ((stepH) * parseInt(fileHeader[0].seqYLength))
-                                / height;
-                        correctPositionY = Math.round(correctPositionY);
-                        ctx.fillText(correctPositionY.toString(), 5, height
+				var stepHorizontal = (currentArea.y1 - currentArea.y0) / 5;
+				var stepH = currentArea.y0;
+
+				for (var y = 25; y <= 525; y += 100) {
+					ctx.font = "bold 12px sans-serif";
+					var correctPositionY = ((stepH) * parseInt(fileHeader[0].seqYLength)) / height;
+
+					//Round to thousands if not so much zoom
+					if(scaleX > 0.20) {
+						correctPositionY = Math.round(correctPositionY/1000)*1000;
+					} else {
+						correctPositionY = Math.round(correctPositionY);
+					}
+
+					correctPositionY = Math.round(correctPositionY);
+					ctx.fillText(correctPositionY.toString(), 5, height
                                 - (y - 55));
-                        ctx.moveTo(50, y);
-                        ctx.lineTo(width + 50, y);
-                        stepH += stepHorizontal;
-                    }
-                }
+					ctx.moveTo(50, y);
+					ctx.lineTo(width + 50, y);
+					stepH += stepHorizontal;
+				}
+			}
 
-                ctx.strokeStyle = "#ddd";
-                ctx.stroke();
-		    }
+			ctx.strokeStyle = "#ddd";
+			ctx.stroke();
         } else {
             var stepVertical = width / 10;
             var stepV = 0;
