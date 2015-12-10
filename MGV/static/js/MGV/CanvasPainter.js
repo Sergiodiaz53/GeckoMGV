@@ -47,6 +47,7 @@ var scaleY = 1;
 var zoomed = false;
 var reset = false;
 var selected = false;
+var shiftSel=false;
 
 // Constants
 const headerSize = 12;
@@ -810,10 +811,11 @@ function createInstance() {
                                 var index =-1;
                                 if((index=selectedLines[arrayIndex].indexOf(lineIndex))>-1){
                                     selectedLines[arrayIndex].splice(index, 1);
-                                    verticalDrawLines(lines[arrayIndex], lineIndex, false, rgb(R[arrayIndex],G[arrayIndex],B[arrayIndex]));
+									clearCanvas("selectLayer");
+                                    drawVerticalLinesInVerticalLayer(selectedLines[arrayIndex], $("#selectLayer"), arrayIndex, rgb(255,0,0));
                                 }else{
                                     selectedLines[arrayIndex].push(lineIndex);
-                                    verticalDrawLines(lines[arrayIndex], lineIndex, true, null);
+                                    drawVerticalLinesInVerticalLayer( [lineIndex], $("#selectLayer"),arrayIndex, rgb(255,0,0));
                                 }
                             }
                         }

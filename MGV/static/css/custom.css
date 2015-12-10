@@ -211,6 +211,19 @@ body {
     z-index: 2;
 }
 
+
+#selectLayer {
+    width: 80%;
+    margin-left: 10%;
+    margin-top: 5%;
+    height: auto;
+    display: block;
+    background-color: transparent;
+    border:1px solid #000000;
+    position: absolute;
+    z-index: 1;
+}
+
 #myCanvasLayer1 {
     width: 80%;
     margin-left: 10%;
