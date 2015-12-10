@@ -23,7 +23,6 @@ var mouseInRect = {
 var lines = [];
 var currentLines = [];
 var selectedLines=[];
-var auxLines = [];
 var currentArea = {
 	x0 : 0,
 	y0 : 0,
