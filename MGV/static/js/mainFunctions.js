@@ -141,41 +141,44 @@ function drawAnnotations(){
         }
 }
 
-function dialogFrags(){
-    var $dialogContainer = $('#output');
-    var $detachedChildren = $dialogContainer.children().detach();
-    $('#output').dialog({
-        height:400,
-        widht: 800,
-        title: 'CSB & Frag',
-        buttons: [
-            {
-                text: "selected",
-                click: function () {
-                   showSelected()
+function dialogFrags() {
+    if (!$('#output').is(':visible')) {
+        var $dialogContainer = $('#output');
+        var $detachedChildren = $dialogContainer.children().detach();
+        $('#output').dialog({
+            height: 400,
+            widht: 800,
+            title: 'CSB & Frag',
+            buttons: [
+                {
+                    text: "selected",
+                    click: function () {
+                        showSelected()
+                    },
+                    "class": "ui-button-primary"
                 },
-                "class":"ui-button-primary"
-            },
-            {
-                text: "Save CSV",
-                click: function () {
-                    saveCSV()
-                    //redraw();
+                {
+                    text: "Save CSV",
+                    click: function () {
+                        saveCSV()
+                        //redraw();
+                    },
+                    "class": "ui-button-primary"
                 },
-                "class":"ui-button-primary"
-            },
 
-            {
-                text: "Close",
-                click: function () {
-                    $(this).dialog("close");
+                {
+                    text: "Close",
+                    click: function () {
+                        $(this).dialog("close");
+                    }
                 }
+            ],
+            open: function () {
+                $detachedChildren.appendTo($dialogContainer);
             }
-        ],
-        open: function () {
-            $detachedChildren.appendTo($dialogContainer);
-        }
-    });
+        });
+    }else
+        $('#output').dialog("close");
 }
 
 function dialogAnnotations(){
