@@ -53,7 +53,7 @@ function getFilesListFromServer(){
         url:"/getFileList/",
         success: function(response){
 
-                BootstrapDialog.show({
+                BootstrapDialogDialog.show({
                     title: 'Select file from Server',
                     message:function(dialog) {
                         var content = '<table class="table table-striped">';

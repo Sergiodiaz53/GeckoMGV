@@ -12,6 +12,7 @@
                     <div id="toolmenu">
                         <div class="row row-centered top-buffer">
                             <button type="button" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Load frags from server" onclick ="getFilesListFromServer()"><span class="glyphicon glyphicon-floppy-save"></span></button>
+                            <button type="button" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Go back" onclick ="goToPrevZoom()"><span class="glyphicon glyphicon-chevron-left"></span></button>
                             <span class="btn btn-primary btn-file glyphicon glyphicon-floppy-disk" data-toggle="tooltip" data-placement="bottom" title="Load frags from local" ><input type="file" multiple="true" onchange="handleFiles(this.files,'csv')" accept=".csv"></span>
                             <span class="btn btn-primary btn-file glyphicon glyphicon-th" data-toggle="tooltip" data-placement="bottom" title="Load Matrix from local" ><input type="file" multiple="false" onchange="handleFiles(this.files,'mat')" accept=".MAT"></span>
                             <button type="button" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Return to initial view" onclick="resetDraw()"><span class="glyphicon glyphicon-step-backward"></span></button>
@@ -55,6 +56,7 @@
 						<canvas id="myCanvas" class="img-responsive"  width="500" height="500"></canvas>
 						<canvas id="myCanvasLayer1" class="img-responsive"  width="500" height="500"> </canvas>
                         <canvas id="myCanvasLayer2" class="img-responsive"  width="500" height="500"> </canvas>
+						<canvas id="selectLayer" class="img-responsive"  width="500" height="500"> </canvas>
 					</div>
 				</div>
 

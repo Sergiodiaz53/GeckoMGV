@@ -175,7 +175,7 @@ body {
     background-color: transparent;
     border:1px solid #000000;
     position: absolute;
-    z-index:2;
+    z-index:3;
     margin-top: 25px;
     margin-left: 50px;
 }
@@ -186,6 +186,15 @@ body {
     border:1px solid #000000;
     position: absolute;
     z-index: 1;
+    margin-top: 25px;
+    margin-left: 50px;
+}
+#selectLayer {
+
+    background-color: transparent;
+    border:1px solid #000000;
+    position: absolute;
+    z-index: 2;
     margin-top: 25px;
     margin-left: 50px;
 }
