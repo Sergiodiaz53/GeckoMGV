@@ -28,7 +28,7 @@ var selectedLines=[];
 var backZoomList=[];
 var backCanvas =$('<canvas/>',{'class':'canvasLayer img-responsive'}).prop({width: 500,height: 500 });
 var backCtx=backCanvas[0].getContext('2d');
-var initialImage;
+var currentZoomIndex=-1;
 
 var currentArea = {
 	x0 : 0,
@@ -81,17 +81,38 @@ function addPrevZoom(){
 		backCtx.drawImage(canvasLayer,0,0);
 	}
 	var img=backCtx.getImageData(0,0,canvas.width,canvas.height);
+	for(var i=backZoomList.length;i>currentZoomIndex.length;i--)
+		backZoomList.pop();
 	backZoomList.push([$.extend(true, {},currentArea),img]);
+	currentZoomIndex++;
 }
 
 //Go to the previous zoom
 function goToPrevZoom(){
-	if(backZoomList.length>0) {
+	if(currentZoomIndex>0) {
+		//if(currentZoomIndex==backZoomList.length-1)
+			//addPrevZoom();
 		for (var i = 0; i < lines.length; i++) {
 			clearCanvas("layer" + i);
 		}
 		var l0Ctx = $("#layer0")[0].getContext('2d');
-		var last = backZoomList.pop();
+		var last = backZoomList[--currentZoomIndex];
+		currentArea = last[0];
+		scaleX = (currentArea.x1 - currentArea.x0) / canvas.width;
+		scaleY = (currentArea.y1 - currentArea.y0) / canvas.height;
+		l0Ctx.putImageData(last[1], 0, 0);
+		drawSelectedFrags();
+	}
+}
+
+//Go forward zooming
+function goToNextZoom(){
+	if(currentZoomIndex<backZoomList.length-1) {
+		for (var i = 0; i < lines.length; i++) {
+			clearCanvas("layer" + i);
+		}
+		var l0Ctx = $("#layer0")[0].getContext('2d');
+		var last = backZoomList[++currentZoomIndex];
 		currentArea = last[0];
 		scaleX = (currentArea.x1 - currentArea.x0) / canvas.width;
 		scaleY = (currentArea.y1 - currentArea.y0) / canvas.height;
@@ -255,6 +276,8 @@ function resetZoom(){
     currentArea.y1 = canvas.height;
     scaleX = 1;
     scaleY = 1;
+	currentZoomIndex=-1;
+	backZoomList=[];
     reset = false;
 }
 
