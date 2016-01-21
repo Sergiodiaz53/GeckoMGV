@@ -30,6 +30,7 @@ var backCanvas =$('<canvas/>',{'class':'canvasLayer img-responsive'}).prop({widt
 var backCtx=backCanvas[0].getContext('2d');
 var currentZoomIndex=-1;
 
+
 var currentArea = {
 	x0 : 0,
 	y0 : 0,
@@ -81,23 +82,24 @@ function addPrevZoom(){
 		backCtx.drawImage(canvasLayer,0,0);
 	}
 	var img=backCtx.getImageData(0,0,canvas.width,canvas.height);
-	for(var i=backZoomList.length;i>currentZoomIndex.length;i--)
-		backZoomList.pop();
-	backZoomList.push([$.extend(true, {},currentArea),img]);
-	currentZoomIndex++;
+	backZoomList[++currentZoomIndex]=[$.extend(true, {},currentArea),img];
+	console.log("modifying index: "+currentZoomIndex)
+	backZoomList.length=currentZoomIndex+1;
+	/*for(var i=currentZoomIndex;i<backZoomList.lenght;i++)
+		backZoomList.pop();*/
+	//backZoomList.push([$.extend(true, {},currentArea),img]);
+	//currentZoomIndex++;
 }
 
 //Go to the previous zoom
 function goToPrevZoom(){
 	if(currentZoomIndex>0) {
-		//if(currentZoomIndex==backZoomList.length-1)
-			//addPrevZoom();
 		for (var i = 0; i < lines.length; i++) {
 			clearCanvas("layer" + i);
 		}
 		var l0Ctx = $("#layer0")[0].getContext('2d');
 		var last = backZoomList[--currentZoomIndex];
-		currentArea = last[0];
+		currentArea = $.extend(true, {},last[0]);
 		scaleX = (currentArea.x1 - currentArea.x0) / canvas.width;
 		scaleY = (currentArea.y1 - currentArea.y0) / canvas.height;
 		l0Ctx.putImageData(last[1], 0, 0);
@@ -113,7 +115,7 @@ function goToNextZoom(){
 		}
 		var l0Ctx = $("#layer0")[0].getContext('2d');
 		var last = backZoomList[++currentZoomIndex];
-		currentArea = last[0];
+		currentArea = $.extend(true, {},last[0]);
 		scaleX = (currentArea.x1 - currentArea.x0) / canvas.width;
 		scaleY = (currentArea.y1 - currentArea.y0) / canvas.height;
 		l0Ctx.putImageData(last[1], 0, 0);
@@ -791,7 +793,7 @@ function createInstance() {
 					console.log("Selecting new area :" + startX + ","
 							+ (canvas.height - mouseY) + "," + mouseX + ","
 							+ (canvas.height - startY));
-					addPrevZoom();
+
 					currentArea.x1 = currentArea.x0 + mouseX * scaleX;
 					currentArea.y1 = currentArea.y0 + (canvas.height - startY)
 							* scaleY;
@@ -814,6 +816,7 @@ function createInstance() {
 					canvas.style.cursor = "default";
 					clearCanvas("selectLayer");
 					redraw();
+					addPrevZoom();
                     //drawAnnotations();
 				}
                 if(area&&vertical&&shiftSel) {
@@ -1037,6 +1040,7 @@ function resetDraw() {
 		backZoomList=[];
         document.getElementById("myCanvasLayer2").getContext("2d").clearRect(0,0,500,500);
 		redraw();
+		addPrevZoom();
 	}
 }
 
