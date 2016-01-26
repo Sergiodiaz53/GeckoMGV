@@ -64,6 +64,14 @@ body {
     margin-bottom: 25px;
 }
 
+.my-container3 {
+    background-color: #eee;
+    border: 1px solid #ddd;
+    background-color: rgba(102, 171, 138, 0.7);
+    border: 1px solid rgba(102, 171, 138, 1.0);
+    margin-bottom: 25px;
+}
+
 #csvInfoTable{
     width: 100%;
 }
@@ -104,13 +112,10 @@ body {
     text-align: center;
 }
 
-.canvas-centered {
+.canvasBlock {
     display:inline-block;
-    float:none;
-    /* reset the text-align */
-    text-align:left;
-    /* inline-block space fix */
-    margin-right:-4px;
+    width:100%;
+    height:100%;
 }
 
 .top-buffer {
@@ -156,38 +161,75 @@ body {
     margin-left: 5px;
 }
 
-#canvasContainer{
-    width: 600px;
-    height: 550px;
-    margin-bottom: 25px;
-}
 
 .canvasLayer{
-    background-color: transparent;
-    border:1px solid #000000;
-    position: absolute;
-    margin-top: 25px;
-    margin-left: 50px;
-    z-index:1;
-}
-
-#myCanvas {
-    background-color: transparent;
-    border:1px solid #000000;
-    position: absolute;
-    z-index:3;
-    margin-top: 25px;
-    margin-left: 50px;
-}
-
-#myCanvasLayer1 {
-
+    width: 80%;
+    margin-left: 10%;
+    margin-top: 5%;
+    height: auto;
+    display: block;
     background-color: transparent;
     border:1px solid #000000;
     position: absolute;
     z-index: 1;
-    margin-top: 25px;
-    margin-left: 50px;
+}
+
+.horizontalCanvasLayer {
+    width: 90%;
+    margin-left: 5%;
+    margin-top: 5%;
+    margin-bottom: 5%;
+    height: auto;
+    display: block;
+    background-color: white;
+    border:1px solid #000000;
+    position: relative;
+    z-index: 1;
+}
+
+#canvasContainer {
+    margin-left: 5%;
+    margin-right: 5%;
+    position: relative;
+}
+
+#horizontalCanvasContainer{
+    position: relative;
+    width: 100%;
+    height: auto;
+}
+
+#myCanvas {
+    width: 80%;
+   margin-left: 10%;
+    margin-top: 5%;
+    height: auto;
+    display: block;
+    background-color: transparent;
+    border:1px solid #000000;
+    position: absolute;
+    z-index: 2;
+}
+
+#myCanvasLayer1 {
+    width: 80%;
+    margin-left: 10%;
+    margin-top: 5%;
+    height: auto;
+    display: block;
+    background-color: transparent;
+    border:1px solid #000000;
+    position: absolute;
+    z-index: 1;
+}
+
+#myCanvasLayer2 {
+    margin-top: 5%;
+    background-color: transparent;
+    border:1px solid #000000;
+    position: absolute;
+    z-index: 1;
+
 }
 #selectLayer {
 
@@ -211,21 +253,14 @@ body {
     overflow-y: scroll;
 }
 
-#myCanvasLayer2 {
-
-    background-color: transparent;
-    border:1px solid #000000;
-    position: absolute;
-    z-index: 1;
-    margin-top: 25px;
-    margin-left: 50px;
-}
-
 #myCanvasGrid {
     background-color: white;
     border:1px solid #000000;
-    position: absolute;
+    position: relative;
     z-index: 1;
+    width: 100%;
+    height: auto;
+    float:left;
 }
 
 #myMap {
@@ -243,6 +278,8 @@ body {
 #myCanvasMatrix {
     background-color:#ffffff;
     border:1px solid #000000;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .horizontalCanvas {

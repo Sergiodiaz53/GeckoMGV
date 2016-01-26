@@ -6,9 +6,7 @@
 	<div id="main" class="container center-block" role="main">
 
 		<div class="row row-centered">
-			<div class="col-xs-12 col-sm-12 col-md-12 col-lg-8">
-
-                <div class="row">
+            <div class="row">
                     <div id="toolmenu">
                         <div class="row row-centered top-buffer">
                             <button type="button" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Load frags from server" onclick ="getFilesListFromServer()"><span class="glyphicon glyphicon-floppy-save"></span></button>
@@ -20,11 +18,6 @@
                             <button type="button" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Draw grid" onclick="activateBoard()"><span class="glyphicon glyphicon-screenshot"></span></button>
                             <button type="button" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="CSB & Frag info" onclick="dialogFrags()"><span class="glyphicon glyphicon-info-sign"></span></button>
                             <button type="button" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Annotations info" onclick="dialogAnnotations()"><span class="glyphicon glyphicon-font"></span></button>
-                            <select id="viewSelect">
-                                <option selected disabled>Choose view</option>
-                                <option>Traditional</option>
-                                <option>Horizontal</option>
-                            </select>
                             <div class="row top-buffer btn-padding form-group row-centered">
 									<form name="option" class="form-centered">
 										<input type="radio" name="tipo" value="Frag" checked
@@ -37,56 +30,65 @@
 								</div>
                         </div>
                     </div>
-                </div>
+            </div>
 
-				<div class="row row-centered my-container2">
-					<div>
-						<div id="fileName">
-							Upload a fragments file
-							<button id="infoPopover" type="button"
-								class="btn btn-warning btn-xs btn-padding" data-container="body"
-								data-toggle="popover" data-placement="right"
-								data-content="Not file loaded" data-html="true">?</button>
-						</div>
-					</div>
+            <div class="col-md-3" id="columnLeft">
+                    <!-- ---------- CANVAS Horizontal -------------------- -->
+                    <div id="horizontalCanvas" class="canvasBlock">
+                        <div id="horizontalCanvasContainer" class="my-container3">
+                        </div>
+                    </div>
 
-					<!-- ---------- CANVAS -------------------- -->
-					<div id="canvasContainer" class="canvas-centered">
-                        <img src="{% static "css/images/loading.gif" %}" id="loading-indicator" style="display:none" />
-						<canvas id="myCanvasGrid" class="img-responsive" width="600" height="550"></canvas>
-						<canvas id="myCanvas" class="img-responsive"  width="500" height="500"></canvas>
-						<canvas id="myCanvasLayer1" class="img-responsive"  width="500" height="500"> </canvas>
-                        <canvas id="myCanvasLayer2" class="img-responsive"  width="500" height="500"> </canvas>
-						<canvas id="selectLayer" class="img-responsive"  width="500" height="500"> </canvas>
-					</div>
+
+            </div>
+
+			<div class="col-md-6" id="columnCentral">
+
+				<div class="row row-centered">
+                    <!-- ---------- CANVAS Vertical -------------------- -->
+                    <div id="mainCanvas" class="canvasBlock my-container2">
+                        <div id="canvasContainer">
+                            <div id="fileName">
+                                Upload a fragments file
+                                <button id="infoPopover" type="button"
+                                    class="btn btn-warning btn-xs btn-padding" data-container="body"
+                                    data-toggle="popover" data-placement="right"
+                                    data-content="Not file loaded" data-html="true">?</button>
+                            </div>
+
+                            <canvas id="myCanvasGrid" class="img-responsive" width="600" height="550"></canvas>
+                            <img src="{% static "css/images/loading.gif" %}" id="loading-indicator" style="display:none" />
+                            <canvas id="myCanvas" class="img-responsive"  width="500" height="500"></canvas>
+                            <canvas id="myCanvasLayer1" class="img-responsive canvasLayer"  width="500" height="500"></canvas>
+                            <canvas id="myCanvasLayer2" class="img-responsive canvasLayer"  width="500" height="500"></canvas>
+                        </div>
+                    </div>
 				</div>
 
 				<div class="row row-centered my-container2">
-					<div class="col-md-10 col-centered">
-						<div class="div-centered">
-							<div id="fileNameMAT">
-								Upload a Matrix file
-								<button id="infoPopoverMatriz" type="button"
-									class="btn btn-warning btn-xs btn-padding"
-									data-container="body" data-toggle="popover"
-									data-placement="right" data-content="Not file loaded"
-									data-html="true">?</button>
-							</div>
-						</div>
-
+					<div class="col-md-12 col-centered">
+						<div class="canvasBlock div-centered">
 						<!-- ---------- CANVAS Matrix -------------------- -->
-                        <div id="canvasContainerMatrix" class="div-centered tab-pane fade in active">
-                            <canvas id="myCanvasMatrix" class="img-responsive" width="500" height="100"> </canvas>
+                            <div id="canvasContainerMatrix" class="div-centered tab-pane fade in active">
+                                <div id="fileNameMAT">
+                                    Upload a Matrix file
+                                    <button id="infoPopoverMatriz" type="button"
+                                        class="btn btn-warning btn-xs btn-padding"
+                                        data-container="body" data-toggle="popover"
+                                        data-placement="right" data-content="Not file loaded"
+                                        data-html="true">?</button>
+                                </div>
+                                <canvas id="myCanvasMatrix" class="img-responsive" width="500" height="100"> </canvas>
+                            </div>
                         </div>
-
 					</div>
 				</div>
 
 			</div>
 
-			<div class="col-md-4">
+			<div class="col-md-3" id="ColumnRight">
 				<div class="row row-centered">
-					<div class="col-xs-9 col-sm-9 col-centered">
+					<div class="col-xs-12 col-sm-12 col-centered">
 						<div class="panel panel-primary">
 							<div class="panel-heading">
                                 <a data-toggle="collapse" data-target="#MapColapsed" href="#MapColapsed" class="collapse-link panel-title accordion-toggle">Map</a>
@@ -102,7 +104,7 @@
 					</div>
 				</div>
 				<div class="row row-centered">
-					<div class="col-xs-9 col-sm-9 col-centered">
+					<div class="col-xs-12 col-sm-12 col-centered">
                         <div class="panel panel-primary">
 							<div class="panel-heading">
                                 <a data-toggle="collapse" data-target="#LayersCollapsed" href="#LayersCollapsed" class="collapse-link panel-title accordion-toggle">Comparisons</a>
@@ -118,7 +120,7 @@
                     </div>
 				</div>
 				<div class="row row-centered">
-					<div class="col-xs-9 col-sm-9 col-centered">
+					<div class="col-xs-12 col-sm-12 col-centered">
 						<div class="panel panel-primary">
 							<div class="panel-heading">
                                 <a data-toggle="collapse" data-target="#FiltersColapsed" href="#FiltersColapsed" class="collapse-link panel-title accordion-toggle">Filters</a>
@@ -171,7 +173,7 @@
 				</div>
 			</div>
                 <div class="row row-centered">
-					<div class="col-xs-9 col-sm-9 col-centered">
+					<div class="col-xs-12 col-sm-12 col-centered">
 						<div class="panel panel-primary">
 							<div class="panel-heading">
                                 <a data-toggle="collapse" data-target="#AnnotColapsed" href="#AnnotColapsed" class="collapse-link panel-title accordion-toggle">Annotations</a>
@@ -200,20 +202,19 @@
 
     <!--Dialog for CSB & Frag Info -->
     <div id="output" class="ui-helper-hidden"><div class="SearchTitle" >
-<div class="SearchTitleFilterButton">
+        <div class="SearchTitleFilterButton">
 <span>Filter:</span>
 <input type="text" class="SearchFilter" />
 <button class="SearchButton" ><span class="glyphicon glyphicon-search"></span></button>
 </div>
-</div>
-</div>
+        </div>
+    </div>
 
     <!--Dialog for Annotations -->
     <div id="annotationsOutput" class="ui-helper-hidden"></div>
 
     <!-- Popover to show CSB Info in Canvas -->
 	<div class="popover right" id="CSBPopover" role="tooltip"></div>
-
 
 	<script>
 		//InfoPopover = File info popover.
