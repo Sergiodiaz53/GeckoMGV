@@ -208,7 +208,7 @@ body {
     background-color: transparent;
     border:1px solid #000000;
     position: absolute;
-    z-index: 2;
+    z-index: 3;
 }
 
 #myCanvasLayer1 {
@@ -237,8 +237,11 @@ body {
     border:1px solid #000000;
     position: absolute;
     z-index: 2;
-    margin-top: 25px;
-    margin-left: 50px;
+    width: 80%;
+    margin-left: 10%;
+    margin-top: 5%;
+    height: auto;
+    display: block;
 }
 
 #loading-indicator {

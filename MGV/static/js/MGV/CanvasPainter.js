@@ -81,14 +81,16 @@ function addPrevZoom(){
 		var canvasLayer= $("#layer"+i)[0];
 		backCtx.drawImage(canvasLayer,0,0);
 	}
+    var horizontalLayers=[];
+    for(var x=0;x<$("#horizontalCanvasContainer")[0].childNodes.length-1;x++) {
+        var horizontalLayer = createHorizontalComparisonLayer(x);
+        var horImg = horizontalLayer.getContext('2d').getImageData(0, 0, horizontalLayer.width, horizontalLayer.height);
+        horizontalLayers.push(horImg);
+    }
 	var img=backCtx.getImageData(0,0,canvas.width,canvas.height);
-	backZoomList[++currentZoomIndex]=[$.extend(true, {},currentArea),img];
+	backZoomList[++currentZoomIndex]=[$.extend(true, {},currentArea),img,$.extend(true, {},RectInMap),horizontalLayers];
 	console.log("modifying index: "+currentZoomIndex)
 	backZoomList.length=currentZoomIndex+1;
-	/*for(var i=currentZoomIndex;i<backZoomList.lenght;i++)
-		backZoomList.pop();*/
-	//backZoomList.push([$.extend(true, {},currentArea),img]);
-	//currentZoomIndex++;
 }
 
 //Go to the previous zoom
@@ -100,11 +102,26 @@ function goToPrevZoom(){
 		var l0Ctx = $("#layer0")[0].getContext('2d');
 		var last = backZoomList[--currentZoomIndex];
 		currentArea = $.extend(true, {},last[0]);
+        RectInMap=$.extend(true, {},last[2]);
+        redrawMap();
+        for(var i=0;i<last[3].length;i++){
+            clearCanvas(createHorizontalComparisonLayer(i).id);
+            createHorizontalComparisonLayer(i).getContext('2d').putImageData(last[3][i],0,0);
+        }
 		scaleX = (currentArea.x1 - currentArea.x0) / canvas.width;
 		scaleY = (currentArea.y1 - currentArea.y0) / canvas.height;
 		l0Ctx.putImageData(last[1], 0, 0);
 		drawSelectedFrags();
 	}
+}
+
+//Draw in red frag that have been selected (Storaged in SelectedLines)
+function drawSelectedFrags(){
+	if(selectedLines.length>0)
+		clearCanvas("selectLayer");
+		for(var i=0;i<selectedLines.length;i++)
+			if($("#checklayer"+i)[0].checked)
+				drawLinesInLayer(selectedLines[i],selectLayer,i,rgb(255,0,0));
 }
 
 //Go forward zooming
@@ -115,7 +132,13 @@ function goToNextZoom(){
 		}
 		var l0Ctx = $("#layer0")[0].getContext('2d');
 		var last = backZoomList[++currentZoomIndex];
+        RectInMap=$.extend(true, {},last[2]);
+        redrawMap();
 		currentArea = $.extend(true, {},last[0]);
+        for(var i=0;i<last[3].length;i++){
+            clearCanvas(createHorizontalComparisonLayer(i).id);
+            createHorizontalComparisonLayer(i).getContext('2d').putImageData(last[3][i],0,0);
+        }
 		scaleX = (currentArea.x1 - currentArea.x0) / canvas.width;
 		scaleY = (currentArea.y1 - currentArea.y0) / canvas.height;
 		l0Ctx.putImageData(last[1], 0, 0);
@@ -224,6 +247,42 @@ function storeFileHeader(currentLines, numFile) {
     $('[data-toggle="popover"]').popover();
     fileInfo[numFile]=table2;
     console.timeEnd("CreateFileHeader()");
+}
+
+function drawLinesInLayer(linesToPaint, canvasLayer, numFile, color){
+	var currentCtx = canvasLayer.getContext('2d');
+
+	currentCtx.beginPath();
+	for (var x in linesToPaint){
+		line = linesToPaint[x];
+
+		var xIni = ((canvasLayer.width * (parseInt(lines[numFile][line][1]) / xtotal) - currentArea.x0) / (currentArea.x1 - currentArea.x0))
+				* canvasLayer.width;
+		var yIni = ((canvasLayer.height * (parseInt(lines[numFile][line][2]) / ytotal) - currentArea.y0) / (currentArea.y1 - currentArea.y0))
+				* canvasLayer.height;
+		var xFin = ((canvasLayer.width * (parseInt(lines[numFile][line][3]) / xtotal) - currentArea.x0) / (currentArea.x1 - currentArea.x0))
+				* canvasLayer.width;
+		var yFin = ((canvasLayer.height * (parseInt(lines[numFile][line][4]) / ytotal) - currentArea.y0) / (currentArea.y1 - currentArea.y0))
+				* canvasLayer.height;
+
+
+		if((xFin-xIni < 0.1)&&(xFin-xIni>0)){
+			xFin = xIni + 0.1;
+		}
+
+		if((yFin-yIni < 0.1)&&(yFin-yIni >0)){
+			yFin = yIni +0.1 ;
+		}
+
+		//console.log((lines[numFile][line][1])+" = "+xIni+"; "+(lines[numFile][line][2])+" = "+yIni+(lines[numFile][line][3])+" = "+xFin+"; "+(lines[numFile][line][4])+" = "+yFin);
+
+		currentCtx.moveTo(xIni, canvasLayer.height - yIni);
+		currentCtx.lineTo(xFin, canvasLayer.height - yFin);
+	}
+	currentCtx.closePath();
+	currentCtx.lineWidth = 2;
+	currentCtx.strokeStyle = color;
+	currentCtx.stroke();
 }
 
 function loadHorizontalView(){
@@ -756,6 +815,7 @@ function createInstance() {
 		prevTable=document.getElementById("files-tab-content").cloneNode(true);
 		console.timeEnd("reDraw()");
         loadingGif.hide();
+        drawSelectedFrags()
 	};
 
 	var lastX = canvas.width / 2, lastY = canvas.height / 2;
