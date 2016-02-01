@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from customAuth.views import *
 from scripts.views import *
 from fileSystem.forms import *
@@ -8,8 +8,8 @@ from fileSystem.views import *
 from scripts.workers.EBI import EBI
 from scripts.workers.services import clustalomega as co
 from scripts.forms import drawMSAComp
-
-
+from django.views.decorators.csrf import ensure_csrf_cookie
+from django.template import RequestContext
 
 from django.http import JsonResponse
 import json
@@ -46,6 +46,13 @@ def services_view(request):
     print list
     return render(request, 'services.html', {'services': list})
 
+@csrf_exempt
+def uploadFrags(request):
+    if request.method == 'POST':
+        createFile(request,request.POST['content'],request.POST['name'])
+        return HttpResponse(status=201)
+    else:
+        return HttpResponse(status=501)
 
 @csrf_exempt
 def loadFileFromServer(request):

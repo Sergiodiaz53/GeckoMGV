@@ -28,7 +28,8 @@ var selectedLines=[];
 var backZoomList=[];
 var backCanvas =$('<canvas/>',{'class':'canvasLayer img-responsive'}).prop({width: 500,height: 500 });
 var backCtx=backCanvas[0].getContext('2d');
-var initialImage;
+var currentZoomIndex=-1;
+
 
 var currentArea = {
 	x0 : 0,
@@ -81,19 +82,64 @@ function addPrevZoom(){
 		var canvasLayer= $("#layer"+i)[0];
 		backCtx.drawImage(canvasLayer,0,0);
 	}
+    var horizontalLayers=[];
+    for(var x=0;x<$("#horizontalCanvasContainer")[0].childNodes.length-1;x++) {
+        var horizontalLayer = createHorizontalComparisonLayer(x);
+        var horImg = horizontalLayer.getContext('2d').getImageData(0, 0, horizontalLayer.width, horizontalLayer.height);
+        horizontalLayers.push(horImg);
+    }
 	var img=backCtx.getImageData(0,0,canvas.width,canvas.height);
-	backZoomList.push([$.extend(true, {},currentArea),img]);
+	backZoomList[++currentZoomIndex]=[$.extend(true, {},currentArea),img,$.extend(true, {},RectInMap),horizontalLayers];
+	console.log("modifying index: "+currentZoomIndex)
+	backZoomList.length=currentZoomIndex+1;
 }
 
 //Go to the previous zoom
 function goToPrevZoom(){
-	if(backZoomList.length>0) {
+	if(currentZoomIndex>0) {
 		for (var i = 0; i < lines.length; i++) {
 			clearCanvas("layer" + i);
 		}
 		var l0Ctx = $("#layer0")[0].getContext('2d');
-		var last = backZoomList.pop();
-		currentArea = last[0];
+		var last = backZoomList[--currentZoomIndex];
+		currentArea = $.extend(true, {},last[0]);
+        RectInMap=$.extend(true, {},last[2]);
+        redrawMap();
+        for(var i=0;i<last[3].length;i++){
+            clearCanvas(createHorizontalComparisonLayer(i).id);
+            createHorizontalComparisonLayer(i).getContext('2d').putImageData(last[3][i],0,0);
+        }
+		scaleX = (currentArea.x1 - currentArea.x0) / canvas.width;
+		scaleY = (currentArea.y1 - currentArea.y0) / canvas.height;
+		l0Ctx.putImageData(last[1], 0, 0);
+		drawSelectedFrags();
+	}
+}
+
+//Draw in red frag that have been selected (Storaged in SelectedLines)
+function drawSelectedFrags(){
+	if(selectedLines.length>0)
+		clearCanvas("selectLayer");
+		for(var i=0;i<selectedLines.length;i++)
+			if($("#checklayer"+i)[0].checked)
+				drawLinesInLayer(selectedLines[i],selectLayer,i,rgb(255,0,0));
+}
+
+//Go forward zooming
+function goToNextZoom(){
+	if(currentZoomIndex<backZoomList.length-1) {
+		for (var i = 0; i < lines.length; i++) {
+			clearCanvas("layer" + i);
+		}
+		var l0Ctx = $("#layer0")[0].getContext('2d');
+		var last = backZoomList[++currentZoomIndex];
+        RectInMap=$.extend(true, {},last[2]);
+        redrawMap();
+		currentArea = $.extend(true, {},last[0]);
+        for(var i=0;i<last[3].length;i++){
+            clearCanvas(createHorizontalComparisonLayer(i).id);
+            createHorizontalComparisonLayer(i).getContext('2d').putImageData(last[3][i],0,0);
+        }
 		scaleX = (currentArea.x1 - currentArea.x0) / canvas.width;
 		scaleY = (currentArea.y1 - currentArea.y0) / canvas.height;
 		l0Ctx.putImageData(last[1], 0, 0);
@@ -102,8 +148,8 @@ function goToPrevZoom(){
 }
 
 function clearCanvas(canvasName) {
-    var canvas = document.getElementById(canvasName);
-    var ctx = canvas.getContext('2d');
+    var canvasToClear = document.getElementById(canvasName);
+    var ctx = canvasToClear.getContext('2d');
 
 	// Clear the canvas
 	ctx.save();
@@ -204,6 +250,42 @@ function storeFileHeader(currentLines, numFile) {
     console.timeEnd("CreateFileHeader()");
 }
 
+function drawLinesInLayer(linesToPaint, canvasLayer, numFile, color){
+	var currentCtx = canvasLayer.getContext('2d');
+
+	currentCtx.beginPath();
+	for (var x in linesToPaint){
+		line = linesToPaint[x];
+
+		var xIni = ((canvasLayer.width * (parseInt(lines[numFile][line][1]) / xtotal) - currentArea.x0) / (currentArea.x1 - currentArea.x0))
+				* canvasLayer.width;
+		var yIni = ((canvasLayer.height * (parseInt(lines[numFile][line][2]) / ytotal) - currentArea.y0) / (currentArea.y1 - currentArea.y0))
+				* canvasLayer.height;
+		var xFin = ((canvasLayer.width * (parseInt(lines[numFile][line][3]) / xtotal) - currentArea.x0) / (currentArea.x1 - currentArea.x0))
+				* canvasLayer.width;
+		var yFin = ((canvasLayer.height * (parseInt(lines[numFile][line][4]) / ytotal) - currentArea.y0) / (currentArea.y1 - currentArea.y0))
+				* canvasLayer.height;
+
+
+		if((xFin-xIni < 0.1)&&(xFin-xIni>0)){
+			xFin = xIni + 0.1;
+		}
+
+		if((yFin-yIni < 0.1)&&(yFin-yIni >0)){
+			yFin = yIni +0.1 ;
+		}
+
+		//console.log((lines[numFile][line][1])+" = "+xIni+"; "+(lines[numFile][line][2])+" = "+yIni+(lines[numFile][line][3])+" = "+xFin+"; "+(lines[numFile][line][4])+" = "+yFin);
+
+		currentCtx.moveTo(xIni, canvasLayer.height - yIni);
+		currentCtx.lineTo(xFin, canvasLayer.height - yFin);
+	}
+	currentCtx.closePath();
+	currentCtx.lineWidth = 2;
+	currentCtx.strokeStyle = color;
+	currentCtx.stroke();
+}
+
 function loadHorizontalView(){
 
     //change the main canvas to horizontal
@@ -256,15 +338,9 @@ function resetZoom(){
     currentArea.y1 = canvas.height;
     scaleX = 1;
     scaleY = 1;
+	currentZoomIndex=-1;
+	backZoomList=[];
     reset = false;
-}
-
-function drawSelectedFrags(){
-	if(selectedLines.length>0)
-		clearCanvas("selectLayer");
-		for(var i=0;i<selectedLines.length;i++)
-			if($("#checklayer"+i)[0].checked)
-				drawVerticalLinesInVerticalLayer(selectedLines[i],selectLayer,i,rgb(255,0,0));
 }
 
 function createVerticalComparisonLayer(numLayer){
@@ -740,6 +816,7 @@ function createInstance() {
 		prevTable=document.getElementById("files-tab-content").cloneNode(true);
 		console.timeEnd("reDraw()");
         loadingGif.hide();
+        drawSelectedFrags()
 	};
 
 	var lastX = canvas.width / 2, lastY = canvas.height / 2;
@@ -890,7 +967,7 @@ function createInstance() {
 					console.log("Selecting new area :" + startX + ","
 							+ (canvas.height - mouseY) + "," + mouseX + ","
 							+ (canvas.height - startY));
-					addPrevZoom();
+
 					currentArea.x1 = currentArea.x0 + mouseX * scaleX;
 					currentArea.y1 = currentArea.y0 + (canvas.height - startY)
 							* scaleY;
@@ -913,6 +990,7 @@ function createInstance() {
 					canvas.style.cursor = "default";
 					clearCanvas("selectLayer");
 					redraw();
+					addPrevZoom();
                     //drawAnnotations();
 				}
                 if(area&&vertical&&shiftSel) {
@@ -978,8 +1056,8 @@ function createInstance() {
 				var layer1 = document.getElementById("myCanvasLayer1");
 				var ctx1 = layer1.getContext("2d");
 
-				mouseX = parseInt(evt.clientX - offsetX);
-				mouseY = parseInt(evt.clientY - offsetY);
+				mouseX = getMousePos(canvas,evt).x;//parseInt(evt.clientX - offsetX);
+				mouseY = canvas.height-getMousePos(canvas,evt).y;//parseInt(evt.clientY - offsetY);
 
 				ctx1.clearRect(0, 0, canvas.width, canvas.height);
 				ctx1.beginPath();
@@ -1135,6 +1213,7 @@ function resetDraw() {
 		backZoomList=[];
         document.getElementById("myCanvasLayer2").getContext("2d").clearRect(0,0,500,500);
 		redraw();
+		addPrevZoom();
 	}
 }
 
@@ -1205,78 +1284,7 @@ function annotationDrawLines(seq,start,end,point){
     ctx.stroke();
 }
 
-function horizontalDrawLines(lines, i, xtotal, ytotal, rectsFilled,
-		rectsStroked, canvasNumber) {
 
-	// Find the canvas document
-	if (canvasNumber != 0) {
-		var c = document.getElementById("myCanvas" + canvasNumber);
-	} else {
-		var c = document.getElementById("myCanvas");
-	}
-	// Then, call its getContext() method (you must pass the string "2d" to the
-	// getContext() method):
-	var ctx = c.getContext("2d");
-
-	var xIni;
-	var xFin;
-	var yIni;
-	var yFin;
-
-	var padding = 50;
-
-	xIni = (c.width * parseInt(lines[i][1]) / xtotal);
-	yIni = (c.width * parseInt(lines[i][2]) / ytotal);
-	xFin = (c.width * parseInt(lines[i][3]) / xtotal);
-	yFin = (c.width * parseInt(lines[i][4]) / ytotal);
-	if(selectedLines.length>canvasNumber&& selectedLines[canvasNumber]!=null&&selectedLines[canvasNumber].indexOf(i)>-1)
-			color=rgb(255,0,0);
-	ctx.fillStyle = ctx.strokeStyle = color;
-
-	// Rect in sequence X
-	roundRect(ctx, xIni, 0, xFin - xIni, padding / 2, 2, rectsFilled,
-			rectsStroked);
-	/*
-	 * if(rectsFilled){ ctx.rect(xIni,0,xFin-xIni,padding); ctx.fill();
-	 * ctx.stroke(); } else { ctx.lineWidth=3;
-	 * ctx.strokeRect(xIni,0,xFin-xIni,padding); }
-	 */
-
-	var halfX = xIni + ((xFin - xIni) / 2);
-	var halfY = yIni + ((yFin - yIni) / 2);
-	ctx.beginPath();
-	ctx.moveTo(halfX, padding / 2);
-	ctx.lineTo(halfX, padding);
-	ctx.moveTo(halfX, padding);
-	ctx.lineTo(halfY, c.height - padding);
-	ctx.lineWidth = 1;
-	ctx.stroke();
-	/*
-	 * ctx.beginPath(); ctx.moveTo(xIni,padding);
-	 * ctx.lineTo(yIni,c.height-padding); ctx.moveTo(xFin,padding);
-	 * ctx.lineTo(yFin,c.height-padding); ctx.lineWidth=1; ctx.stroke();
-	 */
-
-	// Rect in sequence Y
-	var rectYHeight;
-	if (yFin < yIni) {
-		rectYHeight = c.height - padding / 2;
-		ctx.beginPath();
-		ctx.moveTo(halfY, c.height - padding / 2);
-		ctx.lineTo(halfY, c.height - padding);
-		ctx.stroke();
-	} else {
-		rectYHeight = c.height - padding;
-	}
-	roundRect(ctx, yIni, rectYHeight, yFin - yIni, padding / 2, 2, rectsFilled,
-			rectsStroked);
-	// ctx.lineWidth=3;
-	// ctx.strokeRect(yIni,c.height-padding,yFin-yIni,padding);
-	// ctx.lineWidth=1;
-	// ctx.fill();
-	// ctx.stroke();
-
-}
 
 function showSelected(){
     if(!showingSelected){
@@ -1695,8 +1703,8 @@ function getMousePos(canvas, evt) {
 	var rect = canvas.getBoundingClientRect();
 
 	return {
-		x : evt.clientX - rect.left,
-		y : (canvas.height - (evt.clientY - rect.top))
+		x : (evt.clientX - rect.left)*canvas.width/$(canvas).width(),
+		y : ((canvas.height - (evt.clientY - rect.top))-(canvas.height-$(canvas).height()))*canvas.height/$(canvas).height(),
 	};
 }
 
@@ -1709,57 +1717,3 @@ function activateBoard() {
 		redraw();
 	}
 }
-
-$('#viewSelect')
-		.change(
-				function() {
-					if (this.value == 'Traditional') {
-						$("#selectLayer").show();
-						$("#myCanvasLayer1").show();
-						$("#myCanvasLayer2").show();
-						$("#myCanvasGrid").show();
-						$("#canvasContainer").css('width', '600px').css(
-								'height', '550px');
-						$("#myCanvas").css('background-color', 'transparent')
-								.css('position', 'absolute').css('margin-top',
-										'25px').css('margin-left', '50px');
-
-						for (x = 1; x < lines.length; x++) {
-							console.log("Generating horizontal canvas");
-							var canvasTemp = document.getElementById("myCanvas"
-									+ x);
-							canvasTemp.remove();
-						}
-
-						vertical = true;
-						redraw();
-						zoomBoard = false;
-					}
-
-					if (this.value == 'Horizontal') {
-						$("#selectLayer").hide();
-						$("#myCanvasLayer1").hide();
-						$("#myCanvasLayer2").hide();
-						$("#myCanvasGrid").hide();
-						$("#canvasContainer").css('width', 'auto').css(
-								'height', 'auto');
-						$("#myCanvas").css('background-color', 'white').css(
-								'position', 'relative')
-								.css('margin-top', '0px').css('margin-left',
-										'0px');
-
-						for (x = 1; x < lines.length; x++) {
-							console.log("Generating horizontal canvas");
-							$("#canvasContainer")
-									.append(
-											"<canvas id='myCanvas"
-													+ x
-													+ "' class='horizontalCanvas' width='700' height='250'></canvas>")
-						}
-
-						vertical = false;
-						redraw();
-						zoomBoard = false;
-					}
-
-				});

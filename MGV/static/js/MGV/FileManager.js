@@ -155,6 +155,7 @@ function processData(csv, index) {
 
                 if(parseCount==0){
                     redraw();
+                    addPrevZoom();
                 }
                 $('#loading-indicator').hide();
             },

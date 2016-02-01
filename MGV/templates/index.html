@@ -2,7 +2,6 @@
 {%load staticfiles%}
 {%block content%}
 
-
 	<div id="main" class="container center-block" role="main">
 
 		<div class="row row-centered">
@@ -11,6 +10,7 @@
                         <div class="row row-centered top-buffer">
                             <button type="button" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Load frags from server" onclick ="getFilesListFromServer()"><span class="glyphicon glyphicon-floppy-save"></span></button>
                             <button type="button" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Go back" onclick ="goToPrevZoom()"><span class="glyphicon glyphicon-chevron-left"></span></button>
+                            <button type="button" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Go forward" onclick ="goToNextZoom()"><span class="glyphicon glyphicon-chevron-right"></span></button>
                             <span class="btn btn-primary btn-file glyphicon glyphicon-floppy-disk" data-toggle="tooltip" data-placement="bottom" title="Load frags from local" ><input type="file" multiple="true" onchange="handleFiles(this.files,'csv')" accept=".csv"></span>
                             <span class="btn btn-primary btn-file glyphicon glyphicon-th" data-toggle="tooltip" data-placement="bottom" title="Load Matrix from local" ><input type="file" multiple="false" onchange="handleFiles(this.files,'mat')" accept=".MAT"></span>
                             <button type="button" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Return to initial view" onclick="resetDraw()"><span class="glyphicon glyphicon-step-backward"></span></button>
@@ -37,6 +37,7 @@
                         <div id="horizontalCanvasContainer" class="my-container3">
                         </div>
                     </div>
+
 
             </div>
 

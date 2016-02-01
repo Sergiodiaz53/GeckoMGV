@@ -1,0 +1,6 @@
+CLUSTAL O(1.2.1) multiple sequence alignment
+
+
+EMBOSS_001      aaaaaaa
+EMBOSS_002      ttttttt
+                       

@@ -965,7 +965,8 @@ window.CSV = (function(){
 	if (options && options.trash) delete shared.data.pca;
 	return shared.nextTask();
     }
-    
+
+
     function download(dlname){
 	// download via dataURL and self-clicking link
 	// I would like to thank adeneo, http://stackoverflow.com/users/965051/adeneo

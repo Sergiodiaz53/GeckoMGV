@@ -7,10 +7,9 @@ var prevTable="";
 var currTable="";
 var searchList=[];
 
-function saveCSV(){
-    var anot=[],csvtab=[];
-    for(var x=0;x<lines.length;x++) {
-        var annotationTable = document.getElementById("annotationsOutput");
+//Loads the tables into variables.
+function loadTables(anot,csvtab,x){
+    var annotationTable = document.getElementById("annotationsOutput");
         //annotationTable.deleteRow(0);
 
         var csvInfoTable = document.getElementById("csvInfoTable"+x);
@@ -26,19 +25,30 @@ function saveCSV(){
         var cloneAn = annotationTable.cloneNode(true);
         anot.push(cloneAn);
         csvtab.push(csvInfoTable);
+}
+
+//Prepare tha tables for being printed
+function prepareTable(anot, csvtab,x){
+    var output = document.getElementById("file"+x);
+    var outputTable = document.createElement("table");
+    outputTable.className = "table table-condensed";
+    outputTable.id="output"+x;
+    outputTable.innerHTML = "";
+    outputTable.appendChild(fileInfo[x]);
+    outputTable.appendChild(csvtab[x]);
+    outputTable.appendChild(anot[x]);
+    output.appendChild(outputTable);
+}
+
+function saveCSV(){
+    var anot=[],csvtab=[];
+    for(var x=0;x<lines.length;x++) {
+        loadTables(anot,csvtab,x);
     }
 
     for(var x=0;x<lines.length;x++) {
-        var output = document.getElementById("file"+x);
-        var outputTable = document.createElement("table");
-        outputTable.className = "table table-condensed";
-        outputTable.id="output"+x;
-        outputTable.innerHTML = "";
-        outputTable.appendChild(fileInfo[x]);
-        outputTable.appendChild(csvtab[x]);
-        outputTable.appendChild(anot[x]);
-        output.appendChild(outputTable);
-        console.log(document.getElementById("output"+x));
+        prepareTable(anot, csvtab,x);
+        //console.log(document.getElementById("output"+x));
         var fileName = lines[x][2][0].split(":")[1].trim().split(".")[0]+"-"+lines[x][3][0].split(":")[1].trim().split(".")[0]+".csv";
         console.log("downloading "+fileName);
         CSV.begin("#output"+x).download(fileName).go();
@@ -141,6 +151,26 @@ function drawAnnotations(){
         }
 }
 
+function uploadCSV(){
+    for(var x=0;x<selectedLines.length;x++) {
+        var selectedAsText = ""
+        for (var i = 0; i < 16; i++)
+            selectedAsText += lines[x][i] + '\n';
+        for (var i = 0; i < selectedLines[x].length; i++)
+            selectedAsText += lines[x][selectedLines[x][i]] + '\n';
+        var fileName = lines[x][2][0].split(":")[1].trim().split(".")[0]+"-"+lines[x][3][0].split(":")[1].trim().split(".")[0];
+        $.ajax({
+            url:'/upload/',
+            type: "POST",
+            data: {name: fileName, content: selectedAsText},
+            success:function(response){},
+            complete:function(){},
+            error:function (xhr, textStatus, thrownError){console.log("error")}
+        });
+        selectedAsText = ""
+    }
+}
+
 function dialogFrags() {
     if (!$('#output').is(':visible')) {
         var $dialogContainer = $('#output');
@@ -151,14 +181,21 @@ function dialogFrags() {
             title: 'CSB & Frag',
             buttons: [
                 {
-                    text: "selected",
+                    text: "Selected",
                     click: function () {
                         showSelected()
                     },
                     "class": "ui-button-primary"
                 },
                 {
-                    text: "Save CSV",
+                    text: "Upload",
+                    click: function () {
+                        uploadCSV();
+                    },
+                    "class": "ui-button-primary"
+                },
+                {
+                    text: "Save",
                     click: function () {
                         saveCSV()
                         //redraw();
