@@ -61,3 +61,14 @@ class extractSeqFromFragsForm(forms.Form):
         self.fields['parameter3'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="Y Fasta file", widget=forms.Select(attrs={'class':'selector','id': 'yFastaFile'}))
         self.fields['parameter4'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="Y-reversed Fasta file", widget=forms.Select(attrs={'class':'selector','id': 'yReversedFastaFile'}))
         self.fields['parameter5'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="Output FragFile", widget=forms.Select(attrs={'class':'selector','id': 'outputFragFile'}))
+
+class reverseComplementForm(forms.Form):
+    parameter1 = forms.ChoiceField(label="Fasta to reverse", widget=forms.Select(attrs={'class':'selector','id': 'fastaToReverse'}))
+    parameter2 = forms.ChoiceField(label="Output file", widget=forms.Select(attrs={'class':'selector','id': 'outputFile'}))
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        self.request = kwargs.pop('request', None)
+        super(reverseComplementForm, self).__init__(*args, **kwargs)
+        self.fields['parameter1'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="Fasta to reverse", widget=forms.Select(attrs={'class':'selector','id': 'fastaToReverse'}))
+        self.fields['parameter2'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="Output file", widget=forms.Select(attrs={'class':'selector','id': 'outputFile'}))

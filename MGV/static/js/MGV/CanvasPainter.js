@@ -147,8 +147,8 @@ function goToNextZoom(){
 }
 
 function clearCanvas(canvasName) {
-    var canvas = document.getElementById(canvasName);
-    var ctx = canvas.getContext('2d');
+    var canvasToClear = document.getElementById(canvasName);
+    var ctx = canvasToClear.getContext('2d');
 
 	// Clear the canvas
 	ctx.save();
@@ -1055,8 +1055,8 @@ function createInstance() {
 				var layer1 = document.getElementById("myCanvasLayer1");
 				var ctx1 = layer1.getContext("2d");
 
-				mouseX = parseInt(evt.clientX - offsetX);
-				mouseY = parseInt(evt.clientY - offsetY);
+				mouseX = getMousePos(canvas,evt).x;//parseInt(evt.clientX - offsetX);
+				mouseY = canvas.height-getMousePos(canvas,evt).y;//parseInt(evt.clientY - offsetY);
 
 				ctx1.clearRect(0, 0, canvas.width, canvas.height);
 				ctx1.beginPath();
@@ -1702,8 +1702,8 @@ function getMousePos(canvas, evt) {
 	var rect = canvas.getBoundingClientRect();
 
 	return {
-		x : evt.clientX - rect.left,
-		y : (canvas.height - (evt.clientY - rect.top))
+		x : (evt.clientX - rect.left)*canvas.width/$(canvas).width(),
+		y : ((canvas.height - (evt.clientY - rect.top))-(canvas.height-$(canvas).height()))*canvas.height/$(canvas).height(),
 	};
 }
 
@@ -1716,4 +1716,3 @@ function activateBoard() {
 		redraw();
 	}
 }
-
