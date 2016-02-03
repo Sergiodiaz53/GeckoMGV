@@ -827,7 +827,8 @@ function createInstance() {
 		for(var index=0;index<searchList.length;index++)
 			document.getElementById(searchList[index]).checked=false;
 		searchList=[];
-		prevTable=document.getElementById("files-tab-content").cloneNode(true);
+		prevFragsTable=document.getElementById("files-tab-content").cloneNode(true);
+        prevAnnotTable=document.getElementById("annotations-tab-content").cloneNode(true);
 		console.timeEnd("reDraw()");
         loadingGif.hide();
         drawSelectedFrags()
@@ -1240,7 +1241,7 @@ function resetDraw() {
 //Draw the lines to the lines to the annotation point
 function annotationDrawLines(seq,start,end,point){
 
-	console.log("Drawing Annotations");
+	//console.log("Drawing Annotations");
     start=parseInt(start),end=parseInt(end),point=parseInt(point);
     var c = document.getElementById("myCanvasLayer2");
 	var ctx = c.getContext("2d");
