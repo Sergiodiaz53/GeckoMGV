@@ -3,7 +3,8 @@
  Multigenome Visualizer
  Bitlab - Universidad de Málaga
  */
-var prevTable="";
+var prevFragsTable="";
+var prevAnnotTable="";
 var currTable="";
 var searchList=[];
 
@@ -84,8 +85,11 @@ function showResults(filterText,firstFilter)
             $('.SearchFilter2').val("");
         else
             $('.SearchFilter').val("");
-    if(firstFilter&&prevTable!="")
-        document.getElementById("output").replaceChild(prevTable.cloneNode(true),document.getElementById("files-tab-content"));
+    if(firstFilter&&prevFragsTable!="")
+        document.getElementById("output").replaceChild(prevFragsTable.cloneNode(true), document.getElementById("files-tab-content"));
+    if(firstFilter&&prevAnnotTable!="")
+        document.getElementById("annotationsOutput").replaceChild(prevAnnotTable.cloneNode(true), document.getElementById("annotations-tab-content"));
+
     if(filterText!=""){
         if($("#"+filterText.toLowerCase()+"").length==0)
             search(filterText);
@@ -94,14 +98,16 @@ function showResults(filterText,firstFilter)
                 searchList.push(filterText.toLowerCase());
                 search(filterText);
             } else {
-                document.getElementById("output").replaceChild(prevTable.cloneNode(true),document.getElementById("files-tab-content"));
+                document.getElementById("output").replaceChild(prevFragsTable.cloneNode(true),document.getElementById("files-tab-content"));
+                document.getElementById("annotationsOutput").replaceChild(prevAnnotTable.cloneNode(true), document.getElementById("annotations-tab-content"));
                 searchList.splice(searchList.indexOf(filterText.toLowerCase()),1);
                 for(var index= 0;index<searchList.length;index++)
                     setTimeout(search(searchList[index]),5);
             }
-    }
-    //Draw crossed lines to the found annotations
-    drawAnnotations();
+         //Draw crossed lines to the annotations found
+        drawAnnotations();
+    }else
+        document.getElementById("myCanvasLayer2").getContext("2d").clearRect(0,0,500,500);
 
 }
 //function which deletes from the table the annotations which doesn't match the search
@@ -113,11 +119,19 @@ function search(text){
         return;
     }
     for(var fileNum=0;fileNum<lines.length;fileNum++){
+            var annotToFilter=document.getElementById("csvAnnotationTable"+fileNum).childNodes[0].childNodes;
             var toFilter = document.getElementById("csvInfoTable"+fileNum).childNodes[0].childNodes;
-            for(var i=1;i<toFilter.length;i++){
-                if(!showingSelected)
-                    if(toFilter[i].childNodes[0].innerHTML.indexOf("G")==0&&toFilter[i].childNodes[16].innerHTML.toLowerCase().indexOf(text.toLowerCase())==-1) {
+            for(var i=1;i<toFilter.length;i++) {
+                if (!showingSelected)
+                    if (toFilter[i].childNodes[0].innerHTML.indexOf("G") == 0 && toFilter[i].childNodes[16].innerHTML.toLowerCase().indexOf(text.toLowerCase()) == -1) {
                         document.getElementById("csvInfoTable" + fileNum).childNodes[0].removeChild(toFilter[i]);
+                        i--;
+                    }
+            }
+            for(var i=1;i<annotToFilter.length;i++){
+                if(!showingSelected)
+                    if(annotToFilter[i].childNodes[7].innerHTML.toLowerCase().indexOf(text.toLowerCase())==-1) {
+                        document.getElementById("csvAnnotationTable" + fileNum).childNodes[0].removeChild(annotToFilter[i]);
                         i--;
                     }
             }

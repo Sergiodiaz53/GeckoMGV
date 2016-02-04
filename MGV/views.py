@@ -81,6 +81,7 @@ def clustal_omega(request):
             seq1=form.cleaned_data['seq1']
             seq2=form.cleaned_data['seq2']
             content=co.clustal_omega(request,seq1,seq2)
+            print(content)
             return render(request, 'MSAvisualizer.html', {'content': content})
     else:
         form=drawMSAComp()

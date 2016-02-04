@@ -121,8 +121,10 @@ function drawSelectedFrags(){
 	if(selectedLines.length>0)
 		clearCanvas("selectLayer");
 		for(var i=0;i<selectedLines.length;i++)
-			if($("#checklayer"+i)[0].checked)
-				drawLinesInLayer(selectedLines[i],selectLayer,i,rgb(255,0,0));
+			if($("#checklayer"+i)[0].checked) {
+                drawLinesInLayer(selectedLines[i], selectLayer, i, rgb(255, 0, 0));
+                drawHorizontalLinesinHorizontalLayer(selectedLines[i], document.getElementById("hSel" + i), i, rgb(255, 0, 0))
+            }
 }
 
 //Go forward zooming
@@ -370,7 +372,15 @@ function createHorizontalComparisonLayer(numLayer){
                     width: 500,
                     height: 200
                 });
-		$("#horizontalCanvasContainer").append(newHorizontalLayer);
+        var newHorizontalSelectionLayer=$('<canvas/>',{'class':'horizontalCanvasLayer img-responsive', 'id': "hSel"+numLayer}).prop({
+                    width: 500,
+                    height: 200,
+                });
+        var newHorizontalView=$('<div/>',{'id': "hView"+numLayer}).css({'position':'relative'});
+		$("#horizontalCanvasContainer").append(newHorizontalView);
+        newHorizontalView.append(newHorizontalLayer);
+        $(newHorizontalSelectionLayer).css({'position':'absolute','background':'transparent','z-index':'2','margin-top':'0px'});
+        newHorizontalSelectionLayer.insertBefore(newHorizontalLayer);
 	}
 	return $("#"+idHorizontalLayer)[0];
 }
@@ -391,7 +401,8 @@ function createMapImageLayer(numLayer) {
 
 function createComparisonCheck(numLayer){
 	var idVerticalLayer = "layer"+numLayer;
-	var idHorizontalLayer = "hlayer"+numLayer;
+	var idHorizontalLayer = "hView"+numLayer;
+    //var idHorizontalSelectionLayer= "hSel"+numLayer;
 	var idMapimageLayer = "Maplayer"+numLayer;
 
 	var newLayerBoxElement =
@@ -402,16 +413,20 @@ function createComparisonCheck(numLayer){
 	$('#layersTable').last().append(row);
 
 	$(newLayerBoxElement).change(function() {
+        clearCanvas("selectLayer");
 		if ($(this).is(':checked')) {
 			$('#'+idVerticalLayer).show();
 			$('#'+idHorizontalLayer).show();
+			//$('#'+idHorizontalSelectionLayer).show();
 			$('#'+idMapimageLayer).show()
 					.removeAttr('style');
 		} else {
 			$('#'+idVerticalLayer).hide();
 			$('#'+idHorizontalLayer).hide();
+			//$('#'+idHorizontalSelectionLayer).hide();
 			$('#'+idMapimageLayer).hide();
 		}
+        drawSelectedFrags();
 	});
 }
 
@@ -813,7 +828,8 @@ function createInstance() {
 		for(var index=0;index<searchList.length;index++)
 			document.getElementById(searchList[index]).checked=false;
 		searchList=[];
-		prevTable=document.getElementById("files-tab-content").cloneNode(true);
+		prevFragsTable=document.getElementById("files-tab-content").cloneNode(true);
+        prevAnnotTable=document.getElementById("annotations-tab-content").cloneNode(true);
 		console.timeEnd("reDraw()");
         loadingGif.hide();
         drawSelectedFrags()
@@ -950,8 +966,11 @@ function createInstance() {
                 }
 
 				if ((!selected) && vertical){
-                    if(selectedLines.length==0)
+                    if(selectedLines.length==0) {
                         clearCanvas("selectLayer");
+                        for (var i = 0; i < lines.length; i++)
+                            clearCanvas("hSel" + i);
+                    }
                     $('#CSBPopover').hide();
 				}
 
@@ -1027,9 +1046,11 @@ function createInstance() {
                                     if(selectedLines[x].indexOf(i)==-1)
                                         selectedLines[x].push(i);
                                 }
+                                
                             }
                         }
                     }
+                    drawSelectedFrags();
                     var layer1 = document.getElementById("myCanvasLayer1");
                     var ctx1 = layer1.getContext("2d");
                     ctx1.clearRect(0, 0, canvas.width, canvas.height);
@@ -1220,7 +1241,7 @@ function resetDraw() {
 //Draw the lines to the lines to the annotation point
 function annotationDrawLines(seq,start,end,point){
 
-	console.log("Drawing Annotations");
+	//console.log("Drawing Annotations");
     start=parseInt(start),end=parseInt(end),point=parseInt(point);
     var c = document.getElementById("myCanvasLayer2");
 	var ctx = c.getContext("2d");
@@ -1687,8 +1708,11 @@ function selectFrag(lines, position, evt) {
                             html : true
                         }).show();
 
-		if (selected)
-			clearCanvas("selectLayer");
+		if (selected) {
+            clearCanvas("selectLayer");
+            for(var i=0;i<lines.length;i++)
+                clearCanvas("hSel"+i);
+        }
 
 		selected = true;
 		xtotal = fileHeader[0].seqXLength;
