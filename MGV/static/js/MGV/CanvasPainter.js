@@ -123,8 +123,9 @@ function drawSelectedFrags(){
 		for(var i=0;i<selectedLines.length;i++)
 			if($("#checklayer"+i)[0].checked) {
                 drawLinesInLayer(selectedLines[i], selectLayer, i, rgb(255, 0, 0));
-                drawHorizontalLinesinHorizontalLayer(selectedLines[i], document.getElementById("hSel" + i), i, rgb(255, 0, 0))
+                drawHorizontalLinesInHorizontalLayer(selectedLines[i], document.getElementById("hSel" + i), i, rgb(255, 0, 0))
             }
+
 }
 
 //Go forward zooming
