@@ -1,0 +1,19 @@
+All by-Identity Ungapped Fragments (Hits based approach)
+[Abr.98/Apr.2010/Dec.2011 -- <ortrelles@uma.es>
+SeqX filename        : MH232.fasta
+SeqY filename        : MH7448.fasta
+SeqX name            : gi|54019969|ref|NC_006360.1|
+SeqY name            : gi|72080342|ref|NC_007332.1|
+SeqX length          : 892758
+SeqY length          : 920079
+Min.fragment.length  : 100
+Min.Identity         : 65
+Tot Hits (seeds)     : 16744
+Tot Hits (seeds) used: 2256
+Total fragments      : 505
+========================================================
+Total frags      : 403
+x========================================================
+Frag,97821,645309,99768,647256,f,-2,1948,96.82,1917.00,98.41,96.82,7544,-,-
+Frag,97825,560700,99373,559152,r,-2,1549,98.84,1540.00,99.42,98.84,6124,-,-
+Frag,99373,559153,99738,558788,r,-2,366,98.36,363.00,99.18,98.36,1440,-,-
