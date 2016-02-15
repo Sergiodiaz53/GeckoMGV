@@ -14,6 +14,7 @@ var fileNameMAT;
 var maxMat = 0;
 
 function paintMatrix (){
+    canvasMatrix = document.getElementById("myCanvasMatrix");
     var ctx = canvasMatrix.getContext("2d");
     var x, y, value;
 

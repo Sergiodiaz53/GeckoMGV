@@ -232,18 +232,20 @@ function processData(csv, index) {
     } else if (fileType == 'mat') {
 
         if (fileNameMAT == fileName) {
-            loadMatrix();
+            loadMatrix(csv);
+            $('#loading-indicator').hide();
         } else {
+            $('#loading-indicator').hide();
             BootstrapDialog.confirm('Filename do not match with frags file, do you want to continue?�', function (result) {
                 if (result) {
-                    loadMatrix();
+                    loadMatrix(csv);
                 }
             });
         }
     }
 }
 
-    function loadMatrix() {
+    function loadMatrix(csv) {
         var auxLines = [];
         var allTextLines = csv.split(/\r\n|\n/);
 
