@@ -248,3 +248,45 @@ function dialogAnnotations(){
     $( document ).ready(function() {
         $('[data-toggle="tooltip"]').tooltip();
     });
+
+
+function getServicelist(){
+        $.ajax({
+        type:"GET",
+        url:"/scripts/getServiceList/",
+        success: function(response){
+
+                BootstrapDialog.show({
+                    title: 'Select service from Server',
+                    message:function(dialog) {
+                        var content = '<table class="table table-striped">';
+                        for (i in response) {
+                            content += '<thead><tr><th class="clickable" onclick="loadServiceForm('+"'"+response[i]+"'"+')"><span class="glyphicon glyphicon-file"></span> '+response[i]+'</th></tr></thead>';
+                        }
+                        content += '</table>';
+                        dialog.setSize(BootstrapDialog.SIZE_SMALL);
+                        return content;
+                    }
+                })
+            }
+    });
+}
+
+function loadServiceForm(serviceName){
+        BootstrapDialog.closeAll();
+        $.ajax({
+        type: 'POST',
+        url: '/scripts/getServiceForm/',
+        data: {
+            'exeName': 'extractSeqFromFrags'
+        },
+        success: function(content) {
+            var $generatedForm = $('<div></div>');
+            $generatedForm.append(content);
+            BootstrapDialog.show({
+                message:  $generatedForm
+            });
+        }
+        });
+        return false;
+}

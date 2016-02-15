@@ -69,3 +69,21 @@ def testForm(request):
     print request
     return HttpResponse("OK", content_type="text/plain")
 
+@csrf_exempt
+def getServiceList(request):
+    serviceNames = []
+    for service in listServices(request):
+        serviceNames.append(service.name)
+    response = JsonResponse(serviceNames, safe=False)
+    return HttpResponse(response, content_type="application/json")
+
+@csrf_exempt
+def getServiceForm(request):
+    if request.method == 'POST':
+        service = Script.objects.get(exeName=request.POST.get('exeName'))
+        files = listUserFiles(request)
+        auxform = getattr(forms, service.form)
+        form = auxform(user = request.user, request = request)
+
+        return render(request, 'modalForm.html', {'name': service.name, 'exeName': service.exeName,
+                                                         'files': files, 'form': form})

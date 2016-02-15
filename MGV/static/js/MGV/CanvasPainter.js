@@ -118,14 +118,15 @@ function goToPrevZoom(){
 
 //Draw in red frag that have been selected (Storaged in SelectedLines)
 function drawSelectedFrags(){
-	if(selectedLines.length>0)
+	if(selectedLines.length>0) {
 		clearCanvas("selectLayer");
-		for(var i=0;i<selectedLines.length;i++)
-			if($("#checklayer"+i)[0].checked) {
-                drawLinesInLayer(selectedLines[i], selectLayer, i, rgb(255, 0, 0));
-                drawHorizontalLinesInHorizontalLayer(selectedLines[i], document.getElementById("hSel" + i), i, rgb(255, 0, 0))
-            }
-
+		$('#executeServiceButton').prop('disabled', false);
+		for (var i = 0; i < selectedLines.length; i++)
+			if ($("#checklayer" + i)[0].checked) {
+				drawLinesInLayer(selectedLines[i], selectLayer, i, rgb(255, 0, 0));
+				drawHorizontalLinesInHorizontalLayer(selectedLines[i], document.getElementById("hSel" + i), i, rgb(255, 0, 0))
+			}
+	}
 }
 
 //Go forward zooming
@@ -895,6 +896,9 @@ function createInstance() {
 				console.log("MouseUP");
 				mousedown = false;
 				dragStart = null;
+
+				$('#executeServiceButton').prop('disabled', true);
+
 				if (!dragged) {
                     if (!shiftSel) {
                         selectFrag(lines, getMousePos(canvas, evt), evt);
@@ -1013,6 +1017,7 @@ function createInstance() {
 					addPrevZoom();
                     //drawAnnotations();
 				}
+
                 if(area&&vertical&&shiftSel) {
                      if(startX>mouseX)
                         startX=[mouseX,mouseX=startX][0];

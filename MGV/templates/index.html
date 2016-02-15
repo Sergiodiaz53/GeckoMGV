@@ -17,6 +17,7 @@
                             <button type="button" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Draw grid" onclick="activateBoard()"><span class="glyphicon glyphicon-screenshot"></span></button>
                             <button type="button" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="CSB & Frag info" onclick="dialogFrags()"><span class="glyphicon glyphicon-info-sign"></span></button>
                             <button type="button" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Annotations info" onclick="dialogAnnotations()"><span class="glyphicon glyphicon-font"></span></button>
+                            <button type="button" id="executeServiceButton" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Execute Service" onclick="getServicelist()" disabled=""><span class="glyphicon glyphicon-cog"></span></button>
                             <div class="row top-buffer btn-padding form-group row-centered">
 									<form name="option" class="form-centered">
 										<input type="radio" name="tipo" value="Frag" checked
@@ -226,6 +227,10 @@
 		$(window).unload(function() {
 			localStorage.clear()
 		});
+
+        $(document).ready(function(){
+            $('#executeServiceButton').prop('disabled', true);
+        });
 
 		//Detect changes on filterLength value
 		$("#filterLenghtNumber").change(function() {
