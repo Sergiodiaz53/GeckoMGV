@@ -31,15 +31,17 @@ function log10(val) {
 
 function paintMatrix (){
 
-    var w = 500,
-        h = 300,
+    var svg = d3.select("#matrixSVG");
+
+    var w = parseInt(svg.style("width")),
+        h = parseInt(svg.style("height")),
         pad = 20,
         left_pad = 50;
 
-    var svg = d3.select("#matrixSVG")
-        .attr("width", w)
-        .attr("height", h);
+    svg.attr("preserveAspectRatio", "xMinYMin")
+        .attr("viewBox","0 0 " + w + " " + h);
 
+    console.log("W: "+w+" H: "+h);
 
     var x = d3.scale.linear().domain([0,1000]).range([left_pad, w-pad]),
         y = d3.scale.linear().domain([100, 0]).range([pad, h-pad*2]);

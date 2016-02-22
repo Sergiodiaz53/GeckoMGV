@@ -35,7 +35,7 @@
             <div class="col-md-3" id="columnLeft">
                     <!-- ---------- CANVAS Horizontal -------------------- -->
                     <div id="horizontalCanvas" class="canvasBlock">
-                        <div id="horizontalCanvasContainer" class="my-container3">
+                        <div id="horizontalCanvasContainer" >
                         </div>
                     </div>
 
@@ -66,22 +66,44 @@
                     </div>
 				</div>
 
-				<div class="row row-centered my-container2">
+				<div class="row row-centered">
 					<div class="col-md-12 col-centered">
 						<div class="canvasBlock div-centered">
 						<!-- ---------- CANVAS Matrix -------------------- -->
-                            <div id="canvasContainerMatrix" class="div-centered tab-pane fade in active">
-                                <div id="fileNameMAT">
-                                    Upload a Matrix file
-                                    <button id="infoPopoverMatriz" type="button"
-                                        class="btn btn-warning btn-xs btn-padding"
-                                        data-container="body" data-toggle="popover"
-                                        data-placement="right" data-content="Not file loaded"
-                                        data-html="true">?</button>
-                                </div>
-                                <canvas id="myCanvasMatrix" class="img-responsive" width="500" height="100"> </canvas>
-                                <div>
-                                    <svg id="matrixSVG" class="img-responsive" width="500" height="300"></svg>
+                            <div id="canvasContainerMatrix" class="div-centered">
+                                <ul class="nav nav-tabs nav-justified">
+                                  <li class="active"><a data-toggle="tab" href="#distributionMatrix">Distribution Matrix</a></li>
+                                  <li><a data-toggle="tab" href="#oldMatrix">General Matrix</a></li>
+                                  <li><a data-toggle="tab" href="#optionsMatrix">Options</a></li>
+                                </ul>
+                                <div class="tab-content">
+                                    <div id="distributionMatrix" class="tab-pane fade in active svg-container">
+                                        <div id="fileNameMAT">
+                                            Upload a Matrix file
+                                            <button id="infoPopoverMatriz" type="button"
+                                                class="btn btn-warning btn-xs btn-padding"
+                                                data-container="body" data-toggle="popover"
+                                                data-placement="right" data-content="Not file loaded"
+                                                data-html="true">?</button>
+                                        </div>
+                                        <svg id="matrixSVG" class="embed-responsive-item" width="500" height="300"></svg>
+                                    </div>
+                                    <div id="oldMatrix" class="tab-pane fade">
+                                        <canvas id="myCanvasMatrix" class="img-responsive" width="500" height="100"> </canvas>
+                                    </div>
+                                    <div id="optionsMatrix" class="tab-pane fade">
+                                        <div class="col-lg-6 col-sm-6 col-centered">
+                                            <div class="input-group">
+                                              <span class="input-group-addon" id="columnNumber">X</span>
+                                              <input type="text" class="form-control" placeholder="Number of Columns" aria-describedby="columnNumber">
+                                            </div>
+                                            <div class="input-group">
+                                              <span class="input-group-addon" id="rowNumber">Y</span>
+                                              <input type="text" class="form-control" placeholder="Number of Rows" aria-describedby="rowNumber">
+                                            </div>
+                                            <button type="button" class="btn btn-default" title="">Set</button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
