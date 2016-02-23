@@ -5,7 +5,6 @@
  */
 
 //Global Variables//
-var matrix = [];
 var currentMatrix = [];
 var fileType;
 var fileName;
@@ -35,16 +34,14 @@ function paintMatrix (){
 
     var w = parseInt(svg.style("width")),
         h = parseInt(svg.style("height")),
-        pad = 20,
-        left_pad = 50;
+        pad = 40,
+        left_pad = 100;
 
     svg.attr("preserveAspectRatio", "xMinYMin")
         .attr("viewBox","0 0 " + w + " " + h);
 
-    console.log("W: "+w+" H: "+h);
-
-    var x = d3.scale.linear().domain([0,1000]).range([left_pad, w-pad]),
-        y = d3.scale.linear().domain([100, 0]).range([pad, h-pad*2]);
+    var x = d3.scale.linear().domain([0,currentMatrix.length]).range([left_pad, w-pad]),
+        y = d3.scale.linear().domain([currentMatrix[0].length, 0]).range([pad, h-pad*2]);
 
     var xAxis = d3.svg.axis().scale(x).orient("bottom"),
         yAxis = d3.svg.axis().scale(y).orient("left");
@@ -54,18 +51,35 @@ function paintMatrix (){
         .attr("transform", "translate(0, "+(h-pad)+")")
         .call(xAxis);
 
+
+    svg.append("text")      // text label for the x axis
+        .attr("x", w/2 +pad/2 )
+        .attr("y",  h-3)
+        .style("text-anchor", "middle")
+        .text("Length")
+        .attr("id", "xAxis");
+
     svg.append("g")
         .attr("class", "axis")
         .attr("transform", "translate("+(left_pad-pad)+", 0)")
         .call(yAxis);
 
+    svg.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 10)
+        .attr("x",0 - (h / 2) + pad/2)
+        .attr("dy", "1em")
+        .style("text-anchor", "middle")
+        .text("Identity")
+        .attr("id", "yAxis");
+
     svg.selectAll('circle')
         .data(matrixProcessedData)
         .enter().append("svg:circle")
-        .attr("cx", function(d,i){
+        .attr("cx", function(d){
             return x(d[0]);
         })
-        .attr("cy", function(d,i){
+        .attr("cy", function(d){
             return y(d[1]);
         })
         .attr("r", function(d){return logValue(d[2])})
@@ -120,5 +134,68 @@ function getHUEColor(value){
     b = Math.floor(b * 255);
 
     return rgb(r,g,b);
+
+}
+
+function changeAxisName(){
+
+    var svg = d3.select("#matrixSVG");
+
+    var xAxisName = $("#xAxisName").val(),
+        yAxisName = $("#yAxisName").val(),
+        w = parseInt(svg.style("width")),
+        h = parseInt(svg.style("height")),
+        pad = 40,
+        left_pad = 100;
+
+    console.log("Values: "+xAxisName+" -- "+yAxisName);
+
+    svg.select("#xAxis").remove();
+    svg.select("#yAxis").remove();
+
+    svg.append("text")      // text label for the x axis
+        .attr("x", w/2 +pad/2 )
+        .attr("y",  h-3)
+        .style("text-anchor", "middle")
+        .text(xAxisName)
+        .attr("id", "xAxisName");
+
+    svg.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 10)
+        .attr("x",0 - (h / 2) + pad/2)
+        .attr("dy", "1em")
+        .style("text-anchor", "middle")
+        .text(yAxisName)
+        .attr("id", "yAxisName");
+
+}
+
+function paintFrag(ident, length){
+
+    console.log("Painting Ident: "+ident+" Length: "+length);
+
+    var svg = d3.select("#matrixSVG");
+
+    var w = parseInt(svg.style("width")),
+        h = parseInt(svg.style("height")),
+        pad = 40,
+        left_pad = 100;
+
+    var x = d3.scale.linear().domain([0,currentMatrix.length]).range([left_pad, w-pad]),
+        y = d3.scale.linear().domain([currentMatrix[0].length, 0]).range([pad, h-pad*2]);
+
+    svg.append("svg:circle")
+        .attr("cx", function(){
+            console.log("X: "+x(length));
+            return x(length);
+        })
+        .attr("cy", function(){
+            console.log("Y: "+y(length));
+            return y(ident);
+        })
+        .attr("r", 10)
+        .style("fill","black");
+
 
 }

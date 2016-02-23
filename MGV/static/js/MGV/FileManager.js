@@ -246,7 +246,6 @@ function processData(csv, index) {
 
                 //Read raw data
                 currentMatrix = results.data;
-                console.log(currentMatrix);
 
                 var count = 0;
 
@@ -254,9 +253,6 @@ function processData(csv, index) {
                 //MatrixProcessedData[X-Position, Y-Position, X-Y-Value]
                 for (var i = 1; i < currentMatrix.length; i++) {
                  for (var j = 0; j < currentMatrix[i].length - 1; j++) {
-                     if(currentMatrix[i][j] > 0){
-                         count ++;
-                     }
 
                      if(currentMatrix[i][j]>0){
                          matrixProcessedData.push([i,j,currentMatrix[i][j]])

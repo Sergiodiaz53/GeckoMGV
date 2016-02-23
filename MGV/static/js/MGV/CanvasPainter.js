@@ -1677,6 +1677,8 @@ function selectFrag(lines, position, evt) {
 		var left = evt.pageX;
 		var top = evt.pageY;
 
+		paintFrag(((lines[arrayIndex][lineIndex][9]/lines[arrayIndex][lineIndex][7]).toFixed(2))*100,lines[arrayIndex][lineIndex][7]);
+
 		$('#CSBPopover')
 				.html(
 						"<div class='popover-title'>"
