@@ -30,7 +30,7 @@ function log10(val) {
 
 function paintMatrix (){
 
-    var svg = d3.select("#matrixSVG");
+    var svg = d3.select("#matrixSVG")
 
     var w = parseInt(svg.style("width")),
         h = parseInt(svg.style("height")),
@@ -94,7 +94,7 @@ function paintMatrix (){
                 .style("stroke", "none")
         })
         .style("fill",function(d) {
-            return getHUEColor(d[2]);
+           return (d[1] > coverageLine.coverageValue) ? getHUEColor(d[2]) : rgb(158,158,158);
         } );
 
     $('svg circle').tipsy({
@@ -105,6 +105,8 @@ function paintMatrix (){
             return d[2];
         }
       });
+
+    coverageLine.paint(coverageLine.coverageValue);
 }
 
 function getHUEColor(value){
@@ -197,5 +199,72 @@ function paintFrag(ident, length){
         .attr("r", 10)
         .style("fill","black");
 
-
 }
+
+var coverageLine = {
+
+    coverageValue : 50,
+
+    paint : function(coverageValue){
+
+        this.coverageValue = parseInt(coverageValue);
+
+        var svg = d3.select("#matrixSVG");
+
+            var w = parseInt(svg.style("width")),
+                h = parseInt(svg.style("height")),
+                pad = 40,
+                left_pad = 100;
+
+            var x = d3.scale.linear().domain([0,currentMatrix.length]).range([left_pad, w-pad]),
+            y = d3.scale.linear().domain([currentMatrix[0].length, 0]).range([pad, h-pad*2]);
+
+            svg.select("#coverageLine").remove();
+
+            var drag = d3.behavior.drag()
+                .on("dragstart", dragstarted)
+                .on("drag", dragged)
+                .on("dragend", dragended);
+
+            var filteringLine = svg.append("line")
+                 .attr("x1", x(0)-pad)
+                 .attr("y1", y(this.coverageValue))
+                 .attr("x2", x(1000))
+                 .attr("y2", y(this.coverageValue))
+                 .attr("stroke-width", 3)
+                 .attr("stroke", "steelblue")
+                 .attr("id", "coverageLine")
+                 .call(drag);
+
+            function dragstarted() {
+              d3.event.sourceEvent.stopPropagation();
+              d3.select(this).classed("dragging", true);
+             }
+
+            function dragged() {
+
+                coverageLine.coverageValue = y.invert(d3.event.y) > d3.max(y.domain()) ? 100 : y.invert(d3.event.y);
+
+                var newYPositionValue = function() {
+                    if(y.invert(d3.event.y) > 100) {
+                        return y(100);
+                    } else if (y.invert(d3.event.y) < 0) {
+                        return y(0);
+                    } else {
+                        return d3.event.y;
+                    }
+                }
+
+                filteringLine.attr("y1", newYPositionValue())
+                    .attr("y2", newYPositionValue());
+            }
+
+            function dragended() {
+              d3.select(this).classed("dragging", false);
+                var circle = svg.selectAll("circle")
+                    .style("fill",function(d) {
+                       return (d[1] > coverageLine.coverageValue) ? getHUEColor(d[2]) : rgb(158,158,158);
+                    } );
+            }
+    }
+};
