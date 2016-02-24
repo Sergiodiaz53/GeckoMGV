@@ -1292,7 +1292,7 @@ function annotationDrawLines(seq,start,end,point){
         ctx.moveTo(xIni, c.height);
         ctx.lineTo(xIni, c.height - 5);
         ctx.moveTo(xFin, c.height);
-        ctx.lineTo(xFin,c.height - 5);
+        ctx.lineTo(xFin,c.height -5);
     }else{
         ctx.moveTo(0, c.height -yIni);
         ctx.lineTo(5, c.height - yIni);
