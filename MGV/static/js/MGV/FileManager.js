@@ -149,6 +149,7 @@ function processData(csv, index) {
 
                 if(parseCount==0){
                     redraw();
+                    calculateMatrix(lines[0]);
                     addPrevZoom();
                 }
                 $('#loading-indicator').hide();
@@ -247,20 +248,7 @@ function processData(csv, index) {
                 //Read raw data
                 currentMatrix = results.data;
 
-                var count = 0;
-
-                //Process and filter the data
-                //MatrixProcessedData[X-Position, Y-Position, X-Y-Value]
-                for (var i = 1; i < currentMatrix.length; i++) {
-                 for (var j = 0; j < currentMatrix[i].length - 1; j++) {
-
-                     if(currentMatrix[i][j]>0){
-                         matrixProcessedData.push([i,j,currentMatrix[i][j]])
-                     }
-
-                    maxMat = Math.max(parseInt(currentMatrix[i][j]), maxMat);
-                }}
-                paintMatrix();
+                processMatrixData(currentMatrix);
             },
             error: function(err,reason){
                 alert(err);

@@ -177,6 +177,13 @@
 												value="positives" onClick="redraw()">Positive blocks
 											</label>
 										</div>
+                                        <div class="input-group group-padding">
+											<span class="input-group-addon"> <input
+												type="checkbox" id="filterIdentity"
+												onClick="redraw()">Identity<br>
+											</span> <input type="number" class="form-control"
+												id="filterIdentityNumber" value="50">
+										</div>
 										<div class="input-group group-padding">
 											<span class="input-group-addon"> <input
 												type="checkbox" id="filterLenght" value="lenght"
@@ -268,6 +275,14 @@
 			if (document.getElementById("filterLenght").checked) {
 				redraw();
 			}
+		});
+
+        $("#filterIdentityNumber").change(function() {
+            if ($('#filterIdentity').prop('checked')){
+                var auxValue = $("#filterIdentityNumber").val();
+                coverageLine.paint(auxValue);
+                coverageLine.update();
+            }
 		});
 
 		//Not sending form on ENTER

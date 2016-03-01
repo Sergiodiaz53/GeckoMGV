@@ -10,6 +10,7 @@ var fileType;
 var fileName;
 var fileNameMAT;
 var maxMat = 0;
+var minMat = 200;
 
 function logValue(value) {
 
@@ -203,7 +204,7 @@ function paintFrag(ident, length){
 
 var coverageLine = {
 
-    coverageValue : 50,
+    coverageValue : 0,
 
     paint : function(coverageValue){
 
@@ -242,29 +243,89 @@ var coverageLine = {
              }
 
             function dragged() {
-
-                coverageLine.coverageValue = y.invert(d3.event.y) > d3.max(y.domain()) ? 100 : y.invert(d3.event.y);
-
+                var auxValue = 0;
                 var newYPositionValue = function() {
-                    if(y.invert(d3.event.y) > 100) {
-                        return y(100);
-                    } else if (y.invert(d3.event.y) < 0) {
-                        return y(0);
+                    if(y.invert(d3.event.y) > d3.max(y.domain())) {
+                        auxValue = y(100)
+                    } else if (y.invert(d3.event.y) < d3.min(y.domain())) {
+                        auxValue = y(0);
                     } else {
-                        return d3.event.y;
+                        auxValue = d3.event.y;
                     }
-                }
+
+                    coverageLine.coverageValue = y.invert(auxValue).toFixed(2);
+
+                    $("#filterIdentityNumber").val(Math.round(y.invert(auxValue)));
+
+                    return auxValue;
+                };
 
                 filteringLine.attr("y1", newYPositionValue())
                     .attr("y2", newYPositionValue());
             }
 
             function dragended() {
-              d3.select(this).classed("dragging", false);
-                var circle = svg.selectAll("circle")
+                d3.select(this).classed("dragging", false);
+                coverageLine.update();
+            }
+    },
+
+    update : function() {
+        var svg = d3.select("#matrixSVG");
+        var circle = svg.selectAll("circle")
                     .style("fill",function(d) {
                        return (d[1] > coverageLine.coverageValue) ? getHUEColor(d[2]) : rgb(158,158,158);
-                    } );
-            }
+                    });
+        if(currentLines){
+            redraw();
+        }
+
     }
 };
+
+function calculateMatrix(arrFrags){
+
+for(var i=0; i<1001; i++) {
+    currentMatrix[i] = [];
+    for(var j=0; j<101; j++) {
+        currentMatrix[i][j] = [0];
+    }
+}
+
+    for (var i= fragsStarts+1; i < arrFrags.length; i++) {
+
+        var frag = arrFrags[i];
+
+        console.log(frag);
+
+        if(frag[0] == 'Frag') {
+
+            var length = parseInt(frag[7]),
+                identity = (parseInt(frag[9])/length).toFixed(2)*100;
+
+           if (length > 1000) length = 1000;
+
+            if (length)
+                currentMatrix[length][identity] = parseInt(currentMatrix[length][identity]) + 1;
+        }
+    }
+
+    processMatrixData();
+}
+
+function processMatrixData(){
+
+    //Process and filter the data
+    //MatrixProcessedData[X-Position, Y-Position, X-Y-Value]
+    for (var i = 1; i < currentMatrix.length; i++) {
+        for (var j = 0; j < currentMatrix[i].length - 1; j++) {
+
+            if(currentMatrix[i][j]>0){
+                matrixProcessedData.push([i,j,currentMatrix[i][j]])
+            }
+
+            maxMat = Math.max(parseInt(currentMatrix[i][j]), maxMat);
+        }}
+
+    paintMatrix();
+}

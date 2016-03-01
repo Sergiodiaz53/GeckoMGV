@@ -1179,6 +1179,7 @@ function filter(line) {
 	var filterLenght = document.getElementById("filterLenght").checked;
 	var filterSimilarity = document.getElementById("filterSimilarity").checked;
 	var filterPositives = document.getElementById("filterPositives").checked;
+	var filterIdentity = document.getElementById("filterIdentity").checked;
 
 	switch (parseInt(line[6])) {
         case -1:
@@ -1219,6 +1220,12 @@ function filter(line) {
 
 	if (filterDuplications) {
 		if (parseInt(line[6]) < -2) {
+			paint = false;
+		}
+	}
+
+	if(filterIdentity){
+		if((line[9]/line[7]).toFixed(2)*100 < coverageLine.coverageValue) {
 			paint = false;
 		}
 	}
@@ -1310,8 +1317,6 @@ function annotationDrawLines(seq,start,end,point){
     ctx.strokeStyle = rgba(51,122,183,0.7);
     ctx.stroke();
 }
-
-
 
 function showSelected(){
     if(!showingSelected){
