@@ -55,6 +55,7 @@ var scaleY = 1;
 var zoomed = false;
 var reset = false;
 var selected = false;
+var shiftSel=false;
 var selectLayer=$("#selectLayer")[0];
 
 // Constants
@@ -122,8 +123,9 @@ function drawSelectedFrags(){
 		for(var i=0;i<selectedLines.length;i++)
 			if($("#checklayer"+i)[0].checked) {
                 drawLinesInLayer(selectedLines[i], selectLayer, i, rgb(255, 0, 0));
-                drawHorizontalLinesinHorizontalLayer(selectedLines[i], document.getElementById("hSel" + i), i, rgb(255, 0, 0))
+                drawHorizontalLinesInHorizontalLayer(selectedLines[i], document.getElementById("hSel" + i), i, rgb(255, 0, 0))
             }
+
 }
 
 //Go forward zooming
@@ -344,7 +346,6 @@ function resetZoom(){
     reset = false;
 }
 
-
 function createVerticalComparisonLayer(numLayer){
 	var idVerticalLayer = "layer"+numLayer;
 
@@ -356,7 +357,6 @@ function createVerticalComparisonLayer(numLayer){
                     width: 500,
                     height: 500
                 });
-
 		$("#canvasContainer").append(newVerticalLayer);
 		createComparisonCheck(numLayer);
 	}
@@ -366,7 +366,6 @@ function createVerticalComparisonLayer(numLayer){
 
 function createHorizontalComparisonLayer(numLayer){
 	var idHorizontalLayer = "hlayer"+numLayer;
-
 
 	if($("#" + idHorizontalLayer).length == 0) {
 		var newHorizontalLayer =
@@ -387,7 +386,7 @@ function createHorizontalComparisonLayer(numLayer){
 	return $("#"+idHorizontalLayer)[0];
 }
 
-function createMapimageLayer(numLayer) {
+function createMapImageLayer(numLayer) {
 
 	var idLayer = "Maplayer"+numLayer;
 
@@ -468,7 +467,7 @@ function drawVerticalLinesInVerticalLayer(linesToPaint, canvasLayer, numFile, co
 	currentCtx.stroke();
 }
 
-function drawHorizontalLinesinHorizontalLayer(linesToPaint, canvasLayer, numFile, color) {
+function drawHorizontalLinesInHorizontalLayer(linesToPaint, canvasLayer, numFile, color) {
 
 	var currentCtx = canvasLayer.getContext('2d');
 	var padding = 50;
@@ -765,8 +764,11 @@ function createInstance() {
 				drawVerticalLinesInVerticalLayer(filteredLines,currentVerticalCanvas,numFile,rgba(189, 195, 199, 0.5));
 
 				//Draw in horizontal layer
-				drawHorizontalLinesinHorizontalLayer(linesToPaint, currentHorizontalCanvas, numFile, rgba(R[numFile], G[numFile], B[numFile], 1));
-				drawHorizontalLinesinHorizontalLayer(filteredLines, currentHorizontalCanvas, numFile, rgba(189, 195, 199, 0.5));
+				drawHorizontalLinesInHorizontalLayer(linesToPaint, currentHorizontalCanvas, numFile, rgba(R[numFile], G[numFile], B[numFile], 1));
+				drawHorizontalLinesInHorizontalLayer(filteredLines, currentHorizontalCanvas, numFile, rgba(189, 195, 199, 0.5));
+
+				//Draw Selected frags
+				drawSelectedFrags();
 
 				$("#files-tab").append(
 						"<li><a href='#file" + numFile + "' data-toggle='tab'>File "
@@ -819,7 +821,7 @@ function createInstance() {
 			redrawMap();
 
 			if ((numFile <= (lines.length-1)) && (map == false)) {
-				var mapimage = createMapimageLayer(numFile);
+				var mapimage = createMapImageLayer(numFile);
 				mapimage.src = currentVerticalCanvas.toDataURL("image/png");
 				if(numFile==lines.length-1) map = true;
 			}
@@ -954,10 +956,10 @@ function createInstance() {
                                 if((index=selectedLines[arrayIndex].indexOf(lineIndex))>-1){
                                     selectedLines[arrayIndex].splice(index, 1);
 									clearCanvas("selectLayer");
-                                    drawLinesInLayer(selectedLines[arrayIndex],selectLayer, arrayIndex, rgb(255,0,0));
+                                    drawVerticalLinesInVerticalLayer(selectedLines[arrayIndex], $("#selectLayer"), arrayIndex, rgb(255,0,0));
                                 }else{
                                     selectedLines[arrayIndex].push(lineIndex);
-                                    drawLinesInLayer([lineIndex],selectLayer, arrayIndex, rgb(255,0,0));
+                                    drawVerticalLinesInVerticalLayer( [lineIndex], $("#selectLayer"),arrayIndex, rgb(255,0,0));
                                 }
                             }
                         }
@@ -1041,7 +1043,7 @@ function createInstance() {
                                     paint = false;
                                 }
                                 if (paint) {
-                                    //drawLinesInLayer([i],selectLayer,x,rgb(255,0,0));
+                                    drawVerticalLinesInVerticalLayer([i],selectLayer,x,rgb(255,0,0));
                                     if(selectedLines[x].indexOf(i)==-1)
                                         selectedLines[x].push(i);
                                 }
@@ -1220,7 +1222,6 @@ function filter(line) {
 
 }
 
-
 function resetDraw() {
 	if ((canvas) && (vertical)) {
 		clearCanvas("selectLayer");
@@ -1304,6 +1305,7 @@ function annotationDrawLines(seq,start,end,point){
     ctx.strokeStyle = rgba(51,122,183,0.7);
     ctx.stroke();
 }
+
 
 
 function showSelected(){

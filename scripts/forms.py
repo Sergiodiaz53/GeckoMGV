@@ -108,3 +108,67 @@ class connectFragsUpForm(forms.Form):
         self.fields['parameter2'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="Output file", widget=forms.Select(attrs={'class':'selector','id': 'outputFile'}))
         self.fields['parameter3'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="Sequence X FASTA", widget=forms.Select(attrs={'class':'selector','id': 'seqx'}))
         self.fields['parameter4'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="Sequence Y FASTA", widget=forms.Select(attrs={'class':'selector','id': 'seqy'}))
+
+class refineOverlappedForm(forms.Form):
+    parameter1 = forms.ChoiceField(label="Original frags file", widget=forms.Select(attrs={'class':'selector','id': 'originalFrags'}))
+    parameter2 = forms.ChoiceField(label="Overlapped frags file", widget=forms.Select(attrs={'class':'selector','id': 'overFile'}))
+    parameter3 = forms.ChoiceField(label="Not overlapped file", widget=forms.Select(attrs={'class':'selector','id': 'notFrags'}))
+    parameter4 = forms.ChoiceField(label="New Master frags file", widget=forms.Select(attrs={'class':'selector','id': 'newMFile'}))
+    parameter5 = forms.ChoiceField(label="New overlapped frags file", widget=forms.Select(attrs={'class':'selector','id': 'newOFrags'}))
+    parameter6 = forms.ChoiceField(label="New not overlapped frags file", widget=forms.Select(attrs={'class':'selector','id': 'newNFile'}))
+    parameter7 = forms.ChoiceField(label="Sequence X FASTA", widget=forms.Select(attrs={'class':'selector','id': 'seqx'}))
+    parameter8 = forms.ChoiceField(label="Sequence Y FASTA", widget=forms.Select(attrs={'class':'selector','id': 'seqy'}))
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        self.request = kwargs.pop('request', None)
+        super(refineOverlappedForm, self).__init__(*args, **kwargs)
+        self.fields['parameter1'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="Original frags file", widget=forms.Select(attrs={'class':'selector','id': 'originalFrags'}))
+        self.fields['parameter2'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="Overlapped frags file", widget=forms.Select(attrs={'class':'selector','id': 'overFile'}))
+        self.fields['parameter3'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="Not overlapped file", widget=forms.Select(attrs={'class':'selector','id': 'notFrags'}))
+        self.fields['parameter4'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="New Master frags file", widget=forms.Select(attrs={'class':'selector','id': 'newMFile'}))
+        self.fields['parameter5'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="New overlapped frags file", widget=forms.Select(attrs={'class':'selector','id': 'newOFrags'}))
+        self.fields['parameter6'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="New not overlapped frags file", widget=forms.Select(attrs={'class':'selector','id': 'newNFile'}))
+        self.fields['parameter7'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="Sequence X FASTA", widget=forms.Select(attrs={'class':'selector','id': 'seqx'}))
+        self.fields['parameter8'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="Sequence Y FASTA", widget=forms.Select(attrs={'class':'selector','id': 'seqy'}))
+
+class classifyRepeatsForm(forms.Form):
+    parameter4 = forms.ChoiceField(label="Tandem repeats", widget=forms.Select(attrs={'class':'selector','id': 'tandemFrags'}))
+    parameter1 = forms.ChoiceField(label="Overlapped frags file", widget=forms.Select(attrs={'class':'selector','id': 'overFile'}))
+    parameter2 = forms.ChoiceField(label="Not overlapped file", widget=forms.Select(attrs={'class':'selector','id': 'notFrags'}))
+    parameter3 = forms.ChoiceField(label="New Master frags file", widget=forms.Select(attrs={'class':'selector','id': 'newMFile'}))
+    parameter5 = forms.ChoiceField(label="Interspersed repeats", widget=forms.Select(attrs={'class':'selector','id': 'interFrags'}))
+    parameter6 = forms.ChoiceField(label="Duplications", widget=forms.Select(attrs={'class':'selector','id': 'dupFile'}))
+    parameter7 = forms.ChoiceField(label="Nor overlapped repeats", widget=forms.Select(attrs={'class':'selector','id': 'notFile'}))
+    parameter8 = forms.ChoiceField(label="Sequence X FASTA", widget=forms.Select(attrs={'class':'selector','id': 'seqx'}))
+    parameter9 = forms.ChoiceField(label="Sequence Y FASTA", widget=forms.Select(attrs={'class':'selector','id': 'seqy'}))
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        self.request = kwargs.pop('request', None)
+        super(classifyRepeatsForm, self).__init__(*args, **kwargs)
+        self.fields['parameter4'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="Tandem repeats", widget=forms.Select(attrs={'class':'selector','id': 'tandemFrags'}))
+        self.fields['parameter1'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="Overlapped frags file", widget=forms.Select(attrs={'class':'selector','id': 'overFile'}))
+        self.fields['parameter2'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="Not overlapped file", widget=forms.Select(attrs={'class':'selector','id': 'notFrags'}))
+        self.fields['parameter3'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="New Master frags file", widget=forms.Select(attrs={'class':'selector','id': 'newMFile'}))
+        self.fields['parameter5'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="Interspersed repeats", widget=forms.Select(attrs={'class':'selector','id': 'interFrags'}))
+        self.fields['parameter6'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="Duplications", widget=forms.Select(attrs={'class':'selector','id': 'dupFile'}))
+        self.fields['parameter7'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="Nor overlapped repeats", widget=forms.Select(attrs={'class':'selector','id': 'notFile'}))
+        self.fields['parameter8'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="Sequence X FASTA", widget=forms.Select(attrs={'class':'selector','id': 'seqx'}))
+        self.fields['parameter9'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="Sequence Y FASTA", widget=forms.Select(attrs={'class':'selector','id': 'seqy'}))
+
+class geckoForm(forms.Form):
+    choice=(("2","8"),("3","12"),("4","16"),("5","20"),("6","24"),("7","28"),("8","32"))
+    parameter3 = forms.IntegerField(label='min length', widget=forms.TextInput(attrs={'id': 'leng'}))
+    parameter4 = forms.CharField(label='min similarity', max_length=3, widget=forms.TextInput(attrs={'id': 'sim'}))
+    parameter5 = forms.ChoiceField(label='word length', choices=choice, widget=forms.Select(attrs={'class':'selector','id': 'Wleng'}))
+    parameter6 = forms.CharField(label='fixed length', initial="1",widget = forms.HiddenInput(attrs={'id': 'fl'}))
+    parameter1 = forms.ChoiceField(label="Sequence X FASTA", widget=forms.Select(attrs={'class':'selector','id': 'seqx'}))
+    parameter2 = forms.ChoiceField(label="Sequence Y FASTA", widget=forms.Select(attrs={'class':'selector','id': 'seqy'}))
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        self.request = kwargs.pop('request', None)
+        super(geckoForm, self).__init__(*args, **kwargs)
+        self.fields['parameter1'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="Sequence X FASTA", widget=forms.Select(attrs={'class':'selector','id': 'seqx'}))
+        self.fields['parameter2'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="Sequence Y FASTA", widget=forms.Select(attrs={'class':'selector','id': 'seqy'}))
