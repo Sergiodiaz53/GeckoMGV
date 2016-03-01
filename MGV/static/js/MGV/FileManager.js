@@ -10,7 +10,7 @@ var fileNames = [];
 var fileInfo=[];
 var multigenome;
 var parseCount;
-
+var matrixProcessedData = [];
 
 //My Objects
 function CSVHeader (headers) {
@@ -77,7 +77,6 @@ function handleFiles(files, type) {
         $('#loading-indicator').show();
     }
 
-    console.log("HandleFiles");
     console.time("ReadingFile()");
     // Check for the various File API support.
 
@@ -98,9 +97,8 @@ function handleFiles(files, type) {
 }
 
 function getAsText(fileToRead, i) {
-    console.log("GetAsText:"+i);
-
     var reader = new FileReader();
+
     if(fileType=='csv'){
         fileNames[i] = fileToRead.name;
         fileNames[i]  = fileNames[i].substring(0, fileNames[i].length-4);
@@ -126,17 +124,12 @@ function getAsText(fileToRead, i) {
 }
 
 function loadHandler(event, i) {
-    console.log("LoadHandler: "+i);
     var csv = event.target.result;
     processData(csv, i);
 }
 
 function processData(csv, index) {
-
-    console.log("ProcessData: " + index);
-
     if (fileType == 'csv') {
-        console.log("I: "+index+" fileName"+fileNames[index]);
         document.getElementById("fileName").innerHTML = fileNames[index];
 
         //InfoPopover = File info popover ()
@@ -145,6 +138,7 @@ function processData(csv, index) {
         });
 
         $('#loading-indicator').show();
+
         Papa.parse(csv, {
             worker: true,
             complete: function (results) {
@@ -155,6 +149,7 @@ function processData(csv, index) {
 
                 if(parseCount==0){
                     redraw();
+                    calculateMatrix(lines[0]);
                     addPrevZoom();
                 }
                 $('#loading-indicator').hide();
@@ -232,36 +227,34 @@ function processData(csv, index) {
     } else if (fileType == 'mat') {
 
         if (fileNameMAT == fileName) {
-            loadMatrix();
+            loadMatrix(csv);
+            $('#loading-indicator').hide();
         } else {
-            BootstrapDialog.confirm('Filename do not match with frags file, do you want to continue?�', function (result) {
+            $('#loading-indicator').hide();
+            BootstrapDialog.confirm('Filename do not match with frags file, do you want to continue?', function (result) {
                 if (result) {
-                    loadMatrix();
+                    loadMatrix(csv);
                 }
             });
         }
     }
 }
 
-    function loadMatrix() {
-        var auxLines = [];
-        var allTextLines = csv.split(/\r\n|\n/);
+    function loadMatrix(csv) {
+        Papa.parse(csv, {
+            worker: true,
+            complete: function (results) {
 
-        while (allTextLines.length) {
-            auxLines.push(allTextLines.shift().split('\t'));
-        }
+                //Read raw data
+                currentMatrix = results.data;
 
-        // Recovery lines
-        matrix = JSON.parse(JSON.stringify(auxLines));
-        currentMatrix = matrix.slice(0);
-
-        for (var i = 1; i < currentMatrix.length; i++) {
-            for (var j = 0; j < currentMatrix[i].length - 1; j++) {
-                maxMat = Math.max(parseInt(currentMatrix[i][j]), maxMat);
+                processMatrixData(currentMatrix);
+            },
+            error: function(err,reason){
+                alert(err);
+                alert(reason);
             }
-        }
-
-        paintMatrix();
+        });
     }
 
 function errorHandler(evt) {

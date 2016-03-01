@@ -17,6 +17,7 @@
                             <button type="button" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Draw grid" onclick="activateBoard()"><span class="glyphicon glyphicon-screenshot"></span></button>
                             <button type="button" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="CSB & Frag info" onclick="dialogFrags()"><span class="glyphicon glyphicon-info-sign"></span></button>
                             <button type="button" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Annotations info" onclick="dialogAnnotations()"><span class="glyphicon glyphicon-font"></span></button>
+                            <button type="button" id="executeServiceButton" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Execute Service" onclick="getServicelist()" disabled=""><span class="glyphicon glyphicon-cog"></span></button>
                             <div class="row top-buffer btn-padding form-group row-centered">
 									<form name="option" class="form-centered">
 										<input type="radio" name="tipo" value="Frag" checked
@@ -34,7 +35,7 @@
             <div class="col-md-3" id="columnLeft">
                     <!-- ---------- CANVAS Horizontal -------------------- -->
                     <div id="horizontalCanvas" class="canvasBlock">
-                        <div id="horizontalCanvasContainer" class="my-container3">
+                        <div id="horizontalCanvasContainer" >
                         </div>
                     </div>
 
@@ -65,20 +66,45 @@
                     </div>
 				</div>
 
-				<div class="row row-centered my-container2">
+				<div class="row row-centered">
 					<div class="col-md-12 col-centered">
 						<div class="canvasBlock div-centered">
 						<!-- ---------- CANVAS Matrix -------------------- -->
-                            <div id="canvasContainerMatrix" class="div-centered tab-pane fade in active">
-                                <div id="fileNameMAT">
-                                    Upload a Matrix file
-                                    <button id="infoPopoverMatriz" type="button"
-                                        class="btn btn-warning btn-xs btn-padding"
-                                        data-container="body" data-toggle="popover"
-                                        data-placement="right" data-content="Not file loaded"
-                                        data-html="true">?</button>
+                            <div id="canvasContainerMatrix" class="div-centered">
+                                <ul class="nav nav-tabs nav-justified">
+                                  <li class="active"><a data-toggle="tab" href="#distributionMatrix">Distribution Matrix</a></li>
+                                  <li><a data-toggle="tab" href="#oldMatrix">General Matrix</a></li>
+                                  <li><a data-toggle="tab" href="#optionsMatrix">Options</a></li>
+                                </ul>
+                                <div class="tab-content">
+                                    <div id="distributionMatrix" class="tab-pane fade in active svg-container">
+                                        <div id="fileNameMAT">
+                                            Upload a Matrix file
+                                            <button id="infoPopoverMatriz" type="button"
+                                                class="btn btn-warning btn-xs btn-padding"
+                                                data-container="body" data-toggle="popover"
+                                                data-placement="right" data-content="Not file loaded"
+                                                data-html="true">?</button>
+                                        </div>
+                                        <svg id="matrixSVG" class="embed-responsive-item" width="500" height="300"></svg>
+                                    </div>
+                                    <div id="oldMatrix" class="tab-pane fade">
+                                        <canvas id="myCanvasMatrix" class="img-responsive" width="500" height="100"> </canvas>
+                                    </div>
+                                    <div id="optionsMatrix" class="tab-pane fade">
+                                        <div class="col-lg-6 col-sm-6 col-centered">
+                                            <div class="input-group">
+                                              <span class="input-group-addon" id="columnNumber">X</span>
+                                              <input type="text" id="xAxisName" class="form-control" placeholder="X Axis name" aria-describedby="xAxisName">
+                                            </div>
+                                            <div class="input-group">
+                                              <span class="input-group-addon" id="rowNumber">Y</span>
+                                              <input type="text" id="yAxisName" class="form-control" placeholder="Y Axis name" aria-describedby="yAxisName">
+                                            </div>
+                                            <button type="button" class="btn btn-default" title="Set" onclick="changeAxisName('','')">Set</button>
+                                        </div>
+                                    </div>
                                 </div>
-                                <canvas id="myCanvasMatrix" class="img-responsive" width="500" height="100"> </canvas>
                             </div>
                         </div>
 					</div>
@@ -150,6 +176,13 @@
 											<label> <input type="checkbox" id="filterPositives"
 												value="positives" onClick="redraw()">Positive blocks
 											</label>
+										</div>
+                                        <div class="input-group group-padding">
+											<span class="input-group-addon"> <input
+												type="checkbox" id="filterIdentity"
+												onClick="redraw()">Identity<br>
+											</span> <input type="number" class="form-control"
+												id="filterIdentityNumber" value="50">
 										</div>
 										<div class="input-group group-padding">
 											<span class="input-group-addon"> <input
@@ -227,6 +260,10 @@
 			localStorage.clear()
 		});
 
+        $(document).ready(function(){
+            $('#executeServiceButton').prop('disabled', true);
+        });
+
 		//Detect changes on filterLength value
 		$("#filterLenghtNumber").change(function() {
 			if (document.getElementById("filterLenght").checked) {
@@ -238,6 +275,14 @@
 			if (document.getElementById("filterLenght").checked) {
 				redraw();
 			}
+		});
+
+        $("#filterIdentityNumber").change(function() {
+            if ($('#filterIdentity').prop('checked')){
+                var auxValue = $("#filterIdentityNumber").val();
+                coverageLine.paint(auxValue);
+                coverageLine.update();
+            }
 		});
 
 		//Not sending form on ENTER

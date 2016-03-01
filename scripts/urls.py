@@ -7,5 +7,7 @@ urlpatterns = patterns(
         url(r'^executeService$', views.executeService, name='executeService'),
         url(r'^listServices/$', views.listServices, name='listServices'),
         url(r'^ServiceInterface/$', views.serviceInterface, name='serviceInterface'),
-        url(r'^testForm/$', views.testForm, name='testForm')
+        url(r'^testForm/$', views.testForm, name='testForm'),
+        url(r'^getServiceList/$', views.getServiceList, name='getServiceList'),
+        url(r'^getServiceForm/$', views.getServiceForm, name='getServiceForm')
 )
