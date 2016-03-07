@@ -27,6 +27,9 @@ def executeService(request):
         for i in xrange(1, (len(form.fields))+1):
             idParamater = 'parameter'+str(i)
             args.append(request.POST.get(idParamater))
+            print "/**\n"
+            print form
+            print "\n**/"
 
         print os.path.join(settings.MEDIA_ROOT, service.path+request.POST.get('exeName'))
         command = [os.path.join(settings.MEDIA_ROOT, service.path+request.POST.get('exeName'))]
@@ -61,6 +64,7 @@ def serviceInterface(request):
         files = listUserFiles(request)
         auxform = getattr(forms, service.form)
         form = auxform(user = request.user, request = request)
+
         return render(request, 'serviceInterface.html', {'name': service.name, 'exeName': service.exeName,
                                                          'files': files, 'form': form})
 
@@ -84,6 +88,8 @@ def getServiceForm(request):
         files = listUserFiles(request)
         auxform = getattr(forms, service.form)
         form = auxform(user = request.user, request = request)
-
+        print "/**\n"
+        print getattr(forms, service.form)
+        print "\n**/"
         return render(request, 'modalForm.html', {'name': service.name, 'exeName': service.exeName,
                                                          'files': files, 'form': form})

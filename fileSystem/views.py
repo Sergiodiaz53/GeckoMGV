@@ -12,6 +12,11 @@ def uploadFile(request):
             newFile.save()
     return userFile.objects.filter(user = request.user)
 
+@csrf_exempt
+def createFilePost_view(request):
+    print "Funciona:\n"+request
+    response = JsonResponse(createFile(request,"",request.POST.get('filename')), safe=False)
+    return HttpResponse(response, content_type="application/json")
 
 def createFile(request, content, filename):
     print "Creating file..."

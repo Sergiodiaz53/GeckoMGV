@@ -306,6 +306,24 @@ function getServicelist(){
 }
 
 //...........................................................................................................
+$("#serviceForm").submit(function(e){
+    console.log("adios");
+    for (var i=0;i<$('#serviceForm :input').length; i++){
+        if($(serviceForm[i]).attr('class')!= null && $(serviceForm[i]).attr('class')=='file')
+            $.ajax({
+            url:'/filemanager/createPost/',
+            type: "POST",
+            data: {filename: $(serviceForm[i]).val()},
+            success:function(response){
+                $(serviceForm[i]).val(response);
+                console.log(response);
+            },
+            complete:function(){},
+            error:function (xhr, textStatus, thrownError){console.log("error")}
+        });
+    }
+    return false;
+      });
 
 function loadServiceForm(serviceName){
         BootstrapDialog.closeAll();
