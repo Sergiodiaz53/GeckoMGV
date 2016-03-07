@@ -20,6 +20,7 @@ var mouseInRect = {
 	x : 0,
 	y : 0
 };
+var filtered=[];
 var lines = [];
 var currentLines = [];
 var selectedLines=[];
@@ -55,7 +56,7 @@ var scaleY = 1;
 var zoomed = false;
 var reset = false;
 var selected = false;
-var shiftSel=false;
+//var shiftSel=false;
 var selectLayer=$("#selectLayer")[0];
 
 // Constants
@@ -583,7 +584,7 @@ function createInstance() {
 		document.getElementById("output").innerHTML = "<div class=\"SearchTitle\" > <div class=\"SearchTitleFilterButton\"> <span>Filter:</span> <input type=\"text\" class=\"SearchFilter\" /> <button class=\"SearchButton\" onclick=\"showResults($(\'.SearchFilter\').val(),true)\" ><span class=\"glyphicon glyphicon-search\"></span></button> </div> </div> <ul class='nav nav-tabs' id='files-tab'></ul>"
 				+ " <div class='tab-content' id='files-tab-content'></div>";
 
-		document.getElementById("annotationsOutput").innerHTML = "<ul class='nav nav-tabs' id='annotations-tab'></ul>"
+		document.getElementById("annotationsOutput").innerHTML = "<div class=\"SearchTitleFilterButton\"><span>Search:</span> <input type=\"text\" class=\"SearchFilter3\" onkeypress=\"if (event.keyCode == 13) document.getElementById('btnSearch').click()\" /> <button id= \"btnSearch\" class=\"SearchButton\" onclick=\"showResults($('.SearchFilter3').val(),true)\"><span class=\"glyphicon glyphicon-search\"></span></button> </div><ul class='nav nav-tabs' id='annotations-tab'></ul>"
 				+ "<div class='tab-content' id='annotations-tab-content'></div>";
 
 
@@ -684,7 +685,7 @@ function createInstance() {
 
 							}
 
-							if (paint == true) {
+							if (paint == true&&!(filtered[numFile]!=null&&filtered[numFile].indexOf(i)>-1)) {
 								// console.time("paint()");
 								linesToPaint.push(i);
 								add2Table(i,table);
@@ -838,7 +839,7 @@ function createInstance() {
 	};
 
 	var lastX = canvas.width / 2, lastY = canvas.height / 2;
-	var dragStart, dragged, area = false, mousedown = false, startX, startY, mouseX, mouseY,squared ,shiftSel,ctrlZoom= false;
+	var dragStart, dragged, area = false, mousedown = false, startX, startY, mouseX, mouseY,squared ,shiftSel,filterSel,ctrlZoom= false;
 
 	window.addEventListener('keydown', function(evt) {
 
@@ -847,12 +848,16 @@ function createInstance() {
 				canvas.style.cursor = "pointer";
 				shiftSel = true;
 				break;
-			case 18: //Alt: Block dragging on square shape
+			/*case 18: //Alt: Block dragging on square shape
 				squared = true;
-				break;
+				break;*/
             case 17: //Ctrl: Block dragging on square shape only when ussed together with Alt
                 squared=true;
                 break;
+			case 70:
+				if($("#filterManual")[0].checked)
+				filterSel = true;
+				break;
 		}
 
 	}, false);
@@ -865,12 +870,15 @@ function createInstance() {
 				canvas.style.cursor = "default";
 				shiftSel = false;
 				break;
-			case 18:
+			/*case 18:
 				squared = false;
-				break;
+				break;*/
             case 17: //Ctrl: Block dragging on square shape only when ussed together with Alt
                 squared=false;
                 break;
+			case 70:
+				filterSel = false;
+				break;
 		}
 
 	}, false);
@@ -901,6 +909,7 @@ function createInstance() {
 
 				if (!dragged) {
                     if (!shiftSel) {
+						$("#filter").html("Filter");
                         selectFrag(lines, getMousePos(canvas, evt), evt);
                         selectedLines = [];
                     }else{
@@ -979,7 +988,7 @@ function createInstance() {
                     $('#CSBPopover').hide();
 				}
 
-				if ((area) && vertical&&!shiftSel) {
+				if ((area) && vertical&&!shiftSel&&!filterSel) {
                     document.getElementById("myCanvasLayer2").getContext("2d").clearRect(0,0,500,500);
 					$('#CSBPopover').hide();
                     if(startX>mouseX)
@@ -1018,7 +1027,7 @@ function createInstance() {
                     //drawAnnotations();
 				}
 
-                if(area&&vertical&&shiftSel) {
+                if(area&&vertical&&(shiftSel||filterSel)) {
                      if(startX>mouseX)
                         startX=[mouseX,mouseX=startX][0];
 
@@ -1034,7 +1043,16 @@ function createInstance() {
                             if ((mode[0].checked && mode[0].value == currentLines[i][0])
                                     || (mode[1].checked && mode[1].value == currentLines[i][0])
                                     || mode[2].checked) {
+								var select =false;
+								if(shiftSel&&!filterSel){
+									$("#filter").html("Filter");
+									select=filtered[x]==null||(filtered[x]!=null &&filtered[x].indexOf(i)==-1);
+								}else {
+									select = (filtered[x] != null && filtered[x].indexOf(i) > -1);
+									$("#filter").html("Unfilter");
+								}
                                 if(paint=filter(currentLines[i]))
+
                                 if ((parseInt(currentLines[i][1]) >= ((currentArea.x0+scaleX * startX)
                                     * xtotal / 500))
                                     && (parseInt(currentLines[i][2]) >= ((currentArea.y0+(canvas.height - mouseY) * scaleY)
@@ -1042,7 +1060,8 @@ function createInstance() {
                                     && (parseInt(currentLines[i][3]) <= ((currentArea.x0 + mouseX * scaleX)
                                     * xtotal / 500))
                                     && (parseInt(currentLines[i][4]) <= ((currentArea.y0 + (canvas.height - startY)
-                                    * scaleY) * ytotal / 500))) {
+                                    * scaleY) * ytotal / 500))
+									&& select) {
                                     paint = true;
                                 } else {
                                     paint = false;

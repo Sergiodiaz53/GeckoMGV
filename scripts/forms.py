@@ -162,7 +162,7 @@ class geckoForm(forms.Form):
     parameter3 = forms.IntegerField(label='min length', widget=forms.TextInput(attrs={'id': 'leng'}))
     parameter4 = forms.CharField(label='min similarity', max_length=3, widget=forms.TextInput(attrs={'id': 'sim'}))
     parameter5 = forms.ChoiceField(label='word length', choices=choice, widget=forms.Select(attrs={'class':'selector','id': 'Wleng'}))
-    parameter6 = forms.CharField(label='fixed length', initial="1",widget = forms.HiddenInput(attrs={'id': 'fl'}))
+    parameter6 = forms.CharField(label='fixed length', initial="1",widget = forms.HiddenInput())
     parameter1 = forms.ChoiceField(label="Sequence X FASTA", widget=forms.Select(attrs={'class':'selector','id': 'seqx'}))
     parameter2 = forms.ChoiceField(label="Sequence Y FASTA", widget=forms.Select(attrs={'class':'selector','id': 'seqy'}))
 

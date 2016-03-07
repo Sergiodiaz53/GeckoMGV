@@ -296,7 +296,7 @@ for(var i=0; i<1001; i++) {
 
         var frag = arrFrags[i];
 
-        console.log(frag);
+        //sconsole.log(frag);
 
         if(frag[0] == 'Frag') {
 

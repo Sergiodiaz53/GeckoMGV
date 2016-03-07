@@ -153,8 +153,15 @@
 							</div>
                             <div id="FiltersColapsed" class="panel-collapse collapse in">
 							<div class="panel-body">
-								<div class="row top-buffer btn-padding">
-									<form name="filters" id="filters">
+                                <div class="row top-buffer btn-padding">
+                                    <div class="input-group">
+                                        <div class="input-group-addon">
+                                            <input type="checkbox" id="filterManual" onclick="buttondisabled()">
+                                            Manual selection
+                                        </div>
+									    <button class="ui-button-text" disabled="true" id="filter" onclick="filterSelection()">Filter</button>
+                                    </div>
+								    <form name="filters" id="filters">
 										<div class="checkbox">
 											<label> <input type="checkbox" id="filterIrrelevants"
 												value="irrelevants" onClick="redraw()">Statistical
@@ -219,9 +226,6 @@
                                             <span>Search:</span>
                                             <input type="text" class="SearchFilter2" onkeypress="if (event.keyCode == 13) document.getElementById('btnSearch').click()" />
                                             <button id= "btnSearch" class="SearchButton" onclick="showResults($('.SearchFilter2').val(),true)"><span class="glyphicon glyphicon-search"></span></button>
-                                            <form action="{\% url services_view %}" method="POST">
-    <input id="submit" type="button" value="Click" />
-</form>
                                         </div>
                                     </div>
                                 </div>
@@ -244,7 +248,13 @@
     </div>
 
     <!--Dialog for Annotations -->
-    <div id="annotationsOutput" class="ui-helper-hidden"></div>
+    <div id="annotationsOutput" class="ui-helper-hidden">
+        <div class="SearchTitleFilterButton">
+            <span>Search:</span>
+            <input type="text" class="SearchFilter3" onkeypress="if (event.keyCode == 13) document.getElementById('btnSearch').click()" />
+            <button id= "btnSearch" class="SearchButton" onclick="showResults($('.SearchFilter3').val(),true)"><span class="glyphicon glyphicon-search"></span></button>
+        </div>
+    </div>
 
     <!-- Popover to show CSB Info in Canvas -->
 	<div class="popover right" id="CSBPopover" role="tooltip"></div>

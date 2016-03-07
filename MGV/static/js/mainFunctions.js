@@ -83,6 +83,8 @@ function showResults(filterText,firstFilter)
     if(filterText)
         if($('.SearchFilter2').val()!="")
             $('.SearchFilter2').val("");
+        else if($('.SearchFilter3').val()!="")
+            $('.SearchFilter3').val("");
         else
             $('.SearchFilter').val("");
     if(firstFilter&&prevFragsTable!="")
@@ -184,6 +186,37 @@ function uploadCSV(){
         selectedAsText = ""
     }
 }
+function buttondisabled(){
+    $("#filter")[0].disabled=!$("#filter")[0].disabled
+    if(!$("#filter")[0].checked) {
+        filtered = [];
+        redraw();
+    }
+}
+function filterSelection(){
+    if(selectedLines.length>0){
+    if($("#filter").text()[0]=='F'){
+    for(var i=0; i<lines.length;i++)
+    for(var j=0;j<selectedLines[i].length; j++) {
+        if (filtered[i] == null)
+            filtered[i] = [];
+        filtered[i].push(selectedLines[i][j]);
+    }
+    }else {
+        for (var i = 0; i < lines.length; i++)
+            for (var j = 0; j < selectedLines[i].length; j++) {
+                filtered[i] = jQuery.grep(filtered[i], function (value) {
+                    return value != selectedLines[i][j];
+                });
+            }
+        $("#filter").text("Filter");
+    }
+    selectedLines=[];
+    clearCanvas("selectLayer");
+    for(var i=0;i<lines.length;i++)
+        clearCanvas("hSel"+i);
+    redraw();}
+}
 
 function dialogFrags() {
     if (!$('#output').is(':visible')) {
@@ -271,6 +304,8 @@ function getServicelist(){
             }
     });
 }
+
+//...........................................................................................................
 
 function loadServiceForm(serviceName){
         BootstrapDialog.closeAll();
