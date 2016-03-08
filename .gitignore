@@ -221,3 +221,7 @@ xcuserdata
 *.xccheckout
 *.moved-aside
 *.xcuserstate
+
+## Bitlab Directories
+media/
+db.sqlite3
