@@ -16,7 +16,7 @@ def uploadFile(request):
 @csrf_exempt
 def createFilePost_view(request):
     path = generatePath(request, 'filename')
-    auxFile = createFile(request,"",request.POST.get('filename'))
+    auxFile = createFile(request,request.POST.get('content'),request.POST.get('filename'))
     print auxFile.file.__str__()
     return HttpResponse(auxFile.file.__str__())
 

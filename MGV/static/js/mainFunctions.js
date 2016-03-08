@@ -315,7 +315,7 @@ $("#serviceForm").submit(function(e){
             url:'/filemanager/createPost/',
             type: "POST",
             async: false,
-            data: {filename: $(serviceForm[i]).val()},
+            data: {filename: $(serviceForm[i]).val(), content:''},
             beforeSend:function(){
                 files++;
             },
@@ -331,6 +331,44 @@ $("#serviceForm").submit(function(e){
     }
     return true;
       });
+//.........................................................................................................
+
+function createFile(){
+    $(".close").click();
+    $.ajax({
+            url:'/filemanager/createPost/',
+            type: "POST",
+            data: {filename: $("#name").val()+'.'+$("#format").val(),content:$("#content").val()},
+            success:function(response){}
+        });
+}
+
+function expandTextarea() {
+    id="content";
+    var element = $('#'+id).get(0);
+    //element.style.overflow = 'hidden';
+    element.style.height = 0;
+    element.style.height = (parseInt(element.scrollHeight)+2).toString() + 'px';
+}
+
+function openCreationPad(){
+     BootstrapDialog.show({
+        title: 'Create a new file',
+        message:function(dialog) {
+            var content = '<p><label for="block">Name:</label> <input id="name" type="text"></p><p><label for="block">Format:</label> <input placeholder= "e.g: fasta" id="format" type="text"></p><p><label for="block">Content:</label> <textarea id="content" onkeyup= "expandTextarea()" style="min-width: 85%; height: 28px" type="text"/>';
+            dialog.setSize(BootstrapDialog.SIZE_NORMAL);
+            return content
+        },
+         buttons: [{
+                label: 'Create',
+                cssClass: 'btn btn-success',
+                //hotkey: 13,
+                action: function() {
+                    createFile();
+                }
+            }]
+    })
+}
 
 function loadServiceForm(serviceName){
         BootstrapDialog.closeAll();
