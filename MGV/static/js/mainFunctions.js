@@ -307,22 +307,29 @@ function getServicelist(){
 
 //...........................................................................................................
 $("#serviceForm").submit(function(e){
-    console.log("adios");
+    serviceForm=$('#serviceForm :input');
+    files=0;
     for (var i=0;i<$('#serviceForm :input').length; i++){
         if($(serviceForm[i]).attr('class')!= null && $(serviceForm[i]).attr('class')=='file')
             $.ajax({
             url:'/filemanager/createPost/',
             type: "POST",
+            async: false,
             data: {filename: $(serviceForm[i]).val()},
-            success:function(response){
-                $(serviceForm[i]).val(response);
-                console.log(response);
+            beforeSend:function(){
+                files++;
             },
-            complete:function(){},
+            success:function(response){
+                console.log($(serviceForm[i]).val())
+                $(serviceForm[i]).val(response);
+                console.log($(serviceForm[i]).val())
+            },
+            complete:function(){
+            },
             error:function (xhr, textStatus, thrownError){console.log("error")}
         });
     }
-    return false;
+    return true;
       });
 
 function loadServiceForm(serviceName){

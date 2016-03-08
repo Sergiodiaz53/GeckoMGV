@@ -1,3 +1,4 @@
+from django.http import HttpResponse, JsonResponse
 from MGV.views import *
 from fileSystem.models import *
 from fileSystem.forms import *
@@ -14,22 +15,21 @@ def uploadFile(request):
 
 @csrf_exempt
 def createFilePost_view(request):
-    print request.POST
     path = generatePath(request, 'filename')
     auxFile = createFile(request,"",request.POST.get('filename'))
-    print auxFile.file
-    return HttpResponse("Ok")
+    print auxFile.file.__str__()
+    return HttpResponse(auxFile.file.__str__())
 
 def createFile(request, content, filename):
     print "Creating file..."
-    auxname = filename+".csv"
+    auxname = filename#+".csv"
     path = generatePath(request, auxname)
 
     print userFile.objects.filter(file=path)
     x = 1
 
     while len(userFile.objects.filter(file=path)) != 0:
-        auxname = filename+str(x)+'.csv'
+        auxname = filename[:filename.rfind('.')]+"("+str(x)+")"+filename[filename.rfind('.'):]#+'.csv'
         path = generatePath(request, auxname)
         x += 1
 
