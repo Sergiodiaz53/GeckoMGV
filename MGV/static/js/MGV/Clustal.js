@@ -30,8 +30,8 @@ function drawMSA(string){
     var m = msa(opts);
 
     gg = m;
-    var seqs=clustal.parse(string)
-    m.seqs.reset(seqs)
+    var seqs=clustal.parse(string);
+    m.seqs.reset(seqs);
     var defMenu = new msa.menu.defaultmenu({
     el: menuDiv,
     msa: m

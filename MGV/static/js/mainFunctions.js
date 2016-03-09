@@ -174,7 +174,7 @@ function uploadCSV(){
             selectedAsText += lines[x][i] + '\n';
         for (var i = 0; i < selectedLines[x].length; i++)
             selectedAsText += lines[x][selectedLines[x][i]] + '\n';
-        var fileName = lines[x][2][0].split(":")[1].trim().split(".")[0]+"-"+lines[x][3][0].split(":")[1].trim().split(".")[0];
+        var fileName = lines[x][2][0].split(":")[1].trim().split(".")[0]+"-"+lines[x][3][0].split(":")[1].trim().split(".")[0]+".csv";
         $.ajax({
             url:'/upload/',
             type: "POST",
@@ -183,6 +183,7 @@ function uploadCSV(){
             complete:function(){},
             error:function (xhr, textStatus, thrownError){console.log("error")}
         });
+        newFileInformation();
         selectedAsText = ""
     }
 }
@@ -389,10 +390,9 @@ $(".alert button.close").click(function (e) {
 function createFile(){
     $(".close").click();
     $.ajax({
-            url:'/filemanager/createPost/',
+            url:'/filemanager/createFile',
             type: "POST",
             data: {filename: $("#name").val()+'.'+$("#format").val(),content:$("#content").val()},
-            success:function(response){}
         });
 }
 
@@ -418,6 +418,7 @@ function openCreationPad(){
                 //hotkey: 13,
                 action: function() {
                     createFile();
+                    location.reload();
                 }
             }]
     })

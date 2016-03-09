@@ -1,6 +1,6 @@
 {%extends "includes/basic.html" %}
 {%block content%}
-<script src="https://s3-eu-west-1.amazonaws.com/biojs/msa/latest/msa.js"></script>
+
 <link type=text/css rel=stylesheet href=https://s3-eu-west-1.amazonaws.com/biojs/msa/latest/msa.css />
 <div id='menu'></div>
 <div id='msa'></div>
@@ -10,6 +10,7 @@
     <input type="submit" value="Submit" id="suButton"/>
 </form>
 <script type="text/javascript">
+
     function draw(){
         var myVar="{{ content | escapejs }}"
         drawMSA(myVar);
