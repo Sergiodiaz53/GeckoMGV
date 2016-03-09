@@ -149,7 +149,7 @@ function processData(csv, index) {
 
                 if(parseCount==0){
                     redraw();
-                    calculateMatrix(lines[0]);
+                    //calculateMatrix(lines[0]);
                     addPrevZoom();
                 }
                 $('#loading-indicator').hide();

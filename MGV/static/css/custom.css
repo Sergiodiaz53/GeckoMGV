@@ -162,6 +162,11 @@ body {
 }
 
 
+.popupPosition {
+    margin-left:-2%;
+}
+
+
 .canvasLayer{
     width: 80%;
     margin-left: 10%;
@@ -362,7 +367,6 @@ body {
     -o-user-select: auto !important;
     user-select: auto !important;
 }
-
 
 /* FileManager CSS */
 

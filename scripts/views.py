@@ -5,6 +5,7 @@ from scripts.forms import *
 from fileSystem.views import *
 from scripts import forms
 import subprocess
+import time
 
 # Create your views here.
 
@@ -27,15 +28,16 @@ def executeService(request):
         for i in xrange(1, (len(form.fields))+1):
             idParamater = 'parameter'+str(i)
             args.append(request.POST.get(idParamater))
-            print "/**\n"
-            print form
-            print "\n**/"
+            #print "/**\n"
+            #print form
+            #print "\n**/"
 
         print os.path.join(settings.MEDIA_ROOT, service.path+request.POST.get('exeName'))
         command = [os.path.join(settings.MEDIA_ROOT, service.path+request.POST.get('exeName'))]
         command.extend(args)
         output = subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0]
 
+        print args
 
         #Read console output line by line example
         """
@@ -52,6 +54,41 @@ def executeService(request):
         return render(request, 'serviceResult.html', {'serviceName': request.POST.get('serviceName'),
                                                       'fileResult': fileResult, 'filePath': fileResult.file})
 
+@csrf_exempt
+def executeServiceInBackground(request):
+
+    if request.method == 'POST':
+        service = Script.objects.get(exeName=request.POST.get('exeName'))
+        auxForm= getattr(forms, service.form)
+        form = auxForm(user = request.user, request=request)
+        args = []
+
+        for i in xrange(1, (len(form.fields))+1):
+            idParamater = 'parameter'+str(i)
+            args.append(request.POST.get(idParamater))
+            #print "/**\n"
+            #print form
+            #print "\n**/"
+
+        print os.path.join(settings.MEDIA_ROOT, service.path+request.POST.get('exeName'))
+        command = [os.path.join(settings.MEDIA_ROOT, service.path+request.POST.get('exeName'))]
+        command.extend(args)
+        output = subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0]
+
+        print args
+
+        #Read console output line by line example
+        """
+        p = Popen(command, stdout=PIPE, bufsize=1)
+        with p.stdout:
+            for line in iter(p.stdout.readline, b''):
+                print line,
+        p.wait() # wait for the subprocess to exit
+
+        """
+
+        createFile(request, output, request.POST.get('nameFileResult'))
+        return HttpResponse("OK", content_type="text/plain")
 
 def listServices(request):
     print "listServices_scripts"
@@ -76,9 +113,20 @@ def testForm(request):
 @csrf_exempt
 def getServiceList(request):
     serviceNames = []
+    serviceExes = []
     for service in listServices(request):
         serviceNames.append(service.name)
-    response = JsonResponse(serviceNames, safe=False)
+        serviceExes.append(service.exeName);
+
+    response = []
+
+    response.append(serviceExes)
+    response.append(serviceNames)
+
+    response = JsonResponse(response, safe=False)
+
+    print response
+
     return HttpResponse(response, content_type="application/json")
 
 @csrf_exempt

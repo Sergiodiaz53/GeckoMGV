@@ -59,9 +59,6 @@ def openFile(user, file):
         auxfile.close()
         return content
 
-
-
-
 def listUserFiles(request):
     if request.user.is_authenticated():
         files = userFile.objects.filter(user=request.user)

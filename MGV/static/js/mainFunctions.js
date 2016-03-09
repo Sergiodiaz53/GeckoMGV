@@ -293,8 +293,8 @@ function getServicelist(){
                     title: 'Select service from Server',
                     message:function(dialog) {
                         var content = '<table class="table table-striped">';
-                        for (i in response) {
-                            content += '<thead><tr><th class="clickable" onclick="loadServiceForm('+"'"+response[i]+"'"+')"><span class="glyphicon glyphicon-file"></span> '+response[i]+'</th></tr></thead>';
+                        for (i in response[0]) {
+                            content += '<thead><tr><th class="clickable" onclick="loadServiceForm('+"'"+response[0][i]+"','"+response[1][i]+"'"+')"><span class="glyphicon glyphicon-file"></span> '+response[1][i]+'</th></tr></thead>';
                         }
                         content += '</table>';
                         dialog.setSize(BootstrapDialog.SIZE_SMALL);
@@ -307,8 +307,10 @@ function getServicelist(){
 
 //...........................................................................................................
 $("#serviceForm").submit(function(e){
+
     serviceForm=$('#serviceForm :input');
     files=0;
+
     for (var i=0;i<$('#serviceForm :input').length; i++){
         if($(serviceForm[i]).attr('class')!= null && $(serviceForm[i]).attr('class')=='file')
             $.ajax({
@@ -329,8 +331,59 @@ $("#serviceForm").submit(function(e){
             error:function (xhr, textStatus, thrownError){console.log("error")}
         });
     }
+
     return true;
-      });
+});
+
+$("#serviceFormModal").submit(function(e){
+
+    serviceForm=$('#serviceFormModal :input');
+    files=0;
+
+    for (var i=0;i<$('#serviceFormModal :input').length; i++){
+        if($(serviceForm[i]).attr('class')!= null && $(serviceForm[i]).attr('class')=='file')
+            $.ajax({
+            url:'/filemanager/createPost/',
+            type: "POST",
+            async: false,
+            data: {filename: $(serviceForm[i]).val(), content:''},
+            beforeSend:function(){
+                files++;
+            },
+            success:function(response){
+                console.log($(serviceForm[i]).val())
+                $(serviceForm[i]).val(response);
+                console.log($(serviceForm[i]).val())
+            },
+            complete:function(){
+            },
+            error:function (xhr, textStatus, thrownError){console.log("error")}
+        });
+    }
+
+    $.ajax({
+            type: 'POST',
+            url: $(this).attr('action'),
+            data: $(this).serialize(),
+            success: function(data) {
+                newFileInformation(data)
+            }
+    });
+
+    BootstrapDialog.closeAll();
+
+    return false;
+});
+
+function newFileInformation(data){
+
+    $("#newFilePopup").removeClass("hidden")
+}
+
+$(".alert button.close").click(function (e) {
+    $(this).parent().addClass("hidden")
+});
+
 //.........................................................................................................
 
 function createFile(){
@@ -370,18 +423,20 @@ function openCreationPad(){
     })
 }
 
-function loadServiceForm(serviceName){
-        BootstrapDialog.closeAll();
+function loadServiceForm(serviceExe, serviceName){
+        BootstrapDialog.closeAll()
         $.ajax({
         type: 'POST',
         url: '/scripts/getServiceForm/',
         data: {
-            'exeName': 'extractSeqFromFrags'
+            'exeName': serviceExe
         },
         success: function(content) {
             var $generatedForm = $('<div></div>');
+            console.log(content);
             $generatedForm.append(content);
             BootstrapDialog.show({
+                title: serviceName,
                 message:  $generatedForm
             });
         }

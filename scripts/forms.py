@@ -139,7 +139,7 @@ class classifyRepeatsForm(forms.Form):
     parameter3 = forms.ChoiceField(label="New Master frags file", widget=forms.Select(attrs={'class':'selector','id': 'newMFile'}))
     parameter5 = forms.ChoiceField(label="Interspersed repeats", widget=forms.Select(attrs={'class':'selector','id': 'interFrags'}))
     parameter6 = forms.ChoiceField(label="Duplications", widget=forms.Select(attrs={'class':'selector','id': 'dupFile'}))
-    parameter7 = forms.ChoiceField(label="Nor overlapped repeats", widget=forms.Select(attrs={'class':'selector','id': 'notFile'}))
+    parameter7 = forms.ChoiceField(label="Not overlapped repeats", widget=forms.Select(attrs={'class':'selector','id': 'notFile'}))
     parameter8 = forms.ChoiceField(label="Sequence X FASTA", widget=forms.Select(attrs={'class':'selector','id': 'seqx'}))
     parameter9 = forms.ChoiceField(label="Sequence Y FASTA", widget=forms.Select(attrs={'class':'selector','id': 'seqy'}))
 

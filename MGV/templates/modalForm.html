@@ -1,4 +1,6 @@
-<form id="serviceForm" action="{% url 'executeService' %}" method="POST">
+{%load staticfiles%}
+
+<form id="serviceFormModal" action="{% url 'executeServiceInBackground' %}" method="POST">
     {% csrf_token %}
     <input type="text" name="serviceName" class="hidden" value="{{ name }}" />
     <input type="text" name="exeName" class="hidden" value= "{{ exeName }}" />
@@ -17,3 +19,5 @@
     </div>
 
 </form>
+
+<script type="text/javascript" src="{% static "js/mainFunctions.js" %}"></script>

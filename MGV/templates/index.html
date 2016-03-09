@@ -5,8 +5,9 @@
 	<div id="main" class="container center-block" role="main">
 
 		<div class="row row-centered">
-            <div class="row">
-                    <div id="toolmenu">
+                <div class="col-md-3">
+                </div>
+                    <div  class="col-md-6" id="toolmenu">
                         <div class="row row-centered top-buffer">
                             <button type="button" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Load frags from server" onclick ="getFilesListFromServer()"><span class="glyphicon glyphicon-floppy-save"></span></button>
                             <button type="button" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Go back" onclick ="goToPrevZoom()"><span class="glyphicon glyphicon-chevron-left"></span></button>
@@ -30,9 +31,16 @@
 								</div>
                         </div>
                     </div>
-            </div>
+                <div class="col-md-3 ">
+                    <div class="alert alert-success hidden alert-dismissable" role="alert" id="newFilePopup">
+                        <button type="button" class="close" aria-hidden="true">&times;</button>
+                        <p> New file avaliable </p>
+                    </div>
+                </div>
+        </div>
 
-            <div class="col-md-3" id="columnLeft">
+        <div class="row row-centered">
+            <div class="col-md-3 " id="columnLeft">
                     <!-- ---------- CANVAS Horizontal -------------------- -->
                     <div id="horizontalCanvas" class="canvasBlock">
                         <div id="horizontalCanvasContainer" >
@@ -112,7 +120,7 @@
 
 			</div>
 
-			<div class="col-md-3" id="ColumnRight">
+            <div class="col-md-3 " id="ColumnRight">
 				<div class="row row-centered">
 					<div class="col-xs-12 col-sm-12 col-centered">
 						<div class="panel panel-primary">
@@ -154,13 +162,6 @@
                             <div id="FiltersColapsed" class="panel-collapse collapse in">
 							<div class="panel-body">
                                 <div class="row top-buffer btn-padding">
-                                    <div class="input-group">
-                                        <div class="input-group-addon">
-                                            <input type="checkbox" id="filterManual" onclick="buttondisabled()">
-                                            Manual selection
-                                        </div>
-									    <button class="ui-button-text" disabled="true" id="filter" onclick="filterSelection()">Filter</button>
-                                    </div>
 								    <form name="filters" id="filters">
 										<div class="checkbox">
 											<label> <input type="checkbox" id="filterIrrelevants"
@@ -205,6 +206,13 @@
 											</span> <input type="number" class="form-control"
 												id="filterSimilarityNumber" value="50" min="0" max="100">
 										</div>
+                                        <div class="input-group">
+                                        <div class="input-group-addon">
+                                            <input type="checkbox" id="filterManual" onclick="buttondisabled()">
+                                            Manual selection
+                                        </div>
+									    <button class="ui-button-text" disabled="true" id="filter" onclick="filterSelection()">Filter</button>
+                                    </div>
 									</form>
 								</div>
 							</div>
@@ -235,6 +243,7 @@
 					</div>
 				</div>
 		</div>
+        </div>
 	</div>
 
     <!--Dialog for CSB & Frag Info -->

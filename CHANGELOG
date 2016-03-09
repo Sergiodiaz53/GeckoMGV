@@ -1,3 +1,29 @@
+09/03/2016
+- Services execution from index improvements.
+    - Alerts added to service execution callback.
+    - Execution in background improved.
+
+
+08/03/2016
+- CreateFile now accept filename and file format.
+    - Some bugs fixed in fileSystem
+
+07/03/2016
+- Manual filtering
+
+01/03/2016
+- Matrix visualization improvements.
+
+27/02/2016
+- Methods to generate Matrix added.
+- Identify filter line added to Matrix.
+
+25/02/2016
+- Matrix in D3.js Added
+
+15/02/2016
+- Methods to call services from the index added (TESTING)
+
 27/01/2016
 -B16 (control of map and horizontal layers on zoom) solved
 -Added upload to server option to upload selected frags.
