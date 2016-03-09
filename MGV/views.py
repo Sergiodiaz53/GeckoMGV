@@ -75,14 +75,17 @@ def executeService_view(request):
     return render(request, 'serviceResult.html', {'output': output})
 
 def clustal_omega(request):
-    if request.method=='POST':
-        form = drawMSAComp(request.POST)
-        if form.is_valid():
-            seq1=form.cleaned_data['seq1']
-            seq2=form.cleaned_data['seq2']
-            content=co.clustal_omega(request,seq1,seq2)
+            content=co.clustal_omega(request)
             print(content)
             return render(request, 'MSAvisualizer.html', {'content': content})
-    else:
-        form=drawMSAComp()
-        return render(request, 'MSAvisualizer.html', {'form': form})
+    #if request.method=='POST':
+    #    form = drawMSAComp(request.POST)
+    #    if form.is_valid():
+    #        seq1=form.cleaned_data['seq1']
+    #        seq2=form.cleaned_data['seq2']
+    #        content=co.clustal_omega(request,seq1,seq2)
+    #        print(content)
+    #        return render(request, 'MSAvisualizer.html', {'content': content})
+    #else:
+    #    form=drawMSAComp()
+    #    return render(request, 'MSAvisualizer.html', {'form': form})

@@ -15,8 +15,9 @@
                             <p class="list-group-item-text"> Align sequences</p>
                             <span class="pull-right">
                                 <form role="form" action="{% url 'serviceInterface' %}" method="POST">
-                                    <input type="text" name="serviceName" class="form-control hidden" value="{{ service.name }}" />
-                                    <input type="text" name="exeName" class="form-control hidden" value= "{{ service.exeName }}" />
+                                    {% csrf_token %}
+                                    <input type="text" name="serviceName" class="form-control hidden" value="Clustal" />
+                                    <input type="text" name="exeName" class="form-control hidden" value= "clustal" />
                                     <button type="submit" class="btn btn-xs btn-info glyphicon glyphicon-cog"> Start</button>
                                 </form>
                             </span>
