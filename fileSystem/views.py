@@ -28,7 +28,10 @@ def createFile(request, content, filename):
     x = 1
 
     while len(userFile.objects.filter(file=path)) != 0:
-        auxname = filename[:filename.rfind('.')]+"("+str(x)+")"+filename[filename.rfind('.'):]#+'.csv'
+        if filename.rfind('.')>0 & filename.rfind('.')<len(filename):
+            auxname = filename[:filename.rfind('.')]+"("+str(x)+")"+filename[filename.rfind('.'):]#+'.csv'
+        else:
+            auxname = filename+"("+str(x)+")"
         path = generatePath(request, auxname)
         x += 1
 
