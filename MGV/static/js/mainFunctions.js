@@ -105,6 +105,7 @@ function showResults(filterText,firstFilter)
                 searchList.splice(searchList.indexOf(filterText.toLowerCase()),1);
                 for(var index= 0;index<searchList.length;index++)
                     setTimeout(search(searchList[index]),5);
+
             }
          //Draw crossed lines to the annotations found
         drawAnnotations();
@@ -147,6 +148,7 @@ function search(text){
 //Draw crossed lines to the found annotations
 function drawAnnotations(){
     document.getElementById("myCanvasLayer2").getContext("2d").clearRect(0,0,500,500);
+    if(searchList.length>0)
     for(var fileNum=0;fileNum<lines.length;fileNum++){
         var toFilter = document.getElementById("csvInfoTable"+fileNum).childNodes[0].childNodes;
         var xfrag=parseInt(toFilter[1].childNodes[1].innerHTML),yfrag=parseInt(toFilter[1].childNodes[2].innerHTML);
@@ -408,7 +410,7 @@ function openCreationPad(){
      BootstrapDialog.show({
         title: 'Create a new file',
         message:function(dialog) {
-            var content = '<p><label for="block">Name:</label> <input id="name" type="text"></p><p><label for="block">Format:</label> <input placeholder= "e.g: fasta" id="format" type="text"></p><p><label for="block">Content:</label> <textarea id="content" onkeyup= "expandTextarea()" style="min-width: 85%; height: 28px" type="text"/>';
+            var content = '<p><label for="block">Name:</label> <input id="name" placeholder="e.g:file" type="text"></p><p><label for="block">Format:</label> <div ><select id="format" style="width:auto;" class="form-control"><option value="fasta">fasta</option><option value="csv">csv</option><option value="txt">txt</option></select></div></p><p><label for="block">Content:</label> <textarea id="content" onkeyup= "expandTextarea()" style="min-width: 85%; height: 28px" type="text"/>';
             dialog.setSize(BootstrapDialog.SIZE_NORMAL);
             return content
         },
