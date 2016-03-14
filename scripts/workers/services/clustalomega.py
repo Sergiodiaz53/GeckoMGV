@@ -1,11 +1,17 @@
 __author__ = 'sabega'
 from scripts.workers.EBI import EBI
+from fileSystem.models import *
 
 
-def clustal_omega(request,seq1,seq2):
+
+def clustal_omega(request):
     baseUrl='http://www.ebi.ac.uk/Tools/services/rest/clustalo'
     params={}
-    params['sequence']=">\n"+seq1+"\n>\n"+seq2
+    file = open(str(userFile.objects.get(file=request.POST.get('parameter1')).file), 'r')
+    content = file.read()
+    file.close()
+    #print content
+    params['sequence']=content
     params['mbediteration'] = True
     params['guidetreeout'] = True
     params['dismatout'] = True

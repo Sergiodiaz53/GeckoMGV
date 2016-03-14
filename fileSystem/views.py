@@ -17,7 +17,6 @@ def uploadFile(request):
 def createFilePost_view(request):
     path = generatePath(request, 'filename')
     auxFile = createFile(request,request.POST.get('content'),request.POST.get('filename'))
-    print auxFile.file.__str__()
     return HttpResponse(auxFile.file.__str__())
 
 def createFile(request, content, filename):
@@ -29,7 +28,10 @@ def createFile(request, content, filename):
     x = 1
 
     while len(userFile.objects.filter(file=path)) != 0:
-        auxname = filename[:filename.rfind('.')]+"("+str(x)+")"+filename[filename.rfind('.'):]#+'.csv'
+        if filename.rfind('.')>0 & filename.rfind('.')<len(filename):
+            auxname = filename[:filename.rfind('.')]+"("+str(x)+")"+filename[filename.rfind('.'):]#+'.csv'
+        else:
+            auxname = filename+"("+str(x)+")"
         path = generatePath(request, auxname)
         x += 1
 
@@ -69,6 +71,7 @@ def fileManager_view(request):
     form = FileForm()
     if request.user.is_authenticated():
         files = userFile.objects.filter(user = request.user)
+        print "going to render"
         return render(request, 'filemanager.html', {'form': form, 'files': files})
     else:
         return render(request, 'filemanager.html', {'form': form, 'files': {} })
@@ -84,9 +87,9 @@ def deleteFile_view(request):
     form = FileForm()
     files = deleteFile(request)
     return render(request, 'filemanager.html', {'form': form, 'files': files})
-
+@csrf_exempt
 def createFile_view(request):
-    createFile(request,"","newFile")
+    createFile(request,request.POST.get('content'),request.POST.get('filename'))
     return fileManager_view(request)
 
 def fileViewer_view(request):

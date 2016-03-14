@@ -141,6 +141,7 @@ function processData(csv, index) {
 
         Papa.parse(csv, {
             worker: true,
+            delimiter:",",
             complete: function (results) {
                 parseCount--;
                 lines[index] = results.data;
@@ -148,6 +149,7 @@ function processData(csv, index) {
                 map = false;
 
                 if(parseCount==0){
+                    console.log(lines[index])
                     redraw();
                     //calculateMatrix(lines[0]);
                     addPrevZoom();

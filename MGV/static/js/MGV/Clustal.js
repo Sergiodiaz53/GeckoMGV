@@ -28,14 +28,13 @@ function drawMSA(string){
 
     // init msa
     var m = msa(opts);
-
-    gg = m;
-    var seqs=clustal.parse(string)
-    m.seqs.reset(seqs)
+    var seqs=clustal.parse(string);
+    m.seqs.reset(seqs);
     var defMenu = new msa.menu.defaultmenu({
     el: menuDiv,
     msa: m
     });
     defMenu.render();
     m.render();
+    $(".biojs_msa_headers")[0].style.width= "155px";
 }
