@@ -1226,7 +1226,7 @@ function filter(line) {
 
 	if (filterSimilarity) {
 		var similarityValue = document.getElementById("filterSimilarityNumber").value;
-		if (parseFloat(line[10]) < similarityValue) {
+		if (parseFloat(line[10]) <= similarityValue) {
 			paint = false;
 		}
 	}
@@ -1244,7 +1244,7 @@ function filter(line) {
 	}
 
 	if(filterIdentity){
-		if((line[9]/line[7]).toFixed(2)*100 < coverageLine.coverageValue) {
+		if((line[9]/line[7]).toFixed(2)*100 <= coverageLine.coverageValue) {
 			paint = false;
 		}
 	}

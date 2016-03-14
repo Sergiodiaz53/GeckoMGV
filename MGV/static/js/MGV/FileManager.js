@@ -243,6 +243,7 @@ function processData(csv, index) {
     function loadMatrix(csv) {
         Papa.parse(csv, {
             worker: true,
+            delimiter: ",",
             complete: function (results) {
 
                 //Read raw data
