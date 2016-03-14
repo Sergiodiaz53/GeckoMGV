@@ -30,7 +30,6 @@ function log10(val) {
 }
 
 function paintMatrix (){
-
     var svg = d3.select("#matrixSVG")
 
     var w = parseInt(svg.style("width")),
@@ -106,6 +105,8 @@ function paintMatrix (){
             return d[2];
         }
       });
+
+        console.log("cucu!");
 
     coverageLine.paint(coverageLine.coverageValue);
 }
@@ -328,4 +329,36 @@ function processMatrixData(){
         }}
 
     paintMatrix();
+}
+
+
+function calculateCurve(coverage){
+
+    var totalColumns = [];
+    var yPosition = [];
+
+
+    for(var i=0; i<1001; i++) {
+        for(var j=0; j<101; j++) {
+            totalColumns[i] += currentMatrix[i][j];
+        }
+    }
+
+    for(var i=0; i<1001; i++) {
+        var percentValue = (totalColumns[i] * coverage) / 100;
+        var currentColumn = 0;
+        for(var j=0; j<101; j++) {
+            currentColumn += currentMatrix[i][j]
+            if(currentColumn >= percentValue){
+                yPosition[i] = j;
+                break;
+            }
+        }
+    }
+
+    console.log("Posiciones: "+yPosition);
+
+
+
+
 }
