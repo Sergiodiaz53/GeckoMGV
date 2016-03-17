@@ -299,8 +299,8 @@
         $("#filterIdentityNumber").change(function() {
             if ($('#filterIdentity').prop('checked')){
                 var auxValue = $("#filterIdentityNumber").val();
-                coverageLine.paint(auxValue);
-                coverageLine.update();
+                identityLine.paint(auxValue);
+                identityLine.update();
             }
 		});
 

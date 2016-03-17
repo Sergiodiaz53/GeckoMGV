@@ -22,6 +22,7 @@ var mouseInRect = {
 };
 var filtered=[];
 var lines = [];
+var evolutiveEvents = [];
 var currentLines = [];
 var selectedLines=[];
 
@@ -290,6 +291,43 @@ function drawLinesInLayer(linesToPaint, canvasLayer, numFile, color){
 	currentCtx.strokeStyle = color;
 	currentCtx.stroke();
 }
+
+function drawArrayFragsInLayer(arrayLinesToPaint, canvasLayer, numFile, color){
+	var currentCtx = canvasLayer.getContext('2d');
+
+	currentCtx.beginPath();
+	for (var x in arrayLinesToPaint){
+		line = arrayLinesToPaint[x];
+
+		var xIni = ((canvasLayer.width * (parseInt(line[1]) / xtotal) - currentArea.x0) / (currentArea.x1 - currentArea.x0))
+				* canvasLayer.width;
+		var yIni = ((canvasLayer.height * (parseInt(line[2]) / ytotal) - currentArea.y0) / (currentArea.y1 - currentArea.y0))
+				* canvasLayer.height;
+		var xFin = ((canvasLayer.width * (parseInt(line[3]) / xtotal) - currentArea.x0) / (currentArea.x1 - currentArea.x0))
+				* canvasLayer.width;
+		var yFin = ((canvasLayer.height * (parseInt(line[4]) / ytotal) - currentArea.y0) / (currentArea.y1 - currentArea.y0))
+				* canvasLayer.height;
+
+
+		if((xFin-xIni < 0.1)&&(xFin-xIni>0)){
+			xFin = xIni + 0.1;
+		}
+
+		if((yFin-yIni < 0.1)&&(yFin-yIni >0)){
+			yFin = yIni +0.1 ;
+		}
+
+		//console.log((lines[numFile][line][1])+" = "+xIni+"; "+(lines[numFile][line][2])+" = "+yIni+(lines[numFile][line][3])+" = "+xFin+"; "+(lines[numFile][line][4])+" = "+yFin);
+
+		currentCtx.moveTo(xIni, canvasLayer.height - yIni);
+		currentCtx.lineTo(xFin, canvasLayer.height - yFin);
+	}
+	currentCtx.closePath();
+	currentCtx.lineWidth = 2;
+	currentCtx.strokeStyle = color;
+	currentCtx.stroke();
+}
+
 
 function loadHorizontalView(){
 
@@ -1244,7 +1282,7 @@ function filter(line) {
 	}
 
 	if(filterIdentity){
-		if((line[9]/line[7]).toFixed(2)*100 <= coverageLine.coverageValue) {
+		if((line[9]/line[7]).toFixed(2)*100 <= identityLine.identityValue) {
 			paint = false;
 		}
 	}
