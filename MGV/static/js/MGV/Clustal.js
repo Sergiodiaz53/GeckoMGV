@@ -36,5 +36,5 @@ function drawMSA(string){
     });
     defMenu.render();
     m.render();
-    $(".biojs_msa_headers")[0].style.width= "155px";
+    //$(".biojs_msa_headers")[0].style.width= "155px";
 }

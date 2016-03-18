@@ -962,6 +962,7 @@ function createInstance() {
                                 i++;
                             }
 		}
+							console.log(linefound);
                             if(linefound&&filter(lines[arrayIndex][lineIndex])){
                                 if(selectedLines[arrayIndex]==null)
                                     selectedLines[arrayIndex]=[];
@@ -969,10 +970,10 @@ function createInstance() {
                                 if((index=selectedLines[arrayIndex].indexOf(lineIndex))>-1){
                                     selectedLines[arrayIndex].splice(index, 1);
 									clearCanvas("selectLayer");
-                                    drawVerticalLinesInVerticalLayer(selectedLines[arrayIndex], $("#selectLayer"), arrayIndex, rgb(255,0,0));
+                                    drawVerticalLinesInVerticalLayer(selectedLines[arrayIndex], $("#selectLayer")[0], arrayIndex, rgb(255,0,0));
                                 }else{
                                     selectedLines[arrayIndex].push(lineIndex);
-                                    drawVerticalLinesInVerticalLayer( [lineIndex], $("#selectLayer"),arrayIndex, rgb(255,0,0));
+                                    drawVerticalLinesInVerticalLayer( [lineIndex], $("#selectLayer")[0],arrayIndex, rgb(255,0,0));
                                 }
                             }
                         }
@@ -1067,7 +1068,7 @@ function createInstance() {
                                     paint = false;
                                 }
                                 if (paint) {
-                                    drawVerticalLinesInVerticalLayer([i],selectLayer,x,rgb(255,0,0));
+                                    drawVerticalLinesInVerticalLayer([i],$("selectLayer")[0],x,rgb(255,0,0));
                                     if(selectedLines[x].indexOf(i)==-1)
                                         selectedLines[x].push(i);
                                 }

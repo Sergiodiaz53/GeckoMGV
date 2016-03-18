@@ -59,7 +59,7 @@ class extractSeqFromFragsForm(forms.Form):
     parameter2 = forms.ChoiceField(label="X Fasta file", widget=forms.Select(attrs={'class':'selector','id': 'xFastaFile'}))
     parameter3 = forms.ChoiceField(label="Y Fasta file", widget=forms.Select(attrs={'class':'selector','id': 'yFastaFile'}))
     parameter4 = forms.ChoiceField(label="Y-reversed Fasta file", widget=forms.Select(attrs={'class':'selector','id': 'yReversedFastaFile'}))
-    parameter5 = forms.CharField(label="Output FragFile", widget=forms.Select(attrs={'class':'file','id': 'outputFragFile'}))
+    parameter5 = forms.CharField(label="Output FragFile", widget=forms.TextInput(attrs={'class':'file','id': 'outputFragFile'}))
     parameter6 = forms.CharField(label='Block', max_length=4, widget=forms.TextInput(attrs={'id': 'block'}))
 
     def __init__(self, *args, **kwargs):
