@@ -1007,10 +1007,10 @@ function createInstance() {
                                 if((index=selectedLines[arrayIndex].indexOf(lineIndex))>-1){
                                     selectedLines[arrayIndex].splice(index, 1);
 									clearCanvas("selectLayer");
-                                    drawVerticalLinesInVerticalLayer(selectedLines[arrayIndex], $("#selectLayer"), arrayIndex, rgb(255,0,0));
+                                    drawVerticalLinesInVerticalLayer(selectedLines[arrayIndex], $("#selectLayer")[0], arrayIndex, rgb(255,0,0));
                                 }else{
                                     selectedLines[arrayIndex].push(lineIndex);
-                                    drawVerticalLinesInVerticalLayer( [lineIndex], $("#selectLayer"),arrayIndex, rgb(255,0,0));
+                                    drawVerticalLinesInVerticalLayer( [lineIndex], $("#selectLayer")[0],arrayIndex, rgb(255,0,0));
                                 }
                             }
                         }

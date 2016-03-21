@@ -29,11 +29,13 @@ function processEvolutiveEvents(frags, index){
             eeIndex++;
         }
     }
+    if(eeIndex) $("#EEmanag").show();
 }
 
 function nextEE (){
     if(evolutiveIndex < evolutiveEvents[0].length-1) {
         evolutiveIndex++;
+        $("#EEindex").html(evolutiveIndex);
         console.log("EE: "+evolutiveIndex);
 
         var auxPrevArray = [];
@@ -95,13 +97,14 @@ function prevEE (){
         },3000);
 
        evolutiveIndex--;
+        $("#EEindex").html(evolutiveIndex);
 
 
     } else if (evolutiveIndex == 0) {
 
         var auxPrevArray = [];
         var auxNextArray = [];
-
+        $("#EEindex").html("-");
         for (var i = 0; i < evolutiveFrags[0][evolutiveIndex].length; i++) {
             var frag = evolutiveFrags[0][evolutiveIndex][i];
             console.log(evolutiveFrags[0][evolutiveIndex][i]);
