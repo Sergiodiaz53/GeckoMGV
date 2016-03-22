@@ -804,7 +804,11 @@ function createInstance() {
 				drawVerticalLinesInVerticalLayer(filteredLines,currentVerticalCanvas,numFile,rgba(189, 195, 199, 0.5));
 
 				//Draw in horizontal layer
-				drawHorizontalLinesInHorizontalLayer(linesToPaint, currentHorizontalCanvas, numFile, rgba(R[numFile], G[numFile], B[numFile], 1));
+				if(CSBLines.length>0) {
+					drawHorizontalLinesInHorizontalLayer(CSBLines, currentHorizontalCanvas, numFile, rgba(R[numFile], G[numFile], B[numFile], 1));
+				} else {
+					drawHorizontalLinesInHorizontalLayer(linesToPaint, currentHorizontalCanvas, numFile, rgba(R[numFile], G[numFile], B[numFile], 1));
+				}
 				drawHorizontalLinesInHorizontalLayer(filteredLines, currentHorizontalCanvas, numFile, rgba(189, 195, 199, 0.5));
 
 				//Draw Selected frags
