@@ -30,7 +30,6 @@ function log10(val) {
 }
 
 function paintMatrix (){
-
     var svg = d3.select("#matrixSVG")
 
     var w = parseInt(svg.style("width")),
@@ -95,7 +94,7 @@ function paintMatrix (){
                 .style("stroke", "none")
         })
         .style("fill",function(d) {
-           return (d[1] > coverageLine.coverageValue) ? getHUEColor(d[2]) : rgb(158,158,158);
+           return (d[1] > identityLine.identityValue) ? getHUEColor(d[2]) : rgb(158,158,158);
         } );
 
     $('svg circle').tipsy({
@@ -107,7 +106,7 @@ function paintMatrix (){
         }
       });
 
-    coverageLine.paint(coverageLine.coverageValue);
+    identityLine.paint(identityLine.identityValue);
 }
 
 function getHUEColor(value){
@@ -202,13 +201,13 @@ function paintFrag(ident, length){
 
 }
 
-var coverageLine = {
+var identityLine = {
 
-    coverageValue : 0,
+    identityValue : 0,
 
-    paint : function(coverageValue){
+    paint : function(identityValue){
 
-        this.coverageValue = parseInt(coverageValue);
+        this.identityValue = parseInt(identityValue);
 
         var svg = d3.select("#matrixSVG");
 
@@ -220,7 +219,7 @@ var coverageLine = {
             var x = d3.scale.linear().domain([0,currentMatrix.length]).range([left_pad, w-pad]),
             y = d3.scale.linear().domain([currentMatrix[0].length, 0]).range([pad, h-pad*2]);
 
-            svg.select("#coverageLine").remove();
+            svg.select("#identityLine").remove();
 
             var drag = d3.behavior.drag()
                 .on("dragstart", dragstarted)
@@ -229,12 +228,12 @@ var coverageLine = {
 
             var filteringLine = svg.append("line")
                  .attr("x1", x(0)-pad)
-                 .attr("y1", y(this.coverageValue))
+                 .attr("y1", y(this.identityValue))
                  .attr("x2", x(1000))
-                 .attr("y2", y(this.coverageValue))
+                 .attr("y2", y(this.identityValue))
                  .attr("stroke-width", 3)
                  .attr("stroke", "steelblue")
-                 .attr("id", "coverageLine")
+                 .attr("id", "identityLine")
                  .call(drag);
 
             function dragstarted() {
@@ -253,7 +252,7 @@ var coverageLine = {
                         auxValue = d3.event.y;
                     }
 
-                    coverageLine.coverageValue = y.invert(auxValue).toFixed(2);
+                    identityLine.identityValue = y.invert(auxValue).toFixed(2);
 
                     $("#filterIdentityNumber").val(Math.round(y.invert(auxValue)));
 
@@ -266,7 +265,7 @@ var coverageLine = {
 
             function dragended() {
                 d3.select(this).classed("dragging", false);
-                coverageLine.update();
+                identityLine.update();
             }
     },
 
@@ -274,7 +273,7 @@ var coverageLine = {
         var svg = d3.select("#matrixSVG");
         var circle = svg.selectAll("circle")
                     .style("fill",function(d) {
-                       return (d[1] > coverageLine.coverageValue) ? getHUEColor(d[2]) : rgb(158,158,158);
+                       return (d[1] > identityLine.identityValue) ? getHUEColor(d[2]) : rgb(158,158,158);
                     });
         if(currentLines){
             redraw();
@@ -296,7 +295,7 @@ for(var i=0; i<1001; i++) {
 
         var frag = arrFrags[i];
 
-        //sconsole.log(frag);
+        //console.log(frag);
 
         if(frag[0] == 'Frag') {
 
@@ -321,11 +320,77 @@ function processMatrixData(){
         for (var j = 0; j < currentMatrix[i].length - 1; j++) {
 
             if(currentMatrix[i][j]>0){
-                matrixProcessedData.push([i,j,currentMatrix[i][j]])
+                matrixProcessedData.push([i,j,currentMatrix[i][j]]);
             }
 
-            maxMat = Math.max(parseInt(currentMatrix[i][j]), maxMat);
+            maxMat = Math.max(currentMatrix[i][j], maxMat);
         }}
 
     paintMatrix();
 }
+
+
+function calculateCurve(coverage){
+
+    var totalColumns = [];
+    var yPosition = [];
+
+
+    for(var i=0; i<1000; i++) {
+        totalColumns[i] = 0;
+        for(var j=0; j<100; j++) {
+            var auxValue = parseInt(currentMatrix[i][j]);
+            if(auxValue != null) totalColumns[i] += auxValue;
+        }
+
+        //console.log("Total de "+i+": "+ totalColumns[i])
+    }
+
+    for(var i=0; i<1001; i++) {
+        var percentValue = (totalColumns[i] * coverage) / 100;
+        var currentColumn = 0;
+        for(var j=0; j<100; j++) {
+            currentColumn += parseInt(currentMatrix[i][j]);
+            if(currentColumn >= percentValue){
+                yPosition[i] = j;
+                break;
+            }
+        }
+    }
+    coverageCurve.paint(90,yPosition);
+
+}
+
+var  coverageCurve = {
+
+    coverageValue : 90,
+
+     paint : function(coverageValue, points){
+
+         this.coverageValue = parseInt(coverageValue);
+
+         var svg = d3.select("#matrixSVG");
+
+            var w = parseInt(svg.style("width")),
+                h = parseInt(svg.style("height")),
+                pad = 40,
+                left_pad = 100;
+
+            var x = d3.scale.linear().domain([0,currentMatrix.length]).range([left_pad, w-pad]),
+            y = d3.scale.linear().domain([currentMatrix[0].length, 0]).range([pad, h-pad*2]);
+
+            svg.select("#coverageCurve").remove();
+
+            var line = d3.svg.line()
+              .interpolate("basis")
+              .x(function(d,i) {return x(i);})
+              .y(function(d) {return y(d);});
+
+            var path = svg.append("path")
+              .attr("d", line(points))
+              .attr("stroke", "steelblue")
+              .attr("stroke-width", "2")
+              .attr("fill", "none");
+
+    }
+};

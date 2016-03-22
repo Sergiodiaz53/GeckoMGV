@@ -11,6 +11,7 @@ var fileInfo=[];
 var multigenome;
 var parseCount;
 var matrixProcessedData = [];
+var originalComparison = [];
 
 //My Objects
 function CSVHeader (headers) {
@@ -144,12 +145,13 @@ function processData(csv, index) {
             delimiter:",",
             complete: function (results) {
                 parseCount--;
-                lines[index] = results.data;
+                processEvolutiveEvents(results.data, index);
+                //lines[index] = results.data;
                 reset = true;
                 map = false;
 
                 if(parseCount==0){
-                    console.log(lines[index])
+                    console.log(lines[index]);
                     redraw();
                     //calculateMatrix(lines[0]);
                     addPrevZoom();
@@ -249,7 +251,6 @@ function processData(csv, index) {
 
                 //Read raw data
                 currentMatrix = results.data;
-
                 processMatrixData(currentMatrix);
             },
             error: function(err,reason){

@@ -3,16 +3,16 @@
 FL=1000   # frequency limit
 MG=0
 
-if [ $# -lt 6 ]; then
+if [ $# -lt 7 ]; then
    echo " ==== ERROR ... you called this script inappropriately."
    echo ""
-   echo "   usage:  $0 seqXName seqYName lenght similarity WL fixedL"
+   echo "   usage:  $0 seqXName seqYName lenght similarity WL fixedL CSVOutput"
    echo ""
    exit -1
 fi
 
-if [ $# == 7 ]; then
-   MG=$7
+if [ $# == 8 ]; then
+   MG=$8
 fi
 
 {
@@ -28,6 +28,7 @@ dirNameY=$(${BINDIR}/readlink.sh $2 | xargs dirname)
 seqYName=$(basename "$2")
 extensionY="${seqYName##*.}"
 seqYName="${seqYName%.*}"
+outputFile=$7
 
 #seqXName=`basename $1 .fasta`
 #seqYName=`basename $2 .fasta`
@@ -153,12 +154,15 @@ ${BINDIR}/combineFrags ${seqXName}-${seqYName}-sf.frags ${seqXName}-${seqYName}-
         echo "${BINDIR}/pvalueFilter ${seqXName}-${seqYName}.frags ${seqXName}.karpar ${seqXName}-${seqYName}.fil.frags ${seqXName}-${seqYName}.trash.frags "
         ${BINDIR}/pvalueFilter ${seqXName}-${seqYName}.frags ${seqXName}.karpar ${seqXName}-${seqYName}.fil.frags ${seqXName}-${seqYName}.trash.frags 1
 
-
-${BINDIR}/fragstoMaster ${seqXName}-${seqYName}.fil.frags ${seqXName}-${seqYName}.original.master
-
-${BINDIR}/csb2csv ${seqXName}-${seqYName}.original.master ${seqXName}-${seqYName}.original.master 0 > ${seqXName}-${seqYName}.original.csv.tmp
-
-cat ${seqXName}-${seqYName}.csb.frags.INF ${seqXName}-${seqYName}.original.csv.tmp > ${seqXName}-${seqYName}.original.csv
+echo "-------"
+echo ${BINDIR}
+echo "-------"
+${BINDIR}/fragstoMaster ${seqXName}-${seqYName}.fil.frags ${seqXName}-${seqYName}.original.master ${seqXName}.${extensionX} ${seqYName}.${extensionY}
+echo "${BINDIR}/csb2csv ${seqXName}-${seqYName}.original.master ${seqXName}-${seqYName}.original.master 0 > ${seqXName}-${seqYName}.original.csv.tmp"
+${BINDIR}/csb2csv ${seqXName}-${seqYName}.original.master ${seqXName}-${seqYName}.original.master ${seqXName}.${extensionX} ${seqXName} ${seqYName}.${extensionY} ${seqYName} ${seqXName}-${seqYName}.csv
+#fragstoMaster frags/NC_014448.1-NC_019552.1.fil.frags master fastas/NC_014448.1.fasta fastas/NC_019552.1.fasta
+#csb2csv master master fastas/NC_014448.1.fasta NC_014448.1 fastas/NC_019552.1.fasta NC_019552.1 master.csv
+#cat ${seqXName}-${seqYName}.csb.frags.INF ${seqXName}-${seqYName}.original.csv.tmp > ${seqXName}-${seqYName}.original.csv
 	
 # calculamos hits en txt
 #${BINDIR}/getHistogramFromHits ${seqXName}-${seqYName}-revercomp-K${WL}.hits.sorted ${seqXName}-${seqYName}-K${WL}.histXrever.txt ${seqXName}-${seqYName}-K${WL}.histYrever.txt r 0 
@@ -168,8 +172,8 @@ cat ${seqXName}-${seqYName}.csb.frags.INF ${seqXName}-${seqYName}.original.csv.t
 #Borramos todo menos los frags y los diccionarios
 
 
-cat ${seqXName}-${seqYName}.frags.INF ${seqXName}-${seqYName}.original.csv > ${seqXName}-${seqYName}.csv
-mv ${seqXName}-${seqYName}.csv ../../csv
+#cat ${seqXName}-${seqYName}.frags.INF ${seqXName}-${seqYName}.original.csv > ${seqXName}-${seqYName}.csv
+mv ${seqXName}-${seqYName}.csv ${outputFile}
 mv ${seqXName}-${seqYName}.frags ../../results
 mv ${seqXName}-${seqYName}.frags.INF ../../results
 mv ${seqXName}-${seqYName}.frags.MAT ../../results
