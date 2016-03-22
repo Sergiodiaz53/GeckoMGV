@@ -175,12 +175,13 @@ class classifyRepeatsForm(forms.Form):
 
 class geckoForm(forms.Form):
     choice=(("2","8"),("3","12"),("4","16"),("5","20"),("6","24"),("7","28"),("8","32"))
+    parameter1 = forms.ChoiceField(label="Sequence X FASTA", widget=forms.Select(attrs={'class':'selector','id': 'seqx'}))
+    parameter2 = forms.ChoiceField(label="Sequence Y FASTA", widget=forms.Select(attrs={'class':'selector','id': 'seqy'}))
     parameter3 = forms.IntegerField(label='min length', widget=forms.TextInput(attrs={'id': 'leng'}))
     parameter4 = forms.CharField(label='min similarity', max_length=3, widget=forms.TextInput(attrs={'id': 'sim'}))
     parameter5 = forms.ChoiceField(label='word length', choices=choice, widget=forms.Select(attrs={'class':'selector','id': 'Wleng'}))
     parameter6 = forms.CharField(label='fixed length', initial="1",widget = forms.HiddenInput())
-    parameter1 = forms.ChoiceField(label="Sequence X FASTA", widget=forms.Select(attrs={'class':'selector','id': 'seqx'}))
-    parameter2 = forms.ChoiceField(label="Sequence Y FASTA", widget=forms.Select(attrs={'class':'selector','id': 'seqy'}))
+    parameter7 = forms.CharField(label="CSV result", widget=forms.TextInput(attrs={'class':'file','id': 'csvout'}))
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
