@@ -804,7 +804,11 @@ function createInstance() {
 				drawVerticalLinesInVerticalLayer(filteredLines,currentVerticalCanvas,numFile,rgba(189, 195, 199, 0.5));
 
 				//Draw in horizontal layer
-				drawHorizontalLinesInHorizontalLayer(linesToPaint, currentHorizontalCanvas, numFile, rgba(R[numFile], G[numFile], B[numFile], 1));
+				if(CSBLines.length>0) {
+					drawHorizontalLinesInHorizontalLayer(CSBLines, currentHorizontalCanvas, numFile, rgba(R[numFile], G[numFile], B[numFile], 1));
+				} else {
+					drawHorizontalLinesInHorizontalLayer(linesToPaint, currentHorizontalCanvas, numFile, rgba(R[numFile], G[numFile], B[numFile], 1));
+				}
 				drawHorizontalLinesInHorizontalLayer(filteredLines, currentHorizontalCanvas, numFile, rgba(189, 195, 199, 0.5));
 
 				//Draw Selected frags
@@ -943,8 +947,6 @@ function createInstance() {
 				mousedown = false;
 				dragStart = null;
 
-				$('#executeServiceButton').prop('disabled', true);
-
 				if (!dragged) {
                     if (!shiftSel) {
 						$("#filter").html("Filter");
@@ -1000,6 +1002,7 @@ function createInstance() {
                                 i++;
                             }
 		}
+							console.log(linefound);
                             if(linefound&&filter(lines[arrayIndex][lineIndex])){
                                 if(selectedLines[arrayIndex]==null)
                                     selectedLines[arrayIndex]=[];
@@ -1007,10 +1010,10 @@ function createInstance() {
                                 if((index=selectedLines[arrayIndex].indexOf(lineIndex))>-1){
                                     selectedLines[arrayIndex].splice(index, 1);
 									clearCanvas("selectLayer");
-                                    drawVerticalLinesInVerticalLayer(selectedLines[arrayIndex], $("#selectLayer")[0], arrayIndex, rgb(255,0,0));
+                                    drawVerticalLinesInVerticalLayer(selectedLines[arrayIndex], selectLayer, arrayIndex, rgb(255,0,0));
                                 }else{
                                     selectedLines[arrayIndex].push(lineIndex);
-                                    drawVerticalLinesInVerticalLayer( [lineIndex], $("#selectLayer")[0],arrayIndex, rgb(255,0,0));
+                                    drawVerticalLinesInVerticalLayer( [lineIndex], selectLayer,arrayIndex, rgb(255,0,0));
                                 }
                             }
                         }
@@ -1105,6 +1108,7 @@ function createInstance() {
                                     paint = false;
                                 }
                                 if (paint) {
+									console.log("cucu");
                                     drawVerticalLinesInVerticalLayer([i],selectLayer,x,rgb(255,0,0));
                                     if(selectedLines[x].indexOf(i)==-1)
                                         selectedLines[x].push(i);
