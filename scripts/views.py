@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 from django.core import serializers
+#from future.tests.test_httpservers import request_handler
 from scripts.forms import *
 from fileSystem.views import *
 from scripts import forms
@@ -51,10 +52,22 @@ def executeService(request):
             p.wait() # wait for the subprocess to exit
 
             """
+            path= generatePath(request, 'log')
 
-
-            fileResult = createFile(request, output, request.POST.get('nameFileResult'))
-            return render(request, 'serviceResult.html', {'serviceName': request.POST.get('serviceName'), 'fileResult': fileResult, 'filePath': fileResult.file})
+            if not os.path.isfile(path):
+                print os.path.isfile(path)
+                file = open(path,'wb')
+                file.write(output)
+                file.close()
+            else:
+                print os.path.isfile(path)
+                file = open(path,'r+b')
+                content = file.read()
+                content+="\n\n-----------------------------------NEXT SERVICE-----------------------------------\n\n"+output
+                file.write(content)
+                file.close()
+            #fileResult = createFile(request, output, request.POST.get('nameFileResult'))
+            return render(request, 'filemanager.html')
         else:
             content=co.clustal_omega(request)
             return render(request, 'MSAvisualizer.html', {'content': content})

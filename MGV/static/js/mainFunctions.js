@@ -313,6 +313,16 @@ function getServicelist(){
     });
 }
 
+function showConsole(){
+    console.log("sending ajax");
+    $.ajax({
+            url:'/filemanager/console',
+            type: "POST",
+            async: false,
+            data: {},
+            error:function (xhr, textStatus, thrownError){console.log("error")}
+        })
+}
 //...........................................................................................................
 $("#serviceForm").submit(function(e){
 

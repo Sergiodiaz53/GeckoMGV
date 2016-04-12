@@ -28,11 +28,14 @@
                     </div>
                 </div>
                 <div id='createFile' class="col-md-2 col-centered">
-                    <button onclick="openCreationPad()" class="btn btn-success glyphicon glyphicon-plus-sign"> New</button>
+                    <button onclick="openCreationPad()" class="btn btn-success glyphicon glyphicon-plus-sign"> new</button>
                     <form role="form" action="{% url 'createFile_view' %}" method="POST" id=newFileForm">
                                 {% csrf_token %}
                                 <input type="text" class="hidden" name="filename" value="">
                     </form>
+                </div>
+                <div id='createFile' class="col-md-2 col-centered">
+                    <a href="/filemanager/console" class="btn btn-success glyphicon glyphicon-align-justify "> Console log</a>
                 </div>
             </div>
 
