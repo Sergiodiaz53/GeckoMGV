@@ -94,6 +94,8 @@ function addPrevZoom(){
 	backZoomList[++currentZoomIndex]=[$.extend(true, {},currentArea),img,$.extend(true, {},RectInMap),horizontalLayers];
 	console.log("modifying index: "+currentZoomIndex)
 	backZoomList.length=currentZoomIndex+1;
+	if(currentZoomIndex>0)
+		$("#prevZoom").prop( "disabled",false);
 }
 
 //Go to the previous zoom
@@ -115,6 +117,10 @@ function goToPrevZoom(){
 		scaleY = (currentArea.y1 - currentArea.y0) / canvas.height;
 		l0Ctx.putImageData(last[1], 0, 0);
 		drawSelectedFrags();
+		if($("#nextZoom").prop( "disabled"))
+			$("#nextZoom").prop( "disabled",false);
+		if(currentZoomIndex<=0)
+			$("#prevZoom").prop( "disabled",true);
 	}
 }
 
@@ -149,7 +155,11 @@ function goToNextZoom(){
 		scaleX = (currentArea.x1 - currentArea.x0) / canvas.width;
 		scaleY = (currentArea.y1 - currentArea.y0) / canvas.height;
 		l0Ctx.putImageData(last[1], 0, 0);
-		drawSelectedFrags();
+		drawSelectedFrags()
+		if($("#prevZoom").prop( "disabled"))
+			$("#prevZoom").prop( "disabled",false);
+		if(currentZoomIndex>=backZoomList.length-1)
+			$("#nextZoom").prop( "disabled", true );
 	}
 }
 
@@ -878,6 +888,8 @@ function createInstance() {
 		console.timeEnd("reDraw()");
         loadingGif.hide();
         drawSelectedFrags()
+		$("#nextZoom").prop( "disabled", true);
+		$("#prevZoom").prop( "disabled", true);
 	};
 
 	var lastX = canvas.width / 2, lastY = canvas.height / 2;
@@ -1381,6 +1393,7 @@ function annotationDrawLines(seq,start,end,point){
 
 function showSelected(){
     if(!showingSelected){
+		$("#selButton").html("Selected");
         currTable=document.getElementById("files-tab-content").cloneNode(true);
         document.getElementById("annotationsOutput").innerHTML = "<ul class='nav nav-tabs' id='annotations-tab'></ul>"
 				+ "<div class='tab-content' id='annotations-tab-content'></div>";
@@ -1395,7 +1408,6 @@ function showSelected(){
                      add2Table(i, table);
                  }
             }
-
             var newAnnot=document.createElement("table");
             newAnnot.className="table table-condensed";
             newAnnot.id = "csvAnnotationTable" + x;
@@ -1407,6 +1419,7 @@ function showSelected(){
         }
         showingSelected=true;
     }else{
+		$("#selButton").html("All")
         showingSelected=false;
         document.getElementById("files-tab-content").parentNode.replaceChild(currTable.cloneNode(true),document.getElementById("files-tab-content"));
     }

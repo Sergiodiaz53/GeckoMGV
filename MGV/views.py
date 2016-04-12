@@ -21,6 +21,8 @@ def index (request):
     print request.user
     return render(request, 'index.html')
 
+def contact(request):
+    return render(request,'contact.html')
 
 def login_view(request):
     print "login_view_MGV"

@@ -7,6 +7,7 @@
 <script src=https://cdn.biojs.net/msa/0.3/msa.min.gz.js></script>
 <script type="text/javascript">
         drawMSA("{{ content | escapejs }}");
+        $(".biojs_msa_headers").width(158);
         $("#canv_0").remove()
 </script>
 {%endblock%}

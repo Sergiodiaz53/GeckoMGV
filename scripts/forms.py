@@ -60,7 +60,7 @@ class extractSeqFromFragsForm(forms.Form):
     parameter3 = forms.ChoiceField(label="Y Fasta file", widget=forms.Select(attrs={'class':'selector','id': 'yFastaFile'}))
     parameter4 = forms.ChoiceField(label="Y-reversed Fasta file", widget=forms.Select(attrs={'class':'selector','id': 'yReversedFastaFile'}))
     parameter5 = forms.CharField(label="Output FragFile", widget=forms.TextInput(attrs={'class':'file','id': 'outputFragFile'}))
-    parameter6 = forms.CharField(label='Block', max_length=4, widget=forms.TextInput(attrs={'id': 'block'}))
+    parameter6 = forms.CharField(label='Block', max_length=4, widget=forms.TextInput(attrs={'id': 'block', 'placeholder':'e.g: 0'}))
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
@@ -119,6 +119,24 @@ class connectFragsUpForm(forms.Form):
 
         self.fields['parameter3'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="Sequence X FASTA", widget=forms.Select(attrs={'class':'selector','id': 'seqx'}))
         self.fields['parameter4'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="Sequence Y FASTA", widget=forms.Select(attrs={'class':'selector','id': 'seqy'}))
+
+class GeckoCSB(forms.Form):
+    parameter1 = forms.ChoiceField(label="Original frags file", widget=forms.Select(attrs={'class':'selector','id': 'originalFrags'}))
+    parameter2 = forms.CharField(label="Overlapped file", widget=forms.TextInput(attrs={'class':'file','id': 'overFile'}))
+    parameter5 = forms.CharField(label="CSB file", widget=forms.TextInput(attrs={'class':'file','id': 'csbFile'}))
+    parameter6 = forms.CharField(label="Master file", widget=forms.TextInput(attrs={'class':'file','id': 'masterFile'}))
+    parameter3 = forms.CharField(label="iGap", widget=forms.TextInput(attrs={'id': 'igap'}))
+    parameter4 = forms.IntegerField(label='eGap', widget=forms.TextInput(attrs={'id': 'egap'}))
+    parameter7 = forms.ChoiceField(label="Sequence X FASTA", widget=forms.Select(attrs={'class':'selector','id': 'seqx'}))
+    parameter8 = forms.ChoiceField(label="Sequence Y FASTA", widget=forms.Select(attrs={'class':'selector','id': 'seqy'}))
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        self.request = kwargs.pop('request', None)
+        super(GeckoCSB, self).__init__(*args, **kwargs)
+        self.fields['parameter1'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="Original frags file", widget=forms.Select(attrs={'class':'selector','id': 'originalFrags'}))
+        self.fields['parameter7'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="Sequence X FASTA", widget=forms.Select(attrs={'class':'selector','id': 'seqx'}))
+        self.fields['parameter8'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="Sequence Y FASTA", widget=forms.Select(attrs={'class':'selector','id': 'seqy'}))
 
 class refineOverlappedForm(forms.Form):
     parameter1 = forms.ChoiceField(label="Overlapped frags file", widget=forms.Select(attrs={'class':'selector','id': 'overFile'}))
