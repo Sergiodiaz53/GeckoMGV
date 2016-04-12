@@ -70,6 +70,7 @@ def listUserFiles(request):
         return files
 
 # Rendering methods
+@login_required()
 def fileManager_view(request):
     form = FileForm()
     if request.user.is_authenticated():
@@ -79,7 +80,7 @@ def fileManager_view(request):
     else:
         return render(request, 'filemanager.html', {'form': form, 'files': {} })
 
-
+@login_required()
 def uploadFile_view(request):
     form = FileForm()
     files = uploadFile(request)
@@ -90,6 +91,7 @@ def deleteFile_view(request):
     form = FileForm()
     files = deleteFile(request)
     return render(request, 'filemanager.html', {'form': form, 'files': files})
+
 @csrf_exempt
 def createFile_view(request):
     createFile(request,request.POST.get('content'),request.POST.get('filename'))

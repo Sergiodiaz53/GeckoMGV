@@ -20,6 +20,7 @@ def storeService(request):
             script.save()
     return HttpResponse("OK", content_type="text/plain")
 
+@login_required()
 def executeService(request):
     print request.POST
     if request.method == 'POST':
@@ -114,6 +115,7 @@ def listServices(request):
     return Script.objects.all()
 
 
+@login_required()
 def serviceInterface(request):
     if request.method == 'POST':
         service = Script.objects.get(exeName=request.POST.get('exeName'))

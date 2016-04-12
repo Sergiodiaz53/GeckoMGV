@@ -12,5 +12,12 @@ urlpatterns = patterns(
         url(r'^getFileList', views.getFileList, name='getFileList'),
         url(r'^test',views.clustal_omega,name='clustal_omega'),
         url(r'^upload',views.uploadFrags, name= 'uploadFrags'),
+<<<<<<< HEAD
         url(r'^contact',views.contact, name= 'contact')
+=======
+        url(r'^contact',views.contact_view, name= 'contact_view'),
+        url(r'^help',views.help_view, name= 'help_view'),
+        url(r'^lrequired',views.loginrequired_view, name= 'loginrequired_view')
+
+>>>>>>> 18372cc40b1edfb668d908643c6f1d4cabf27d7d
 )

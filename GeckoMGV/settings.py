@@ -32,6 +32,7 @@ TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
 
+LOGIN_URL = '/lrequired/'
 
 # Application definition
 
