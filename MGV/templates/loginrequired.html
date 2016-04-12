@@ -1,0 +1,25 @@
+{%extends "includes/basic.html"%}
+{%load staticfiles%}
+{%block content%}
+    <div id="main" class="container center-block" role="main">
+
+      		<div class="row row-centered">
+                <p>Please, log in </p>
+               <div class="col-md-6 col-centered">
+                     <form role="form" action="{% url 'login_view' %}" method="POST">
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    <label class="sr-only" for="User">Username</label>
+                                    <input type="text" name="username" class="form-control" id="user" placeholder="Username" autofocus required />
+                                </div>
+                                <div class="form-group">
+                                    <label class="sr-only" for="Password">Password</label>
+                                    <input type="password" name="password" class="form-control" id="password" placeholder="Password" required />
+                                </div>
+
+                                <button type="submit" class="btn btn-success">Sign in</button>
+                     </form>
+            </div>
+    </div>
+
+{% endblock %}

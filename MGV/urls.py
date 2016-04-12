@@ -12,5 +12,8 @@ urlpatterns = patterns(
         url(r'^getFileList', views.getFileList, name='getFileList'),
         url(r'^test',views.clustal_omega,name='clustal_omega'),
         url(r'^upload',views.uploadFrags, name= 'uploadFrags'),
-        url(r'^contact',views.contact_view, name= 'contact_view')
+        url(r'^contact',views.contact_view, name= 'contact_view'),
+        url(r'^help',views.help_view, name= 'help_view'),
+        url(r'^lrequired',views.loginrequired_view, name= 'loginrequired_view')
+
 )

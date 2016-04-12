@@ -5,11 +5,8 @@ from customAuth.views import *
 from scripts.views import *
 from fileSystem.forms import *
 from fileSystem.views import *
-from scripts.workers.EBI import EBI
 from scripts.workers.services import clustalomega as co
-from scripts.forms import drawMSAComp
-from django.views.decorators.csrf import ensure_csrf_cookie
-from django.template import RequestContext
+from django.contrib.auth.decorators import login_required
 
 from django.http import JsonResponse
 import json
@@ -40,13 +37,13 @@ def logout_view(request):
     authLogout(request)
     return render(request, 'index.html')
 
-
 def services_view(request):
     list = listServices(request)
     print list
     return render(request, 'services.html', {'services': list})
 
 @csrf_exempt
+@login_required()
 def uploadFrags(request):
     if request.method == 'POST':
         createFile(request,request.POST['content'],request.POST['name'])
@@ -70,12 +67,22 @@ def getFileList(request):
     response = JsonResponse(fileNames, safe=False)
     return HttpResponse(response, content_type="application/json")
 
+@login_required()
 def executeService_view(request):
     output = executeService(request)
     return render(request, 'serviceResult.html', {'output': output})
 
+
 def contact_view(request):
     return render(request, 'contact.html')
+
+
+def help_view(request):
+    return render(request, 'help.html')
+
+def loginrequired_view(request):
+    return render(request, 'loginrequired.html')
+
 
 def clustal_omega(request):
             content=co.clustal_omega(request)

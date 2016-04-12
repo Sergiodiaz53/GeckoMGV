@@ -1,0 +1,33 @@
+{%extends "includes/basic.html"%}
+{%load staticfiles%}
+{%block content%}
+
+
+    <div id="main" class="container center-block" role="main">
+
+      		<div class="row row-centered">
+
+                <img src="{% static 'css/images/MGVHelp.png' %}" id="logoMGV" />
+
+               <div class="col-md-6 col-centered">
+                    <div class="table-responsive">
+                         <table class="table">
+                             <thead>
+                                <th colspan="2">Files:</th>
+                             </thead>
+                             <tr>
+                                 <td>User guide: </td>
+                                 <td><a href={% static 'data/GeckoMGV-UserGuide.pdf' %}>Link</a></td>
+                             </tr>
+
+                             <tr>
+                                 <td>Guided exercises: </td>
+                                 <td><a href={% static 'data/GuidedExercises.pdf' %}>Link</a></td>
+                             </tr>
+
+                         </table>
+                    </div>
+            </div>
+    </div>
+
+{% endblock %}
