@@ -74,6 +74,9 @@ def executeService_view(request):
     output = executeService(request)
     return render(request, 'serviceResult.html', {'output': output})
 
+def contact_view(request):
+    return render(request, 'contact.html')
+
 def clustal_omega(request):
             content=co.clustal_omega(request)
             print(content)

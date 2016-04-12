@@ -47,10 +47,10 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li class="navbar-left active"><a href="/">Home</a></li>
-                    <li class="navbar-left"><a href="#contact">Contact</a></li>
                     <li class="navbar-left"><a href="{% url 'services_view' %}">Services</a></li>
                     <li class="navbar-left"><a href="{% url 'fileManager_view' %}">File manager</a></li>
                     <li class="navbar-left"><a href="data/MG-Help.pdf">Help</a></li>
+                    <li class="navbar-left"><a href="{% url 'contact_view' %}">Contact</a></li>
                         {% if user.is_authenticated %}
                                 <li class="align-right"><a href="#"><i class="fa fa-sign-out fa-fw whiteColor">Welcome {{ user.get_username }}</i></a></li>
                                 <li class="align-right"><a href="{% url 'logout_view' %}"><i class="fa fa-sign-out fa-fw redColor">Logout</i></a></li>

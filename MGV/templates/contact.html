@@ -1,0 +1,61 @@
+{%extends "includes/basic.html"%}
+{%load staticfiles%}
+{%block content%}
+
+    <div id="main" class="container center-block" role="main">
+
+      		<div class="row row-centered">
+
+                <img src="{% static 'css/images/logoMGV.png' %}" id="logoMGV" />
+
+                <div class="col-md-6 col-centered">
+                    <div class="table-responsive">
+
+                        <p class="text-center">GEKCO-MGV is a Software developed by the University of Malaga.</p>
+
+                        <table class="table">
+                            <thead>
+                                <th>Project’s Coordinator</th>
+                            </thead>
+                            <tr>
+                                <td>Name: </td>
+                                <td>Oswaldo Trelles</td>
+                            </tr>
+                            <tr>
+                                <td>Email: </td>
+                                <td><a href="ots@uma.es">ots@uma.es</a></td>
+                            </tr>
+                            <tr>
+                                <td>Web: </td>
+                                <td><a href="http://www.ac.uma.es/~ots">http://www.ac.uma.es/~ots</a></td>
+                            </tr>
+                            <tr>
+                                <td>Phone:</td>
+                                <td>+34 952 13 2823 (office) – +34 615 07 0797 (mobile phone)</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="table-responsive">
+
+                        <table class="table">
+
+                            <thead>
+                                <th class="text-center" colspan="2">Administrators</th>
+                            </thead>
+                            <tr class="text-center">
+                                <td>Sergio Díaz del Pino</td>
+                                <td>Samuel Benavídes García</td>
+                            </tr>
+                            <tr class="text-center">
+                                <td><a href="Sergiodiazdp@uma.es">Sergiodiazdp@uma.es</a></td>
+                                <td><a href="Samberga@uma.es">Samberga@uma.es</a></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+    </div>
+
+
+{% endblock %}
