@@ -3,7 +3,10 @@ from MGV.views import *
 from fileSystem.models import *
 from fileSystem.forms import *
 
+
 # Methods
+
+
 def uploadFile(request):
     print "UploadingFile..."
     if request.method == 'POST':
@@ -105,3 +108,14 @@ def fileViewer_view(request):
 
         return render(request, 'fileViewer.html', {'fileName': fileInstance.filename, 'content': content})
 
+@csrf_exempt
+def consoleViewer_view(request):
+    if request.user.is_authenticated():
+        path= generatePath(request, 'log')
+        if not os.path.isfile(path):
+            return render(request, 'fileViewer.html', {'fileName': "console.log", 'content': ''})
+        else:
+            file = open(path, 'r')
+            content=file.read()
+            file.close()
+            return render(request, 'fileViewer.html', {'fileName': "console.log", 'content': content})
