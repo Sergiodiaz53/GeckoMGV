@@ -151,7 +151,7 @@ function processData(csv, index) {
                 map = false;
 
                 if(parseCount==0){
-                    console.log(lines[index]);
+                    //console.log(lines[index]);
                     redraw();
                     //calculateMatrix(lines[0]);
                     addPrevZoom();

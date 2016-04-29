@@ -241,7 +241,7 @@
                                         <div class="SearchTitleFilterButton">
                                             <span>Search:</span>
                                             <input type="text" placeholder="e.g: DNA polymerase" class="SearchFilter2" onkeypress="if (event.keyCode == 13) document.getElementById('btnSearch').click()" />
-                                            <button id= "btnSearch" class="SearchButton" onclick="showResults($('.SearchFilter2').val(),true)"><span class="glyphicon glyphicon-search"></span></button>
+                                            <button id= "btnSearch" class="SearchButton" onclick="showResults($('.SearchFilter2').val(),false)"><span class="glyphicon glyphicon-search"></span></button>
                                         </div>
                                     </div>
                                 </div>
@@ -269,7 +269,7 @@
         <div class="SearchTitleFilterButton">
             <span>Search:</span>
             <input type="text" class="SearchFilter3" onkeypress="if (event.keyCode == 13) document.getElementById('btnSearch').click()" />
-            <button id= "btnSearch" class="SearchButton" onclick="showResults($('.SearchFilter3').val(),true)"><span class="glyphicon glyphicon-search"></span></button>
+            <button id= "btnSearch" class="SearchButton" onclick="showResults($('.SearchFilter3').val(),false)"><span class="glyphicon glyphicon-search"></span></button>
         </div>
     </div>
 

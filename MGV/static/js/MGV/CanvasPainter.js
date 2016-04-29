@@ -1062,7 +1062,7 @@ function createInstance() {
                     $('#CSBPopover').hide();
 				}
 
-				if ((area) && vertical&&!shiftSel&&!filterSel) {
+				if ((area) && vertical&&!shiftSel&&!filterSel&&lines.length) {
                     document.getElementById("myCanvasLayer2").getContext("2d").clearRect(0,0,500,500);
 					$('#CSBPopover').hide();
                     if(startX>mouseX)
@@ -1100,6 +1100,9 @@ function createInstance() {
 					addPrevZoom();
                     //drawAnnotations();
 				}
+
+				if(!lines.length)
+					clearCanvas("myCanvasLayer1");
 
                 if(area&&vertical&&(shiftSel||filterSel)) {
                      if(startX>mouseX)
@@ -1173,7 +1176,7 @@ function createInstance() {
 			dragged = true;
 
 			if (area && mousedown && !squared) {
-				console.log("X:"+startX+" Y:"+startY);
+				//console.log("X:"+startX+" Y:"+startY);
 				var layer1 = document.getElementById("myCanvasLayer1");
 				var ctx1 = layer1.getContext("2d");
 
