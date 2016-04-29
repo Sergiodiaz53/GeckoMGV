@@ -2,8 +2,8 @@ var evolutiveIndex = -1;
 var evolutiveFrags = [];
 
 function processEvolutiveEvents(frags, index){
-    console.log("Frags: "+frags);
-    console.log("Index: "+index);
+    //console.log("Frags: "+frags);
+    //console.log("Index: "+index);
     var eeIndex = 0;
     lines[index] = [];
     originalComparison[index] = [];

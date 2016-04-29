@@ -593,7 +593,7 @@ function drawHorizontalLinesInHorizontalLayer(linesToPaint, canvasLayer, numFile
 function roundRect(currentCtx, x, y, width, height, radius, fill) {
 	var	radius = 5;
 
-	console.log("X: "+x+" Y: "+y+" W: "+width);
+	//console.log("X: "+x+" Y: "+y+" W: "+width);
 
 	if(width>0) {
 
