@@ -121,23 +121,24 @@ function search(text){
         return;
     }
     for(var fileNum=0;fileNum<lines.length;fileNum++){
-        if($("#checklayer"+fileNum)) {
-            var annotToFilter = document.getElementById("csvAnnotationTable" + fileNum).childNodes[0].childNodes;
-            var toFilter = document.getElementById("csvInfoTable" + fileNum).childNodes[0].childNodes;
-            for (var i = 1; i < toFilter.length; i++) {
-                if (!showingSelected)
-                    if (toFilter[i].childNodes[0].innerHTML.indexOf("G") == 0 && toFilter[i].childNodes[16].innerHTML.toLowerCase().indexOf(text.toLowerCase()) == -1) {
-                        document.getElementById("csvInfoTable" + fileNum).childNodes[0].removeChild(toFilter[i]);
-                        i--;
-                    }
-            }
-            for (var i = 1; i < annotToFilter.length; i++) {
-                if (!showingSelected)
-                    if (annotToFilter[i].childNodes[7].innerHTML.toLowerCase().indexOf(text.toLowerCase()) == -1) {
-                        document.getElementById("csvAnnotationTable" + fileNum).childNodes[0].removeChild(annotToFilter[i]);
-                        i--;
-                    }
-            }
+        var active= false;
+        if($("#checklayer"+fileNum).prop("checked"))
+            active= true;
+        var annotToFilter = document.getElementById("csvAnnotationTable" + fileNum).childNodes[0].childNodes;
+        var toFilter = document.getElementById("csvInfoTable" + fileNum).childNodes[0].childNodes;
+        for (var i = 1; i < toFilter.length; i++) {
+            if (!showingSelected)
+                if (toFilter[i].childNodes[0].innerHTML.indexOf("G") == 0 && (toFilter[i].childNodes[16].innerHTML.toLowerCase().indexOf(text.toLowerCase()) == -1||!active)) {
+                    document.getElementById("csvInfoTable" + fileNum).childNodes[0].removeChild(toFilter[i]);
+                    i--;
+                }
+        }
+        for (var i = 1; i < annotToFilter.length; i++) {
+            if (!showingSelected)
+                if (annotToFilter[i].childNodes[7].innerHTML.toLowerCase().indexOf(text.toLowerCase()) == -1||!active) {
+                    document.getElementById("csvAnnotationTable" + fileNum).childNodes[0].removeChild(annotToFilter[i]);
+                    i--;
+                }
         }
     }
         currTable=document.getElementById("files-tab-content").cloneNode(true);
@@ -274,16 +275,19 @@ function dialogFrags() {
 }
 
 function dialogAnnotations(){
-    var $dialogContainer = $('#annotationsOutput');
-    var $detachedChildren = $dialogContainer.children().detach();
-    $('#annotationsOutput').dialog({
-        height:400,
-        widht: 800,
-        title: 'Annotations',
-        open: function () {
-            $detachedChildren.appendTo($dialogContainer);
-        }
-    });
+    if (!$('#annotationsOutput').is(':visible')) {
+        var $dialogContainer = $('#annotationsOutput');
+        var $detachedChildren = $dialogContainer.children().detach();
+        $('#annotationsOutput').dialog({
+            height:400,
+            widht: 800,
+            title: 'Annotations',
+            open: function () {
+                $detachedChildren.appendTo($dialogContainer);
+            }
+        });
+    }else
+        $('#annotationsOutput').dialog("close");
 }
 
     $( document ).ready(function() {

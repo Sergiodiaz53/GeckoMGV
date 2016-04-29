@@ -948,8 +948,10 @@ function createInstance() {
                 dragged = false;
                 console.log("MouseDown")
                 mousedown = true;
-                startX = parseInt(evt.clientX - offsetX);
-                startY = parseInt(evt.clientY - offsetY);
+				startX=getMousePos(canvas,evt).x;
+                //startX = parseInt(evt.clientX - offsetX);
+                startY=canvas.width-getMousePos(canvas,evt).y;
+                //startY = parseInt(evt.clientY - offsetY);
             }, false);
 
 	canvas
@@ -972,6 +974,7 @@ function createInstance() {
                         var x1,y1,x2,y2;
                         var x0=getMousePos(canvas,evt).x;
                         var y0=getMousePos(canvas,evt).y;
+						console.log("mouseX:"+x0+" mouseY:"+y0);
 	                    var mode = document.option.tipo;
                         $('#CSBPopover').hide();
                         for (var j = 0; j < lines.length; j++) {
@@ -1152,13 +1155,13 @@ function createInstance() {
 			dragged = true;
 
 			if (area && mousedown && !squared) {
-
+				console.log("X:"+startX+" Y:"+startY);
 				var layer1 = document.getElementById("myCanvasLayer1");
 				var ctx1 = layer1.getContext("2d");
 
 				mouseX = getMousePos(canvas,evt).x;//parseInt(evt.clientX - offsetX);
 				mouseY = canvas.height-getMousePos(canvas,evt).y;//parseInt(evt.clientY - offsetY);
-
+				//console.log("mouseX:"+mouseX+" mouseY:"+mouseY);
 				ctx1.clearRect(0, 0, canvas.width, canvas.height);
 				ctx1.beginPath();
 				ctx1.rect(startX, startY, mouseX - startX, mouseY - startY);
@@ -1226,6 +1229,7 @@ function createInstance() {
 			currentArea.x1 = currentArea.x0 + difx;
 			currentArea.y1 = 500 - RectInMap.y * 5 / 2;
 			currentArea.y0 = currentArea.y1 - dify;
+
 
 			redraw();
 		}
@@ -1816,6 +1820,8 @@ function getMousePos(canvas, evt) {
 	var rect = canvas.getBoundingClientRect();
 
 	return {
+
+		//x : (evt.pageX - rect.left)*canvas.width/$(canvas).width(),
 		x : (evt.clientX - rect.left)*canvas.width/$(canvas).width(),
 		y : ((canvas.height - (evt.clientY - rect.top))-(canvas.height-$(canvas).height()))*canvas.height/$(canvas).height(),
 	};
