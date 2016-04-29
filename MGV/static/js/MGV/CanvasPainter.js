@@ -593,15 +593,33 @@ function drawHorizontalLinesInHorizontalLayer(linesToPaint, canvasLayer, numFile
 function roundRect(currentCtx, x, y, width, height, radius, fill) {
 	var	radius = 5;
 
-	currentCtx.moveTo(x + radius, y);
-	currentCtx.lineTo(x + width - radius, y);
-	currentCtx.quadraticCurveTo(x + width, y, x + width, y + radius);
-	currentCtx.lineTo(x + width, y + height - radius);
-	currentCtx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-	currentCtx.lineTo(x + radius, y + height);
-	currentCtx.quadraticCurveTo(x, y + height, x, y + height - radius);
-	currentCtx.lineTo(x, y + radius);
-	currentCtx.quadraticCurveTo(x, y, x + radius, y);
+	console.log("X: "+x+" Y: "+y+" W: "+width);
+
+	if(width>0) {
+
+		currentCtx.moveTo(x + radius, y);
+		currentCtx.lineTo(x + width - radius, y);
+		currentCtx.quadraticCurveTo(x + width, y, x + width, y + radius);
+		currentCtx.lineTo(x + width, y + height - radius);
+		currentCtx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+		currentCtx.lineTo(x + radius, y + height);
+		currentCtx.quadraticCurveTo(x, y + height, x, y + height - radius);
+		currentCtx.lineTo(x, y + radius);
+		currentCtx.quadraticCurveTo(x, y, x + radius, y);
+
+	} else {
+
+		currentCtx.moveTo(x - radius, y);
+		currentCtx.lineTo(x + width + radius, y);
+		currentCtx.quadraticCurveTo(x + width, y, x + width, y + radius);
+		currentCtx.lineTo(x + width, y + height - radius);
+		currentCtx.quadraticCurveTo(x + width, y + height, x + width + radius, y + height);
+		currentCtx.lineTo(x - radius, y + height);
+		currentCtx.quadraticCurveTo(x, y + height, x, y + height - radius);
+		currentCtx.lineTo(x, y + radius);
+		currentCtx.quadraticCurveTo(x, y, x - radius, y);
+
+	}
 }
 
 function createInstance() {
