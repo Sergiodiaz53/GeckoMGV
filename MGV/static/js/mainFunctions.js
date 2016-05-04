@@ -128,14 +128,14 @@ function search(text){
         var toFilter = document.getElementById("csvInfoTable" + fileNum).childNodes[0].childNodes;
         for (var i = 1; i < toFilter.length; i++) {
             if (!showingSelected)
-                if (toFilter[i].childNodes[0].innerHTML.indexOf("G") == 0 && (toFilter[i].childNodes[16].innerHTML.toLowerCase().indexOf(text.toLowerCase()) == -1||!active)) {
+                if (toFilter[i].childNodes.length == 22 && ((toFilter[i].childNodes[18].innerHTML.toLowerCase().indexOf(text.toLowerCase()) == -1||!active)&& (toFilter[i].childNodes[21].innerHTML.toLowerCase().indexOf(text.toLowerCase()) == -1||!active))) {
                     document.getElementById("csvInfoTable" + fileNum).childNodes[0].removeChild(toFilter[i]);
                     i--;
                 }
         }
         for (var i = 1; i < annotToFilter.length; i++) {
             if (!showingSelected)
-                if (annotToFilter[i].childNodes[7].innerHTML.toLowerCase().indexOf(text.toLowerCase()) == -1||!active) {
+                if ((annotToFilter[i].childNodes[9].innerHTML.toLowerCase().indexOf(text.toLowerCase()) == -1||!active)&&(annotToFilter[i].childNodes[12].innerHTML.toLowerCase().indexOf(text.toLowerCase()) == -1||!active)) {
                     document.getElementById("csvAnnotationTable" + fileNum).childNodes[0].removeChild(annotToFilter[i]);
                     i--;
                 }
@@ -155,15 +155,29 @@ function drawAnnotations(){
         var toFilter = document.getElementById("csvInfoTable"+fileNum).childNodes[0].childNodes;
         var xfrag=parseInt(toFilter[1].childNodes[1].innerHTML),yfrag=parseInt(toFilter[1].childNodes[2].innerHTML);
             for(var i=2;i<toFilter.length;i++){
-                if(toFilter[i].childNodes[0].innerHTML.indexOf("G")==0) {
+                if(toFilter[i].childNodes.length==22) {
                     var seq=toFilter[i].childNodes[0].innerHTML.charAt(1).toUpperCase();
+                    var seqX=false;
+                    for(var fil=0;fil<searchList.length;fil++) {
+                        if (toFilter[i].childNodes[18].innerHTML.indexOf(searchList[fil]) == -1)
+                            break;
+                        seqX=true;
+                    }
+                    var seqY=false;
+                    for(var fil=0;fil<searchList.length;fil++) {
+                        if (toFilter[i].childNodes[21].innerHTML.indexOf(searchList[fil]) == -1)
+                            break;
+                        seqY=true;
+                    }
                     //Classify depending on the sequence
                     var point=xfrag+(parseInt(toFilter[i].childNodes[2].innerHTML)-yfrag);
-                    if (seq=='X') {
+                    if(seqY)
+                        annotationDrawLines('Y', toFilter[i].childNodes[2].innerHTML, toFilter[i].childNodes[4].innerHTML, point);
+                    if (seqX) {
                         point = yfrag+(parseInt(toFilter[i].childNodes[1].innerHTML)-xfrag);
-                        annotationDrawLines(seq, toFilter[i].childNodes[1].innerHTML, toFilter[i].childNodes[3].innerHTML, point);
-                    }else
-                        annotationDrawLines(seq, toFilter[i].childNodes[2].innerHTML, toFilter[i].childNodes[4].innerHTML, point);
+                        annotationDrawLines('X', toFilter[i].childNodes[1].innerHTML, toFilter[i].childNodes[3].innerHTML, point);
+                    }
+
                 }else{
                     var xfrag=parseInt(toFilter[i].childNodes[1].innerHTML),yfrag=parseInt(toFilter[i].childNodes[2].innerHTML);
                 }

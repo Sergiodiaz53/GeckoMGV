@@ -720,8 +720,8 @@ function createInstance() {
 						}
 					}
 
-					if (currentLines[i][0] != 'GX'
-							&& currentLines[i][0] != 'GY') {
+					if (currentLines[i].length<18) {
+
 
 						if(currentLines[i][0]=='CSB') {
 							CSBLines.push(i);
@@ -761,11 +761,11 @@ function createInstance() {
 							}
 						}
 					} else {
-						if (currentLines[i][0] == 'GX') {
-							if ((parseInt(currentLines[i][1]) >= (currentArea.x0
+						if (currentLines[i].length==22) {
+							/*if ((parseInt(currentLines[i][1]) >= (currentArea.x0
 									* xtotal / 500))
 									&& (parseInt(currentLines[i][3]) <= (currentArea.x1
-											* xtotal / 500))) {
+											* xtotal / 500))) {*/
 								paint = filter(currentLines[i]);
 								if (paint == true) {
 									add2Table(i, table);
@@ -790,38 +790,7 @@ function createInstance() {
 										}
 									}
 								}
-							}
-						} else {
-							if ((parseInt(currentLines[i][2]) >= (currentArea.y0
-									* xtotal / 500))
-									&& (parseInt(currentLines[i][4]) <= (currentArea.y1
-											* xtotal / 500))) {
-								paint = filter(currentLines[i]);
-								if (paint == true) {
-									add2Table(i, table);
-									var row = annotationTable.insertRow(-1);
-									for (var j = 0; j < currentLines[i].length; j++) {
-										if (currentLines[i].length > 10) {
-											if ((j <= 3)
-													|| ((j > 5) && (j < 7))
-													|| (j >= 14)) {
-												var firstNameCell = row
-														.insertCell(-1);
-												firstNameCell
-														.appendChild(document
-																.createTextNode(currentLines[i][j]));
-											}
-										} else {
-											var firstNameCell = row
-													.insertCell(-1);
-											firstNameCell
-													.appendChild(document
-															.createTextNode(currentLines[i][j]));
-										}
-									}
-								}
-							}
-
+							//}
 						}
 					}
 				}
