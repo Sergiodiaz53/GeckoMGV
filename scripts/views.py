@@ -136,8 +136,9 @@ def getServiceList(request):
     serviceNames = []
     serviceExes = []
     for service in listServices(request):
-        serviceNames.append(service.name)
-        serviceExes.append(service.exeName);
+        if(service.returnType==request.GET.get('returnType')):
+            serviceNames.append(service.name)
+            serviceExes.append(service.exeName);
 
     response = []
 
