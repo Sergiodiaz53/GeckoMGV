@@ -14,5 +14,5 @@ urlpatterns = patterns(
         url(r'^upload',views.uploadFrags, name= 'uploadFrags'),
         url(r'^contact',views.contact_view, name= 'contact_view'),
         url(r'^help',views.help_view, name= 'help_view'),
-        url(r'^lrequired',views.loginrequired_view, name= 'loginrequired_view')
+        url(r'^lrequired',views.loginrequired_view, name= 'loginrequired_view'),
 )

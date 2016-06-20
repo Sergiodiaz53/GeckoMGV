@@ -1,4 +1,32 @@
-/*
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: CanvasPainter.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: CanvasPainter.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/*
  @author Sergio Díaz del Pino
  Multigenome Visualizer
  Bitlab - Universidad de Málaga
@@ -28,7 +56,7 @@ var selectedLines=[];
 
 //Back zoom stuff
 var backZoomList=[];
-var backCanvas =$('<canvas/>',{'class':'canvasLayer img-responsive'}).prop({width: 500,height: 500 });
+var backCanvas =$('&lt;canvas/>',{'class':'canvasLayer img-responsive'}).prop({width: 500,height: 500 });
 var backCtx=backCanvas[0].getContext('2d');
 var currentZoomIndex=-1;
 
@@ -83,12 +111,12 @@ function addPrevZoom(){
 	backCtx.save();
 	backCtx.clearRect(0, 0, backCtx.canvas.width, backCtx.canvas.height);
 	backCtx.restore();
-	for(var i=0;i<lines.length;i++){
+	for(var i=0;i&lt;lines.length;i++){
 		var canvasLayer= $("#layer"+i)[0];
 		backCtx.drawImage(canvasLayer,0,0);
 	}
     var horizontalLayers=[];
-    for(var x=0;x<$("#horizontalCanvasContainer")[0].childNodes.length-1;x++) {
+    for(var x=0;x&lt;$("#horizontalCanvasContainer")[0].childNodes.length-1;x++) {
         var horizontalLayer = createHorizontalComparisonLayer(x);
         var horImg = horizontalLayer.getContext('2d').getImageData(0, 0, horizontalLayer.width, horizontalLayer.height);
         horizontalLayers.push(horImg);
@@ -108,7 +136,7 @@ function addPrevZoom(){
  */
 function goToPrevZoom(){
 	if(currentZoomIndex>0) {
-		for (var i = 0; i < lines.length; i++) {
+		for (var i = 0; i &lt; lines.length; i++) {
 			clearCanvas("layer" + i);
 		}
 		var l0Ctx = $("#layer0")[0].getContext('2d');
@@ -116,7 +144,7 @@ function goToPrevZoom(){
 		currentArea = $.extend(true, {},last[0]);
         RectInMap=$.extend(true, {},last[2]);
         redrawMap();
-        for(var i=0;i<last[3].length;i++){
+        for(var i=0;i&lt;last[3].length;i++){
             clearCanvas(createHorizontalComparisonLayer(i).id);
             createHorizontalComparisonLayer(i).getContext('2d').putImageData(last[3][i],0,0);
         }
@@ -126,7 +154,7 @@ function goToPrevZoom(){
 		drawSelectedFrags();
 		if($("#nextZoom").prop( "disabled"))
 			$("#nextZoom").prop( "disabled",false);
-		if(currentZoomIndex<=0)
+		if(currentZoomIndex&lt;=0)
 			$("#prevZoom").prop( "disabled",true);
 	}
 }
@@ -139,7 +167,7 @@ function drawSelectedFrags(){
 	if(selectedLines.length>0) {
 		clearCanvas("selectLayer");
 		$('#executeServiceButton').prop('disabled', false);
-		for (var i = 0; i < selectedLines.length; i++)
+		for (var i = 0; i &lt; selectedLines.length; i++)
 			if ($("#checklayer" + i)[0].checked) {
 				drawLinesInLayer(selectedLines[i], selectLayer, i, rgb(255, 0, 0));
 				drawHorizontalLinesInHorizontalLayer(selectedLines[i], document.getElementById("hSel" + i), i, rgb(255, 0, 0))
@@ -153,8 +181,8 @@ function drawSelectedFrags(){
  * @author  Samuel
  */
 function goToNextZoom(){
-	if(currentZoomIndex<backZoomList.length-1) {
-		for (var i = 0; i < lines.length; i++) {
+	if(currentZoomIndex&lt;backZoomList.length-1) {
+		for (var i = 0; i &lt; lines.length; i++) {
 			clearCanvas("layer" + i);
 		}
 		var l0Ctx = $("#layer0")[0].getContext('2d');
@@ -162,7 +190,7 @@ function goToNextZoom(){
         RectInMap=$.extend(true, {},last[2]);
         redrawMap();
 		currentArea = $.extend(true, {},last[0]);
-        for(var i=0;i<last[3].length;i++){
+        for(var i=0;i&lt;last[3].length;i++){
             clearCanvas(createHorizontalComparisonLayer(i).id);
             createHorizontalComparisonLayer(i).getContext('2d').putImageData(last[3][i],0,0);
         }
@@ -225,7 +253,7 @@ function storeFileHeader(currentLines, numFile) {
     firstNameCell.appendChild(document
                 .createTextNode(auxLine[0].toString()));
 
-    for (var i = 2; i <= headerSize; i++) {
+    for (var i = 2; i &lt;= headerSize; i++) {
         var row = table2.insertRow(-1);
 		row.className = "hiddenRow";
         var auxLine = currentLines[i].toString().split(":");
@@ -279,16 +307,16 @@ function storeFileHeader(currentLines, numFile) {
    fileHeader[numFile] = new CSVHeader(headers);
 
    	// Append header information to ['?'] button of each comparison
-    document.getElementById("fileName").innerHTML += '<button id="infoPopover'
+    document.getElementById("fileName").innerHTML += '&lt;button id="infoPopover'
 							+ numFile
 							+ '" type="button" class="btn btn-warning btn-xs btn-padding" '
                             + 'data-container="body" data-toggle="popover" title ="'
                             +headers[1].substr(0,headers[1].length-6)+" - "
                             +headers[2].substr(0,headers[2].length-6)
-                            +' "data-placement="right" data-html="true" data-content="<b> X Sequence length: </b>'
+                            +' "data-placement="right" data-html="true" data-content="&lt;b> X Sequence length: &lt;/b>'
 							+ fileHeader[numFile].seqXLength
-							+ '</br> <b> Y Sequence length: </b>'
-							+ fileHeader[numFile].seqYLength + '">?</button>';
+							+ '&lt;/br> &lt;b> Y Sequence length: &lt;/b>'
+							+ fileHeader[numFile].seqYLength + '">?&lt;/button>';
     if(lines.length>1)
         document.getElementById("infoPopover"+numFile).style.background=rgb(R[numFile],G[numFile],B[numFile]);
     $('[data-toggle="popover"]').popover();
@@ -320,11 +348,11 @@ function drawLinesInLayer(linesToPaint, canvasLayer, numFile, color){
 				* canvasLayer.height;
 
 
-		if((xFin-xIni < 0.1)&&(xFin-xIni>0)){
+		if((xFin-xIni &lt; 0.1)&amp;&amp;(xFin-xIni>0)){
 			xFin = xIni + 0.1;
 		}
 
-		if((yFin-yIni < 0.1)&&(yFin-yIni >0)){
+		if((yFin-yIni &lt; 0.1)&amp;&amp;(yFin-yIni >0)){
 			yFin = yIni +0.1 ;
 		}
 
@@ -363,11 +391,11 @@ function drawArrayFragsInLayer(arrayLinesToPaint, canvasLayer, numFile, color){
 				* canvasLayer.height;
 
 
-		if((xFin-xIni < 0.1)&&(xFin-xIni>0)){
+		if((xFin-xIni &lt; 0.1)&amp;&amp;(xFin-xIni>0)){
 			xFin = xIni + 0.1;
 		}
 
-		if((yFin-yIni < 0.1)&&(yFin-yIni >0)){
+		if((yFin-yIni &lt; 0.1)&amp;&amp;(yFin-yIni >0)){
 			yFin = yIni +0.1 ;
 		}
 
@@ -412,7 +440,7 @@ function loadHorizontalView(){
     Create canvas for each genome comparison in horizontal
     */
 
-    for (var numCanvas = 1; numCanvas < lines.length; numCanvas++) {
+    for (var numCanvas = 1; numCanvas &lt; lines.length; numCanvas++) {
         var canvasTemp = document
             .getElementById("myCanvas" + numCanvas);
         var ctxTemp = canvasTemp.getContext("2d");
@@ -458,7 +486,7 @@ function createVerticalComparisonLayer(numLayer){
 
 		//If layer doesn't exist
 		var newVerticalLayer =
-				$('<canvas/>',{'class':'canvasLayer img-responsive', 'id': idVerticalLayer}).prop({
+				$('&lt;canvas/>',{'class':'canvasLayer img-responsive', 'id': idVerticalLayer}).prop({
                     width: 500,
                     height: 500
                 });
@@ -478,15 +506,15 @@ function createHorizontalComparisonLayer(numLayer){
 
 	if($("#" + idHorizontalLayer).length == 0) {
 		var newHorizontalLayer =
-				$('<canvas/>',{'class':'horizontalCanvasLayer img-responsive', 'id': idHorizontalLayer}).prop({
+				$('&lt;canvas/>',{'class':'horizontalCanvasLayer img-responsive', 'id': idHorizontalLayer}).prop({
                     width: 500,
                     height: 200
                 });
-        var newHorizontalSelectionLayer=$('<canvas/>',{'class':'horizontalCanvasLayer img-responsive', 'id': "hSel"+numLayer}).prop({
+        var newHorizontalSelectionLayer=$('&lt;canvas/>',{'class':'horizontalCanvasLayer img-responsive', 'id': "hSel"+numLayer}).prop({
                     width: 500,
                     height: 200,
                 });
-        var newHorizontalView=$('<div/>',{'id': "hView"+numLayer}).css({'position':'relative'});
+        var newHorizontalView=$('&lt;div/>',{'id': "hView"+numLayer}).css({'position':'relative'});
 		$("#horizontalCanvasContainer").append(newHorizontalView);
         newHorizontalView.append(newHorizontalLayer);
         $(newHorizontalSelectionLayer).css({'position':'absolute','background':'transparent','z-index':'2','margin-top':'0px'});
@@ -505,7 +533,7 @@ function createMapImageLayer(numLayer) {
 	var idLayer = "Maplayer"+numLayer;
 
 	var newLayer =
-			$('<img/>',{'class':'mapimage', 'id': idLayer}).prop({
+			$('&lt;img/>',{'class':'mapimage', 'id': idLayer}).prop({
 				width: 202,
 				height: 202
 			});
@@ -525,10 +553,10 @@ function createComparisonCheck(numLayer){
 	var idMapimageLayer = "Maplayer"+numLayer;
 
 	var newLayerBoxElement =
-				$('<input type="checkbox" class="switchLayer" id="checklayer'+numLayer+'"checked="checked" value="'+numLayer+'"/> '+fileNames[numLayer]+'</input>');
+				$('&lt;input type="checkbox" class="switchLayer" id="checklayer'+numLayer+'"checked="checked" value="'+numLayer+'"/> '+fileNames[numLayer]+'&lt;/input>');
 
-	var row = $("<tr>");
-	var column = row.append( $("<td>").append(newLayerBoxElement));
+	var row = $("&lt;tr>");
+	var column = row.append( $("&lt;td>").append(newLayerBoxElement));
 	$('#layersTable').last().append(row);
 
 	// Listener to hide/show layers activating/deactivating the checkbox
@@ -577,11 +605,11 @@ function drawVerticalLinesInVerticalLayer(linesToPaint, canvasLayer, numFile, co
 		var yFin = ((canvasLayer.height * (parseInt(lines[numFile][line][4]) / ytotal) - currentArea.y0) / (currentArea.y1 - currentArea.y0))
 				* canvasLayer.height;
 	/*
-		if((xFin-xIni < 0.1)&&(xFin-xIni>0)){
+		if((xFin-xIni &lt; 0.1)&amp;&amp;(xFin-xIni>0)){
 			xFin = xIni + 0.1;
 		}
 
-		if((yFin-yIni < 0.1)&&(yFin-yIni >0)){
+		if((yFin-yIni &lt; 0.1)&amp;&amp;(yFin-yIni >0)){
 			yFin = yIni +0.1 ;
 		} */
 
@@ -590,7 +618,7 @@ function drawVerticalLinesInVerticalLayer(linesToPaint, canvasLayer, numFile, co
 
 		var distance = calculateDistanceBetweenTwoPoints(xIni,yIni,xFin,yFin)
 		//console.log("Distance: "+distance);
-		if(distance<=1){
+		if(distance&lt;=1){
 			count++;
 		}
 		counttotal++;
@@ -671,7 +699,7 @@ function drawHorizontalLinesInHorizontalLayer(linesToPaint, canvasLayer, numFile
 
 		// Rect in sequence Y
 		var rectYHeight;
-		if (yFin < yIni) {
+		if (yFin &lt; yIni) {
 			rectYHeight = canvasLayer.height - padding / 2;
 			currentCtx.moveTo(halfY, canvasLayer.height - padding / 2);
 			currentCtx.lineTo(halfY, canvasLayer.height - padding);
@@ -766,17 +794,17 @@ function createInstance() {
 		console.time("reDraw()");
 
 		// Clear previous data in HTML
-		document.getElementById("output").innerHTML = "<div class=\"SearchTitle\" > <div class=\"SearchTitleFilterButton\"> <span>Filter:</span> <input type=\"text\" class=\"SearchFilter\" /> <button class=\"SearchButton\" onclick=\"showResults($(\'.SearchFilter\').val(),true)\" ><span class=\"glyphicon glyphicon-search\"></span></button> </div> </div> <ul class='nav nav-tabs' id='files-tab'></ul>"
-				+ " <div class='tab-content' id='files-tab-content'></div>";
+		document.getElementById("output").innerHTML = "&lt;div class=\"SearchTitle\" > &lt;div class=\"SearchTitleFilterButton\"> &lt;span>Filter:&lt;/span> &lt;input type=\"text\" class=\"SearchFilter\" /> &lt;button class=\"SearchButton\" onclick=\"showResults($(\'.SearchFilter\').val(),true)\" >&lt;span class=\"glyphicon glyphicon-search\">&lt;/span>&lt;/button> &lt;/div> &lt;/div> &lt;ul class='nav nav-tabs' id='files-tab'>&lt;/ul>"
+				+ " &lt;div class='tab-content' id='files-tab-content'>&lt;/div>";
 
-		document.getElementById("annotationsOutput").innerHTML = "<div class=\"SearchTitleFilterButton\"><span>Search:</span> <input type=\"text\" class=\"SearchFilter3\" onkeypress=\"if (event.keyCode == 13) document.getElementById('btnSearch').click()\" /> <button id= \"btnSearch\" class=\"SearchButton\" onclick=\"showResults($('.SearchFilter3').val(),true)\"><span class=\"glyphicon glyphicon-search\"></span></button> </div><ul class='nav nav-tabs' id='annotations-tab'></ul>"
-				+ "<div class='tab-content' id='annotations-tab-content'></div>";
+		document.getElementById("annotationsOutput").innerHTML = "&lt;div class=\"SearchTitleFilterButton\">&lt;span>Search:&lt;/span> &lt;input type=\"text\" class=\"SearchFilter3\" onkeypress=\"if (event.keyCode == 13) document.getElementById('btnSearch').click()\" /> &lt;button id= \"btnSearch\" class=\"SearchButton\" onclick=\"showResults($('.SearchFilter3').val(),true)\">&lt;span class=\"glyphicon glyphicon-search\">&lt;/span>&lt;/button> &lt;/div>&lt;ul class='nav nav-tabs' id='annotations-tab'>&lt;/ul>"
+				+ "&lt;div class='tab-content' id='annotations-tab-content'>&lt;/div>";
 
 
 		// Draw Grid
 		drawGrid(board, vertical, "myCanvasGrid");
 
-		for (var numFile = 0; numFile < lines.length; numFile++) {
+		for (var numFile = 0; numFile &lt; lines.length; numFile++) {
             console.log("Round: "+numFile);
 
 			currentLines = lines[numFile].slice(0);
@@ -795,8 +823,8 @@ function createInstance() {
 
 				var row = annotationTable.insertRow(-1);
 				//console.log("Line: "+lines[0]);
-				for (var j = 0; j < lines[0][16].length; j++) {
-					if ((j <= 3) || ((j > 5) && (j < 7)) || (j >= 14)) {
+				for (var j = 0; j &lt; lines[0][16].length; j++) {
+					if ((j &lt;= 3) || ((j > 5) &amp;&amp; (j &lt; 7)) || (j >= 14)) {
 						var firstNameCell = row.insertCell(-1);
 						firstNameCell.appendChild(document
 								.createTextNode(lines[0][16][j]));
@@ -804,7 +832,7 @@ function createInstance() {
 				}
 
 				// Store the file header
-				if (fileHeader.length < lines.length) {
+				if (fileHeader.length &lt; lines.length) {
                     storeFileHeader(currentLines, numFile);
 				}
 
@@ -824,7 +852,7 @@ function createInstance() {
 				var currentHorizontalCanvas = createHorizontalComparisonLayer(numFile);
 
 				//Start the paint proccess 
-				for (i = fragsStarts; i < currentLines.length; i++) {
+				for (i = fragsStarts; i &lt; currentLines.length; i++) {
 
 					var paint = false;
 
@@ -832,8 +860,8 @@ function createInstance() {
 					//Take headers of each column
 					if (i == fragsStarts) {
 						var row = table.insertRow(-1);
-						for (var j = 0; j < lines[0][16].length; j++) {
-							// if(j<14) {
+						for (var j = 0; j &lt; lines[0][16].length; j++) {
+							// if(j&lt;14) {
 							var firstNameCell = row.insertCell(-1);
 							firstNameCell.appendChild(document
 									.createTextNode(lines[0][16][j]));
@@ -841,15 +869,15 @@ function createInstance() {
 						}
 					}
 
-					if (currentLines[i].length<18) {
+					if (currentLines[i].length&lt;18) {
 
 						if(currentLines[i][0]=='CSB') {
 							CSBLines.push(i);
 						}
 
 						//Check mode (HSP, CSB or both)
-						if ((mode[0].checked && mode[0].value == currentLines[i][0])
-								|| (mode[1].checked && mode[1].value == currentLines[i][0])
+						if ((mode[0].checked &amp;&amp; mode[0].value == currentLines[i][0])
+								|| (mode[1].checked &amp;&amp; mode[1].value == currentLines[i][0])
 								|| mode[2].checked) {
 
 							// console.time("filter()");
@@ -860,11 +888,11 @@ function createInstance() {
 							if (paint == true) {
 								if ((parseInt(currentLines[i][1]) >= (currentArea.x0
 										* xtotal / 500))
-										&& (parseInt(currentLines[i][2]) >= (currentArea.y0
+										&amp;&amp; (parseInt(currentLines[i][2]) >= (currentArea.y0
 												* ytotal / 500))
-										&& (parseInt(currentLines[i][3]) <= (currentArea.x1
+										&amp;&amp; (parseInt(currentLines[i][3]) &lt;= (currentArea.x1
 												* xtotal / 500))
-										&& (parseInt(currentLines[i][4]) <= (currentArea.y1
+										&amp;&amp; (parseInt(currentLines[i][4]) &lt;= (currentArea.y1
 												* ytotal / 500))) {
 									paint = true;
 								} else {
@@ -873,7 +901,7 @@ function createInstance() {
 
 							}
 
-							if (paint == true && !(filtered[numFile]!=null&&filtered[numFile].indexOf(i)>-1)) {
+							if (paint == true &amp;&amp; !(filtered[numFile]!=null&amp;&amp;filtered[numFile].indexOf(i)>-1)) {
 								// console.time("paint()");
 								linesToPaint.push(i);
 								add2Table(i,table);
@@ -886,16 +914,16 @@ function createInstance() {
 						if (currentLines[i].length==22) {
 							/*if ((parseInt(currentLines[i][1]) >= (currentArea.x0
 									* xtotal / 500))
-									&& (parseInt(currentLines[i][3]) <= (currentArea.x1
+									&amp;&amp; (parseInt(currentLines[i][3]) &lt;= (currentArea.x1
 											* xtotal / 500))) {*/
 								paint = filter(currentLines[i]);
 								if (paint == true) {
 									add2Table(i, table);
 									var row = annotationTable.insertRow(-1);
-									for (var j = 0; j < currentLines[i].length; j++) {
+									for (var j = 0; j &lt; currentLines[i].length; j++) {
 										if (currentLines[i].length > 10) {
-											if ((j <= 3)
-													|| ((j > 5) && (j < 7))
+											if ((j &lt;= 3)
+													|| ((j > 5) &amp;&amp; (j &lt; 7))
 													|| (j >= 14)) {
 												var firstNameCell = row
 														.insertCell(-1);
@@ -934,13 +962,13 @@ function createInstance() {
 				drawSelectedFrags();
 
 				$("#files-tab").append(
-						"<li><a href='#file" + numFile + "' data-toggle='tab'>File "
-								+ numFile + "</a></li>");
+						"&lt;li>&lt;a href='#file" + numFile + "' data-toggle='tab'>File "
+								+ numFile + "&lt;/a>&lt;/li>");
 				$("#annotations-tab")
 						.append(
-								"<li><a href='#fileAnnotation" + numFile
+								"&lt;li>&lt;a href='#fileAnnotation" + numFile
 										+ "' data-toggle='tab'>File " + numFile
-										+ "</a></li>");
+										+ "&lt;/a>&lt;/li>");
 
 				var auxDiv = document.createElement("div");
 				var auxAnnotationsDiv = document.createElement("div");
@@ -967,7 +995,7 @@ function createInstance() {
 
 			}
 
-			// Hide filtered rows in the table (CSV&Frag Info button)
+			// Hide filtered rows in the table (CSV&amp;Frag Info button)
 			$('.hiddenRow').hide();
 
 			RectInMap.x = Math.min(currentArea.x0, currentArea.x1) * 2 / 5;
@@ -975,7 +1003,7 @@ function createInstance() {
 			RectInMap.tamx = Math.abs(currentArea.x0 - currentArea.x1) * 2 / 5;
 			RectInMap.tamy = Math.abs(currentArea.y0 - currentArea.y1) * 2 / 5;
 
-			if(RectInMap.tamx < 5 || RectInMap.tamy < 5) {
+			if(RectInMap.tamx &lt; 5 || RectInMap.tamy &lt; 5) {
 				RectInMap.tamx = 5; RectInMap.tamy = 5;
 			}
 
@@ -983,14 +1011,14 @@ function createInstance() {
 
 			redrawMap();
 
-			if ((numFile <= (lines.length-1)) && (map == false)) {
+			if ((numFile &lt;= (lines.length-1)) &amp;&amp; (map == false)) {
 				var mapimage = createMapImageLayer(numFile);
 				mapimage.src = currentVerticalCanvas.toDataURL("image/png");
 				if(numFile==lines.length-1) map = true;
 			}
 		}
 
-		for(var index=0;index<searchList.length;index++)
+		for(var index=0;index&lt;searchList.length;index++)
 			document.getElementById(searchList[index]).checked=false;
 		searchList=[];
 		prevFragsTable=document.getElementById("files-tab-content").cloneNode(true);
@@ -1087,14 +1115,14 @@ function createInstance() {
 						console.log("mouseX:"+x0+" mouseY:"+y0);
 	                    var mode = document.option.tipo;
                         $('#CSBPopover').hide();
-                        for (var j = 0; j < lines.length; j++) {
+                        for (var j = 0; j &lt; lines.length; j++) {
                         xtotal = fileHeader[0].seqXLength;
                         ytotal = fileHeader[0].seqYLength;
                         var i = 17;
 
                         console.log("X: " + xtotal + " Y:" + ytotal);
 
-                        while (!linefound && i < lines[j].length) {
+                        while (!linefound &amp;&amp; i &lt; lines[j].length) {
 
                             x1 = ((((canvas.width * parseInt(lines[j][i][1])) / xtotal) - currentArea.x0) / ((currentArea.x1 - currentArea.x0)))
                                     * canvas.width;
@@ -1105,13 +1133,13 @@ function createInstance() {
                             y2 = (((canvas.height * (parseInt(lines[j][i][4])) / ytotal) - currentArea.y0) / ((currentArea.y1 - currentArea.y0)))
                                     * canvas.height;
 
-                            if ((mode[0].checked && mode[0].value == lines[j][i][0])
-                                    || (mode[1].checked && mode[1].value == lines[j][i][0])
+                            if ((mode[0].checked &amp;&amp; mode[0].value == lines[j][i][0])
+                                    || (mode[1].checked &amp;&amp; mode[1].value == lines[j][i][0])
                                     || mode[2].checked) {
 
-                                if ((x0 > x1) && (x0 < x2) && (y0 != y1) && y0!= y2) {
+                                if ((x0 > x1) &amp;&amp; (x0 &lt; x2) &amp;&amp; (y0 != y1) &amp;&amp; y0!= y2) {
                                     distance = calculateDistance(getMousePos(canvas,evt),lines[j][i]);
-                                    if (distance < 6) {
+                                    if (distance &lt; 6) {
                                         linefound = true;
                                         arrayIndex = j;
                                         lineIndex = i;
@@ -1128,7 +1156,7 @@ function createInstance() {
                             }
 		}
 							console.log(linefound);
-                            if(linefound&&filter(lines[arrayIndex][lineIndex])){
+                            if(linefound&amp;&amp;filter(lines[arrayIndex][lineIndex])){
                                 if(selectedLines[arrayIndex]==null)
                                     selectedLines[arrayIndex]=[];
                                 var index =-1;
@@ -1145,16 +1173,16 @@ function createInstance() {
                     }
                 }
 
-				if ((!selected) && vertical){
+				if ((!selected) &amp;&amp; vertical){
                     if(selectedLines.length==0) {
                         clearCanvas("selectLayer");
-                        for (var i = 0; i < lines.length; i++)
+                        for (var i = 0; i &lt; lines.length; i++)
                             clearCanvas("hSel" + i);
                     }
                     $('#CSBPopover').hide();
 				}
 
-				if ((area) && vertical&&!shiftSel&&!filterSel&&lines.length) {
+				if ((area) &amp;&amp; vertical&amp;&amp;!shiftSel&amp;&amp;!filterSel&amp;&amp;lines.length) {
                     document.getElementById("myCanvasLayer2").getContext("2d").clearRect(0,0,500,500);
 					$('#CSBPopover').hide();
                     if(startX>mouseX)
@@ -1196,7 +1224,7 @@ function createInstance() {
 				if(!lines.length)
 					clearCanvas("myCanvasLayer1");
 
-                if(area&&vertical&&(shiftSel||filterSel)) {
+                if(area&amp;&amp;vertical&amp;&amp;(shiftSel||filterSel)) {
                      if(startX>mouseX)
                         startX=[mouseX,mouseX=startX][0];
 
@@ -1204,33 +1232,33 @@ function createInstance() {
                         startY=[mouseY,mouseY=startY][0];
                     $('#CSBPopover').hide();
                     var mode = document.option.tipo;
-                    for (var x = 0; x < lines.length; x++) {
+                    for (var x = 0; x &lt; lines.length; x++) {
                         if(selectedLines[x]==null)
                             selectedLines[x]=[];
                         currentLines = lines[x].slice(0);
-                        for (var i=0; i < currentLines.length; i++) {
-                            if ((mode[0].checked && mode[0].value == currentLines[i][0])
-                                    || (mode[1].checked && mode[1].value == currentLines[i][0])
+                        for (var i=0; i &lt; currentLines.length; i++) {
+                            if ((mode[0].checked &amp;&amp; mode[0].value == currentLines[i][0])
+                                    || (mode[1].checked &amp;&amp; mode[1].value == currentLines[i][0])
                                     || mode[2].checked) {
 								var select =false;
-								if(shiftSel&&!filterSel){
+								if(shiftSel&amp;&amp;!filterSel){
 									$("#filter").html("Filter");
-									select=filtered[x]==null||(filtered[x]!=null &&filtered[x].indexOf(i)==-1);
+									select=filtered[x]==null||(filtered[x]!=null &amp;&amp;filtered[x].indexOf(i)==-1);
 								}else {
-									select = (filtered[x] != null && filtered[x].indexOf(i) > -1);
+									select = (filtered[x] != null &amp;&amp; filtered[x].indexOf(i) > -1);
 									$("#filter").html("Unfilter");
 								}
                                 if(paint=filter(currentLines[i]))
 
                                 if ((parseInt(currentLines[i][1]) >= ((currentArea.x0+scaleX * startX)
                                     * xtotal / 500))
-                                    && (parseInt(currentLines[i][2]) >= ((currentArea.y0+(canvas.height - mouseY) * scaleY)
+                                    &amp;&amp; (parseInt(currentLines[i][2]) >= ((currentArea.y0+(canvas.height - mouseY) * scaleY)
                                     * ytotal / 500))
-                                    && (parseInt(currentLines[i][3]) <= ((currentArea.x0 + mouseX * scaleX)
+                                    &amp;&amp; (parseInt(currentLines[i][3]) &lt;= ((currentArea.x0 + mouseX * scaleX)
                                     * xtotal / 500))
-                                    && (parseInt(currentLines[i][4]) <= ((currentArea.y0 + (canvas.height - startY)
+                                    &amp;&amp; (parseInt(currentLines[i][4]) &lt;= ((currentArea.y0 + (canvas.height - startY)
                                     * scaleY) * ytotal / 500))
-									&& select) {
+									&amp;&amp; select) {
                                     paint = true;
                                 } else {
                                     paint = false;
@@ -1266,7 +1294,7 @@ function createInstance() {
 
 			dragged = true;
 
-			if (area && mousedown && !squared) {
+			if (area &amp;&amp; mousedown &amp;&amp; !squared) {
 				//console.log("X:"+startX+" Y:"+startY);
 				var layer1 = document.getElementById("myCanvasLayer1");
 				var ctx1 = layer1.getContext("2d");
@@ -1278,7 +1306,7 @@ function createInstance() {
 				ctx1.beginPath();
 				ctx1.rect(startX, startY, mouseX - startX, mouseY - startY);
 				ctx1.stroke();
-            } else if(area && mousedown && squared){
+            } else if(area &amp;&amp; mousedown &amp;&amp; squared){
 				var layer1 = document.getElementById("myCanvasLayer1");
 				var ctx1 = layer1.getContext("2d");
                 //startY=startX;
@@ -1297,7 +1325,7 @@ function createInstance() {
 				: evt.detail ? -evt.detail : 0;
 		if (delta)
 			zoom(delta);
-		return evt.preventDefault() && false;*/
+		return evt.preventDefault() &amp;&amp; false;*/
 	};
 
 	canvas.addEventListener('DOMMouseScroll', handleScroll, false);
@@ -1310,24 +1338,24 @@ function createInstance() {
 			var mapoffset = $("#myMap").offset();
 			mouseInRect.x = e.pageX - mapoffset.left - RectInMap.x;
 			mouseInRect.y = e.pageY - mapoffset.top - RectInMap.y;
-			if (!(mouseInRect.x < 0 || mouseInRect.y < 0
+			if (!(mouseInRect.x &lt; 0 || mouseInRect.y &lt; 0
 					|| mouseInRect.x > RectInMap.tamx
-					|| mouseInRect.y > RectInMap.tamy || (RectInMap.tamx == 200 && RectInMap.tamy == 200))) {
+					|| mouseInRect.y > RectInMap.tamy || (RectInMap.tamx == 200 &amp;&amp; RectInMap.tamy == 200))) {
 				dragInMap = true;
 			}
 		}
 	}
 
 	canvasMap.onmouseup = function() {
-		if (map && dragInMap) {
+		if (map &amp;&amp; dragInMap) {
 			dragInMap = false;
-			if (RectInMap.x < 0) {
+			if (RectInMap.x &lt; 0) {
 				RectInMap.x = 0;
 			}
 			if (RectInMap.x + RectInMap.tamx > 200) {
 				RectInMap.x = 200 - RectInMap.tamx;
 			}
-			if (RectInMap.y < 0) {
+			if (RectInMap.y &lt; 0) {
 				RectInMap.y = 0;
 			}
 			if (RectInMap.y + RectInMap.tamy > 200) {
@@ -1348,7 +1376,7 @@ function createInstance() {
 	}
 
 	canvasMap.onmousemove = function(e) {
-		if (map && dragInMap) {
+		if (map &amp;&amp; dragInMap) {
 			var mapoffset = $("#myMap").offset();
 			RectInMap.x = e.pageX - mapoffset.left - mouseInRect.x;
 			RectInMap.y = e.pageY - mapoffset.top - mouseInRect.y;
@@ -1401,7 +1429,7 @@ function filter(line) {
 
 	if (filterSimilarity) {
 		var similarityValue = document.getElementById("filterSimilarityNumber").value;
-		if (parseFloat(line[10]) <= similarityValue) {
+		if (parseFloat(line[10]) &lt;= similarityValue) {
 			paint = false;
 		}
 	}
@@ -1413,13 +1441,13 @@ function filter(line) {
 	}
 
 	if (filterDuplications) {
-		if (parseInt(line[6]) < -2) {
+		if (parseInt(line[6]) &lt; -2) {
 			paint = false;
 		}
 	}
 
 	if(filterIdentity){
-		if((line[9]/line[7]).toFixed(2)*100 <= identityLine.identityValue) {
+		if((line[9]/line[7]).toFixed(2)*100 &lt;= identityLine.identityValue) {
 			paint = false;
 		}
 	}
@@ -1433,7 +1461,7 @@ function filter(line) {
  * Reset all canvas 
  */
 function resetDraw() {
-	if ((canvas) && (vertical)) {
+	if ((canvas) &amp;&amp; (vertical)) {
 		clearCanvas("selectLayer");
 		$('#CSBPopover').hide();
 		var ctx = canvas.getContext('2d');
@@ -1496,11 +1524,11 @@ function annotationDrawLines(seq,start,end,point){
 			* c.height;
 
 
-	if((xFin-xIni < 0.1)&&(xFin-xIni>0)){
+	if((xFin-xIni &lt; 0.1)&amp;&amp;(xFin-xIni>0)){
 		xFin = xIni + 0.1;
 	}
 
-	if((yFin-yIni < 0.1)&&(yFin-yIni >0)){
+	if((yFin-yIni &lt; 0.1)&amp;&amp;(yFin-yIni >0)){
 		yFin = yIni +0.1 ;
 	}
 
@@ -1525,22 +1553,22 @@ function annotationDrawLines(seq,start,end,point){
 
 
 /**
- * Show selected frags in 'CSV & Frag info' table
+ * Show selected frags in 'CSV &amp; Frag info' table
  */
 function showSelected(){
     if(!showingSelected){
 		$("#selButton").html("Selected");
         currTable=document.getElementById("files-tab-content").cloneNode(true);
-        document.getElementById("annotationsOutput").innerHTML = "<ul class='nav nav-tabs' id='annotations-tab'></ul>"
-				+ "<div class='tab-content' id='annotations-tab-content'></div>";
-        for (var x = 0; x < lines.length; x++) {
+        document.getElementById("annotationsOutput").innerHTML = "&lt;ul class='nav nav-tabs' id='annotations-tab'>&lt;/ul>"
+				+ "&lt;div class='tab-content' id='annotations-tab-content'>&lt;/div>";
+        for (var x = 0; x &lt; lines.length; x++) {
             var table = document.createElement("table");
             table.className = "table table-condensed";
             table.id = "csvInfoTable" + x;
             currentLines=lines[x];
             add2Table(16,table);
-            for (var i = 0; i < currentLines.length; i++) {
-                 if(selectedLines.length>x&&selectedLines[x].indexOf(i)>-1) {
+            for (var i = 0; i &lt; currentLines.length; i++) {
+                 if(selectedLines.length>x&amp;&amp;selectedLines[x].indexOf(i)>-1) {
                      add2Table(i, table);
                  }
             }
@@ -1570,7 +1598,7 @@ function showSelected(){
 function getMax(lines, k) {
 	var max;
 	max = 0;
-	for (var i = 0; i < lines.length; i++) {
+	for (var i = 0; i &lt; lines.length; i++) {
 
 		if (parseInt(lines[i][k]) > max) {
 			max = parseInt(lines[i][k]);
@@ -1620,27 +1648,27 @@ HSBToRGB = function(hsb) {
 		var t3 = (t1 - t2) * (h % 60) / 60;
 		if (h == 360)
 			h = 0;
-		if (h < 60) {
+		if (h &lt; 60) {
 			mirgb.r = t1;
 			rgb.b = t2;
 			rgb.g = t2 + t3
-		} else if (h < 120) {
+		} else if (h &lt; 120) {
 			mirgb.g = t1;
 			mirgb.b = t2;
 			mirgb.r = t1 - t3
-		} else if (h < 180) {
+		} else if (h &lt; 180) {
 			mirgb.g = t1;
 			mirgb.r = t2;
 			mirgb.b = t2 + t3
-		} else if (h < 240) {
+		} else if (h &lt; 240) {
 			mirgb.b = t1;
 			mirgb.r = t2;
 			mirgb.g = t1 - t3
-		} else if (h < 300) {
+		} else if (h &lt; 300) {
 			mirgb.b = t1;
 			mirgb.g = t2;
 			mirgb.r = t2 + t3
-		} else if (h < 360) {
+		} else if (h &lt; 360) {
 			mirgb.r = t1;
 			mirgb.g = t2;
 			mirgb.b = t1 - t3
@@ -1743,7 +1771,7 @@ function drawGrid(board, vertical, canvasName) {
             var stepVertical = (currentArea.x1 - currentArea.x0) / 5;
             var stepV = currentArea.x0;
 
-			for (var x = canvasGrid.width/10; x <= canvasGrid.width; x += canvasGrid.width/5) {
+			for (var x = canvasGrid.width/10; x &lt;= canvasGrid.width; x += canvasGrid.width/5) {
 				ctx.font = "bold 12px sans-serif";
 				var correctPositionX = ((stepV) * parseInt(fileHeader[0].seqXLength)) / width;
 
@@ -1767,7 +1795,7 @@ function drawGrid(board, vertical, canvasName) {
 				var stepHorizontal = (currentArea.y1 - currentArea.y0) / 5;
 				var stepH = currentArea.y0;
 
-				for (var y = canvasGrid.width/20; y <= canvasGrid.width; y += canvasGrid.width/5) {
+				for (var y = canvasGrid.width/20; y &lt;= canvasGrid.width; y += canvasGrid.width/5) {
 					ctx.font = "bold 12px sans-serif";
 					var correctPositionY = ((stepH) * parseInt(fileHeader[0].seqYLength)) / height;
 
@@ -1793,7 +1821,7 @@ function drawGrid(board, vertical, canvasName) {
             var stepVertical = width / 10;
             var stepV = 0;
 
-            for (var x = 0; x <= width; x += stepVertical) {
+            for (var x = 0; x &lt;= width; x += stepVertical) {
                 ctx.font = "bold 12px sans-serif";
                 // var aux = (((x - currentArea.x0) / (currentArea.x1 -
                 // currentArea.x0)) * width);
@@ -1860,7 +1888,7 @@ function selectFrag(lines, position, evt) {
 
 	var mode = document.option.tipo;
 
-	for (var j = 0; j < lines.length; j++) {
+	for (var j = 0; j &lt; lines.length; j++) {
 
 		console.log("Checking lines" + j);
 		xtotal = fileHeader[0].seqXLength;
@@ -1869,7 +1897,7 @@ function selectFrag(lines, position, evt) {
 
 		console.log("X: " + xtotal + " Y:" + ytotal);
 
-		while (!linefound && i < lines[j].length) {
+		while (!linefound &amp;&amp; i &lt; lines[j].length) {
 
 			x1 = ((((canvas.width * parseInt(lines[j][i][1])) / xtotal) - currentArea.x0) / ((currentArea.x1 - currentArea.x0)))
 					* canvas.width;
@@ -1881,15 +1909,15 @@ function selectFrag(lines, position, evt) {
 			y2 = (((canvas.height * (parseInt(lines[j][i][4])) / ytotal) - currentArea.y0) / ((currentArea.y1 - currentArea.y0)))
 					* canvas.height;
 
-			if ((mode[0].checked && mode[0].value == lines[j][i][0])
-					|| (mode[1].checked && mode[1].value == lines[j][i][0])
+			if ((mode[0].checked &amp;&amp; mode[0].value == lines[j][i][0])
+					|| (mode[1].checked &amp;&amp; mode[1].value == lines[j][i][0])
 					|| mode[2].checked) {
 
 				// Pendiente positiva
-				if ((x0 > x1) && (x0 < x2) && (y0 != y1) && y0!= y2) {
+				if ((x0 > x1) &amp;&amp; (x0 &lt; x2) &amp;&amp; (y0 != y1) &amp;&amp; y0!= y2) {
 					distance = calculateDistance(position,lines[j][i]);
                     console.log(distance+" - "+x0+" - "+y0);
-					if (distance < 6&&filter(lines[j][i])) {
+					if (distance &lt; 6&amp;&amp;filter(lines[j][i])) {
                         linefound = true;
 						arrayIndex = j;
 						lineIndex = i;
@@ -1921,33 +1949,33 @@ function selectFrag(lines, position, evt) {
 
 		$('#CSBPopover')
 				.html(
-						"<div class='popover-title'>"
+						"&lt;div class='popover-title'>"
 								+ lines[arrayIndex][lineIndex][0]
 								+ " - "
 								+ (lineIndex - parseInt(fragsStarts))
-                                + "</div><div class='arrow'></div><div class='popover-content'>"
-								+ "<br>xStart: "
+                                + "&lt;/div>&lt;div class='arrow'>&lt;/div>&lt;div class='popover-content'>"
+								+ "&lt;br>xStart: "
 								+ lines[arrayIndex][lineIndex][1]
-								+ "<br>yStart: "
+								+ "&lt;br>yStart: "
 								+ lines[arrayIndex][lineIndex][2]
-								+ "<br>xEnd: "
+								+ "&lt;br>xEnd: "
 								+ lines[arrayIndex][lineIndex][3]
-								+ "<br>yEnd: "
+								+ "&lt;br>yEnd: "
 								+ lines[arrayIndex][lineIndex][4]
-								+ "<br>Strand: "
+								+ "&lt;br>Strand: "
 								+ lines[arrayIndex][lineIndex][5]
-								+ "<br>Block: "
+								+ "&lt;br>Block: "
 								+ lines[arrayIndex][lineIndex][6]
-								+ "<br>length: "
+								+ "&lt;br>length: "
 								+ lines[arrayIndex][lineIndex][7]
-								+ "<br>Score(AVG): "
+								+ "&lt;br>Score(AVG): "
 								+ lines[arrayIndex][lineIndex][8]
-								+ "<br> Identity: "
+								+ "&lt;br> Identity: "
 								+ lines[arrayIndex][lineIndex][9]
-								+ "<br> Identity %: "
+								+ "&lt;br> Identity %: "
 								+ (lines[arrayIndex][lineIndex][9]/lines[arrayIndex][lineIndex][7]).toFixed(2)
-								+ "<br>Similarity: "
-								+ lines[arrayIndex][lineIndex][10] + "</div>")
+								+ "&lt;br>Similarity: "
+								+ lines[arrayIndex][lineIndex][10] + "&lt;/div>")
 
 				.css('left', (left + 20) + 'px');
 
@@ -1958,7 +1986,7 @@ function selectFrag(lines, position, evt) {
 
 		if (selected) {
             clearCanvas("selectLayer");
-            for(var i=0;i<lines.length;i++)
+            for(var i=0;i&lt;lines.length;i++)
                 clearCanvas("hSel"+i);
         }
 
@@ -2001,3 +2029,26 @@ function activateBoard() {
 		redraw();
 	}
 }
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#activateBoard">activateBoard</a></li><li><a href="global.html#addPrevZoom">addPrevZoom</a></li><li><a href="global.html#annotationDrawLines">annotationDrawLines</a></li><li><a href="global.html#calculateDistance">calculateDistance</a></li><li><a href="global.html#calculateDistanceBetweenTwoPoints">calculateDistanceBetweenTwoPoints</a></li><li><a href="global.html#clearCanvas">clearCanvas</a></li><li><a href="global.html#createComparisonCheck">createComparisonCheck</a></li><li><a href="global.html#createHorizontalComparisonLayer">createHorizontalComparisonLayer</a></li><li><a href="global.html#createInstance">createInstance</a></li><li><a href="global.html#createMapImageLayer">createMapImageLayer</a></li><li><a href="global.html#createVerticalComparisonLayer">createVerticalComparisonLayer</a></li><li><a href="global.html#drawArrayFragsInLayer">drawArrayFragsInLayer</a></li><li><a href="global.html#drawGrid">drawGrid</a></li><li><a href="global.html#drawHorizontalLinesInHorizontalLayer">drawHorizontalLinesInHorizontalLayer</a></li><li><a href="global.html#drawLinesInLayer">drawLinesInLayer</a></li><li><a href="global.html#drawSelectedFrags">drawSelectedFrags</a></li><li><a href="global.html#drawVerticalLinesInVerticalLayer">drawVerticalLinesInVerticalLayer</a></li><li><a href="global.html#filter">filter</a></li><li><a href="global.html#getMax">getMax</a></li><li><a href="global.html#getMousePos">getMousePos</a></li><li><a href="global.html#goToNextZoom">goToNextZoom</a></li><li><a href="global.html#goToPrevZoom">goToPrevZoom</a></li><li><a href="global.html#HSBToRGB">HSBToRGB</a></li><li><a href="global.html#loadHorizontalView">loadHorizontalView</a></li><li><a href="global.html#resetDraw">resetDraw</a></li><li><a href="global.html#resetZoom">resetZoom</a></li><li><a href="global.html#rgb">rgb</a></li><li><a href="global.html#rgba">rgba</a></li><li><a href="global.html#roundRect">roundRect</a></li><li><a href="global.html#selectFrag">selectFrag</a></li><li><a href="global.html#showSelected">showSelected</a></li><li><a href="global.html#storeFileHeader">storeFileHeader</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Tue Jun 07 2016 12:08:14 GMT+0200 (CEST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

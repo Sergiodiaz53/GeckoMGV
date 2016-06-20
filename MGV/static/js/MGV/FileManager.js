@@ -28,6 +28,10 @@ function CSVHeader (headers) {
     this.totalFragments = headers[11];
 }
 
+/**
+ * Load file from server side
+ * @param  {[type]} $fileName Name of the file
+ */
 function loadFileFromServer($fileName){
     BootstrapDialog.closeAll();
     $.ajax({
@@ -47,6 +51,10 @@ function loadFileFromServer($fileName){
     return false; //<---- move it here
 }
 
+/**
+ * Load the file list from server side
+ * @return {[type]} Array of file names
+ */
 function getFilesListFromServer(){
 
     $.ajax({
@@ -68,10 +76,14 @@ function getFilesListFromServer(){
                 })
             }
     });
-    return false; //<---- move it here
+    return false;
 }
 
-
+/**
+ * Handler for proccess files
+ * @param  {[type]} files array of files
+ * @param  {[type]} type  type of files
+ */
 function handleFiles(files, type) {
 
     if (files.length!=0) {
@@ -129,6 +141,11 @@ function loadHandler(event, i) {
     processData(csv, i);
 }
 
+/**
+ * Process csv information with Papaparse
+ * @param  {[type]} csv   Data
+ * @param  {[type]} index Number of file
+ */
 function processData(csv, index) {
     if (fileType == 'csv') {
         document.getElementById("fileName").innerHTML = fileNames[index];
@@ -244,6 +261,10 @@ function processData(csv, index) {
     }
 }
 
+/**
+ * Load matrix with Papaparse
+ * @param  {[type]} csv Data
+ */
     function loadMatrix(csv) {
         Papa.parse(csv, {
             worker: true,

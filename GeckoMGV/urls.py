@@ -10,5 +10,5 @@ urlpatterns = patterns(
     url(r'^forms/', include(forms_builder.forms.urls)),
     url(r'^auth/', include('customAuth.urls')),
     url(r'^scripts/', include('scripts.urls')),
-    url(r'^filemanager/', include('fileSystem.urls'))
+    url(r'^filemanager/', include('fileSystem.urls')),
 )
