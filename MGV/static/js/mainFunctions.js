@@ -313,6 +313,7 @@ function getServicelist(){
         $.ajax({
         type:"GET",
         url:"/scripts/getServiceList/",
+        data:{returnType:"Frags"},
         success: function(response){
 
                 BootstrapDialog.show({

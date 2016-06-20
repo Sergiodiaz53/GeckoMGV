@@ -75,10 +75,7 @@ window.onload = function() {
 	createInstance();
 };
 
-/**
- * Add zoom to the backZoomList array
- * @author  Samuel
- */
+//Add zoom to the backZoomList array
 function addPrevZoom(){
 	backCtx.save();
 	backCtx.clearRect(0, 0, backCtx.canvas.width, backCtx.canvas.height);
@@ -101,11 +98,7 @@ function addPrevZoom(){
 		$("#prevZoom").prop( "disabled",false);
 }
 
-
-/**
- * Go to the previous zoom
- * @author  Samuel
- */
+//Go to the previous zoom
 function goToPrevZoom(){
 	if(currentZoomIndex>0) {
 		for (var i = 0; i < lines.length; i++) {
@@ -131,10 +124,7 @@ function goToPrevZoom(){
 	}
 }
 
-/**
- * Draw in red frag that have been selected (Storaged in SelectedLines)
- * @author  Samuel
- */
+//Draw in red frag that have been selected (Storaged in SelectedLines)
 function drawSelectedFrags(){
 	if(selectedLines.length>0) {
 		clearCanvas("selectLayer");
@@ -147,11 +137,7 @@ function drawSelectedFrags(){
 	}
 }
 
-
-/**
- * Go forward zooming
- * @author  Samuel
- */
+//Go forward zooming
 function goToNextZoom(){
 	if(currentZoomIndex<backZoomList.length-1) {
 		for (var i = 0; i < lines.length; i++) {
@@ -177,11 +163,14 @@ function goToNextZoom(){
 	}
 }
 
+<<<<<<< HEAD
 /**
  * Erase all the content in the canvas given
  * @param  {String} canvasName [Canvas ID to erase content]
  * @author Sergio
  */
+=======
+>>>>>>> 5b6d5ba78219832e4a576d99e1900a6dc9de7fee
 function clearCanvas(canvasName) {
     var canvasToClear = document.getElementById(canvasName);
     var ctx = canvasToClear.getContext('2d');
@@ -193,6 +182,7 @@ function clearCanvas(canvasName) {
 	ctx.restore();
 }
 
+<<<<<<< HEAD
 /**
  * Parse the header of a loaded file, store it in a data structure and generate the table to be consulted 
  * by the interface. The generated tables have the ID 'csvInfoTable2-[NUMFILE]'. The file header structure is defined as an object in the
@@ -200,12 +190,13 @@ function clearCanvas(canvasName) {
  * @param  {Array} currentLines Group of lines which we are currently working
  * @param  {Number} numFile    Index number of the file (First file loaded is 0)
  */
+=======
+>>>>>>> 5b6d5ba78219832e4a576d99e1900a6dc9de7fee
 function storeFileHeader(currentLines, numFile) {
     console.time("CreateFileHeader()");
 
     var headers = new Array([]);
 
-    //Create the table to add the information in the interface
     var table2 = document.createElement("table");
     table2.className = "table table-striped";
     table2.id = "csvInfoTable2-" + numFile;
@@ -274,11 +265,8 @@ function storeFileHeader(currentLines, numFile) {
     firstNameCell.appendChild(document
                 .createTextNode(auxLine[0].toString()));
 
-   /* --- End inserting fileHeader --- */
+    fileHeader[numFile] = new CSVHeader(headers);
 
-   fileHeader[numFile] = new CSVHeader(headers);
-
-   	// Append header information to ['?'] button of each comparison
     document.getElementById("fileName").innerHTML += '<button id="infoPopover'
 							+ numFile
 							+ '" type="button" class="btn btn-warning btn-xs btn-padding" '
@@ -296,6 +284,7 @@ function storeFileHeader(currentLines, numFile) {
     console.timeEnd("CreateFileHeader()");
 }
 
+<<<<<<< HEAD
 /**
  * Draw an array of index (fragments) in a given canvas.
  * @param  {Array} linesToPaint Array of index of fragments to paint.
@@ -303,6 +292,8 @@ function storeFileHeader(currentLines, numFile) {
  * @param  {Number} numFile      [Index number of the file (First file loaded is 0)]
  * @param  {String} color        [RGBA color]
  */
+=======
+>>>>>>> 5b6d5ba78219832e4a576d99e1900a6dc9de7fee
 function drawLinesInLayer(linesToPaint, canvasLayer, numFile, color){
 	var currentCtx = canvasLayer.getContext('2d');
 
@@ -339,6 +330,7 @@ function drawLinesInLayer(linesToPaint, canvasLayer, numFile, color){
 	currentCtx.stroke();
 }
 
+<<<<<<< HEAD
 /**
  * Draw an array of lines (fragments) in a given canvas.
  * @param  {Array} linesToPaint Array of fragments to paint.
@@ -346,6 +338,8 @@ function drawLinesInLayer(linesToPaint, canvasLayer, numFile, color){
  * @param  {Number} numFile      [Index number of the file (First file loaded is 0)]
  * @param  {String} color        [RGBA color]
  */
+=======
+>>>>>>> 5b6d5ba78219832e4a576d99e1900a6dc9de7fee
 function drawArrayFragsInLayer(arrayLinesToPaint, canvasLayer, numFile, color){
 	var currentCtx = canvasLayer.getContext('2d');
 
@@ -383,10 +377,6 @@ function drawArrayFragsInLayer(arrayLinesToPaint, canvasLayer, numFile, color){
 }
 
 
-/**
- * Change from Vertical-view to Horizontal-view
- * Deprecated
- */
 function loadHorizontalView(){
 
     //change the main canvas to horizontal
@@ -432,9 +422,6 @@ function loadHorizontalView(){
     }
 }
 
-/**
- * Set coordinates of zoom to 0
- */
 function resetZoom(){
     currentArea.x0 = 0;
     currentArea.y0 = 0;
@@ -447,10 +434,13 @@ function resetZoom(){
     reset = false;
 }
 
+<<<<<<< HEAD
 /**
  * Create vertical layer for each comparison
  * @param  {Number} numLayer [index number for the layer]
  */
+=======
+>>>>>>> 5b6d5ba78219832e4a576d99e1900a6dc9de7fee
 function createVerticalComparisonLayer(numLayer){
 	var idVerticalLayer = "layer"+numLayer;
 
@@ -469,10 +459,13 @@ function createVerticalComparisonLayer(numLayer){
 	return $("#"+idVerticalLayer)[0];
 }
 
+<<<<<<< HEAD
 /**
  * Create horizontal layer for each comparison
  * @param  {Number} numLayer [index number for the layer]
  */
+=======
+>>>>>>> 5b6d5ba78219832e4a576d99e1900a6dc9de7fee
 function createHorizontalComparisonLayer(numLayer){
 	var idHorizontalLayer = "hlayer"+numLayer;
 
@@ -495,11 +488,14 @@ function createHorizontalComparisonLayer(numLayer){
 	return $("#"+idHorizontalLayer)[0];
 }
 
+<<<<<<< HEAD
 
 /**
  * Create new Map image layer for each comparison
  * @param  {Number} numLayer [index number for the layer]
  */
+=======
+>>>>>>> 5b6d5ba78219832e4a576d99e1900a6dc9de7fee
 function createMapImageLayer(numLayer) {
 
 	var idLayer = "Maplayer"+numLayer;
@@ -514,10 +510,13 @@ function createMapImageLayer(numLayer) {
 	return $("#"+idLayer)[0];
 }
 
+<<<<<<< HEAD
 /**
  * Create a checkbox for each new layer generated
  * @param  {Number} numLayer [index number of the layer]
  */
+=======
+>>>>>>> 5b6d5ba78219832e4a576d99e1900a6dc9de7fee
 function createComparisonCheck(numLayer){
 	var idVerticalLayer = "layer"+numLayer;
 	var idHorizontalLayer = "hView"+numLayer;
@@ -531,7 +530,6 @@ function createComparisonCheck(numLayer){
 	var column = row.append( $("<td>").append(newLayerBoxElement));
 	$('#layersTable').last().append(row);
 
-	// Listener to hide/show layers activating/deactivating the checkbox
 	$(newLayerBoxElement).change(function() {
         clearCanvas("selectLayer");
 		if ($(this).is(':checked')) {
@@ -550,6 +548,7 @@ function createComparisonCheck(numLayer){
 	});
 }
 
+<<<<<<< HEAD
 
 /**
  *  Paint an array of lines in a vertical layer
@@ -558,6 +557,8 @@ function createComparisonCheck(numLayer){
  * @param  {Number} numFile      Number of the file
  * @param  {Number} color        RGBa color
  */
+=======
+>>>>>>> 5b6d5ba78219832e4a576d99e1900a6dc9de7fee
 function drawVerticalLinesInVerticalLayer(linesToPaint, canvasLayer, numFile, color){
 	var currentCtx = canvasLayer.getContext('2d');
 
