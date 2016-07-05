@@ -75,7 +75,7 @@ function paintMatrix (){
 
     svg.selectAll('circle')
         .data(matrixProcessedData)
-        .enter().append("svg:circle")
+            .enter().append("svg:circle")
         .attr("cx", function(d){
             return x(d[0]);
         })

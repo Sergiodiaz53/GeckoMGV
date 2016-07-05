@@ -25,6 +25,9 @@ var lines = [];
 var evolutiveEvents = [];
 var currentLines = [];
 var selectedLines=[];
+var annotations = [];
+var annotationsX = [];
+var annotationsY = [];
 
 //Back zoom stuff
 var backZoomList=[];
@@ -163,14 +166,11 @@ function goToNextZoom(){
 	}
 }
 
-<<<<<<< HEAD
 /**
  * Erase all the content in the canvas given
  * @param  {String} canvasName [Canvas ID to erase content]
  * @author Sergio
  */
-=======
->>>>>>> 5b6d5ba78219832e4a576d99e1900a6dc9de7fee
 function clearCanvas(canvasName) {
     var canvasToClear = document.getElementById(canvasName);
     var ctx = canvasToClear.getContext('2d');
@@ -182,7 +182,6 @@ function clearCanvas(canvasName) {
 	ctx.restore();
 }
 
-<<<<<<< HEAD
 /**
  * Parse the header of a loaded file, store it in a data structure and generate the table to be consulted 
  * by the interface. The generated tables have the ID 'csvInfoTable2-[NUMFILE]'. The file header structure is defined as an object in the
@@ -190,8 +189,6 @@ function clearCanvas(canvasName) {
  * @param  {Array} currentLines Group of lines which we are currently working
  * @param  {Number} numFile    Index number of the file (First file loaded is 0)
  */
-=======
->>>>>>> 5b6d5ba78219832e4a576d99e1900a6dc9de7fee
 function storeFileHeader(currentLines, numFile) {
     console.time("CreateFileHeader()");
 
@@ -284,7 +281,6 @@ function storeFileHeader(currentLines, numFile) {
     console.timeEnd("CreateFileHeader()");
 }
 
-<<<<<<< HEAD
 /**
  * Draw an array of index (fragments) in a given canvas.
  * @param  {Array} linesToPaint Array of index of fragments to paint.
@@ -292,8 +288,6 @@ function storeFileHeader(currentLines, numFile) {
  * @param  {Number} numFile      [Index number of the file (First file loaded is 0)]
  * @param  {String} color        [RGBA color]
  */
-=======
->>>>>>> 5b6d5ba78219832e4a576d99e1900a6dc9de7fee
 function drawLinesInLayer(linesToPaint, canvasLayer, numFile, color){
 	var currentCtx = canvasLayer.getContext('2d');
 
@@ -330,7 +324,6 @@ function drawLinesInLayer(linesToPaint, canvasLayer, numFile, color){
 	currentCtx.stroke();
 }
 
-<<<<<<< HEAD
 /**
  * Draw an array of lines (fragments) in a given canvas.
  * @param  {Array} linesToPaint Array of fragments to paint.
@@ -338,8 +331,6 @@ function drawLinesInLayer(linesToPaint, canvasLayer, numFile, color){
  * @param  {Number} numFile      [Index number of the file (First file loaded is 0)]
  * @param  {String} color        [RGBA color]
  */
-=======
->>>>>>> 5b6d5ba78219832e4a576d99e1900a6dc9de7fee
 function drawArrayFragsInLayer(arrayLinesToPaint, canvasLayer, numFile, color){
 	var currentCtx = canvasLayer.getContext('2d');
 
@@ -434,13 +425,10 @@ function resetZoom(){
     reset = false;
 }
 
-<<<<<<< HEAD
 /**
  * Create vertical layer for each comparison
  * @param  {Number} numLayer [index number for the layer]
  */
-=======
->>>>>>> 5b6d5ba78219832e4a576d99e1900a6dc9de7fee
 function createVerticalComparisonLayer(numLayer){
 	var idVerticalLayer = "layer"+numLayer;
 
@@ -459,13 +447,10 @@ function createVerticalComparisonLayer(numLayer){
 	return $("#"+idVerticalLayer)[0];
 }
 
-<<<<<<< HEAD
 /**
  * Create horizontal layer for each comparison
  * @param  {Number} numLayer [index number for the layer]
  */
-=======
->>>>>>> 5b6d5ba78219832e4a576d99e1900a6dc9de7fee
 function createHorizontalComparisonLayer(numLayer){
 	var idHorizontalLayer = "hlayer"+numLayer;
 
@@ -488,14 +473,10 @@ function createHorizontalComparisonLayer(numLayer){
 	return $("#"+idHorizontalLayer)[0];
 }
 
-<<<<<<< HEAD
-
 /**
  * Create new Map image layer for each comparison
  * @param  {Number} numLayer [index number for the layer]
  */
-=======
->>>>>>> 5b6d5ba78219832e4a576d99e1900a6dc9de7fee
 function createMapImageLayer(numLayer) {
 
 	var idLayer = "Maplayer"+numLayer;
@@ -510,21 +491,17 @@ function createMapImageLayer(numLayer) {
 	return $("#"+idLayer)[0];
 }
 
-<<<<<<< HEAD
 /**
  * Create a checkbox for each new layer generated
  * @param  {Number} numLayer [index number of the layer]
  */
-=======
->>>>>>> 5b6d5ba78219832e4a576d99e1900a6dc9de7fee
 function createComparisonCheck(numLayer){
 	var idVerticalLayer = "layer"+numLayer;
 	var idHorizontalLayer = "hView"+numLayer;
-    //var idHorizontalSelectionLayer= "hSel"+numLayer;
 	var idMapimageLayer = "Maplayer"+numLayer;
 
 	var newLayerBoxElement =
-				$('<input type="checkbox" class="switchLayer" id="checklayer'+numLayer+'"checked="checked" value="'+numLayer+'"/> '+fileNames[numLayer]+'</input>');
+				$('<input type="checkbox" class="switchLayer" id="checklayer'+numLayer+'"checked="checked" value="'+numLayer+'"/> '+fileNames[numLayer]+'</input><button class="btn btn-info btn-xs" onclick="paintCodingRegions('+numLayer+')">Annot</button>');
 
 	var row = $("<tr>");
 	var column = row.append( $("<td>").append(newLayerBoxElement));
@@ -548,7 +525,6 @@ function createComparisonCheck(numLayer){
 	});
 }
 
-<<<<<<< HEAD
 
 /**
  *  Paint an array of lines in a vertical layer
@@ -557,8 +533,6 @@ function createComparisonCheck(numLayer){
  * @param  {Number} numFile      Number of the file
  * @param  {Number} color        RGBa color
  */
-=======
->>>>>>> 5b6d5ba78219832e4a576d99e1900a6dc9de7fee
 function drawVerticalLinesInVerticalLayer(linesToPaint, canvasLayer, numFile, color){
 	var currentCtx = canvasLayer.getContext('2d');
 
@@ -600,7 +574,7 @@ function drawVerticalLinesInVerticalLayer(linesToPaint, canvasLayer, numFile, co
 			currentCtx.lineTo(xFin, canvasLayer.height - yFin);
 		}
 	}
-	console.timeEnd("DrawFiltrar")
+	console.timeEnd("DrawFiltrar");
 
 	console.time("DrawComienzo");
 
@@ -795,12 +769,11 @@ function createInstance() {
 				annotationTable.id = "csvAnnotationTable" + numFile;
 
 				var row = annotationTable.insertRow(-1);
-				//console.log("Line: "+lines[0]);
-				for (var j = 0; j < lines[0][16].length; j++) {
-					if ((j <= 3) || ((j > 5) && (j < 7)) || (j >= 14)) {
+				for (var j = 0; j < lines[0][14].length; j++) {
+					if ((j <= 4) || ((j > 5) && (j < 7)) || (j >= 12)) {
 						var firstNameCell = row.insertCell(-1);
 						firstNameCell.appendChild(document
-								.createTextNode(lines[0][16][j]));
+								.createTextNode(lines[0][14][j]));
 					}
 				}
 
@@ -820,6 +793,7 @@ function createInstance() {
 				var linesToPaint = [];
 				var filteredLines = [];
 				var CSBLines = [];
+				var annotationsAux = [];
 
 				var currentVerticalCanvas = createVerticalComparisonLayer(numFile);
 				var currentHorizontalCanvas = createHorizontalComparisonLayer(numFile);
@@ -833,16 +807,16 @@ function createInstance() {
 					//Take headers of each column
 					if (i == fragsStarts) {
 						var row = table.insertRow(-1);
-						for (var j = 0; j < lines[0][16].length; j++) {
+						for (var j = 0; j < lines[0][14].length; j++) {
 							// if(j<14) {
 							var firstNameCell = row.insertCell(-1);
 							firstNameCell.appendChild(document
-									.createTextNode(lines[0][16][j]));
+									.createTextNode(lines[0][14][j]));
 							// }
 						}
 					}
 
-					if (currentLines[i].length<18) {
+					if (currentLines[i][0]=='CSB' || currentLines[i][0] == 'Frag') {
 
 						if(currentLines[i][0]=='CSB') {
 							CSBLines.push(i);
@@ -883,19 +857,16 @@ function createInstance() {
 								filteredLines.push(i);
 							}
 						}
-					} else {
+
 						if (currentLines[i].length==22) {
-							/*if ((parseInt(currentLines[i][1]) >= (currentArea.x0
-									* xtotal / 500))
-									&& (parseInt(currentLines[i][3]) <= (currentArea.x1
-											* xtotal / 500))) {*/
 								paint = filter(currentLines[i]);
 								if (paint == true) {
+									annotationsAux.push(currentLines[i]);
 									add2Table(i, table);
 									var row = annotationTable.insertRow(-1);
 									for (var j = 0; j < currentLines[i].length; j++) {
 										if (currentLines[i].length > 10) {
-											if ((j <= 3)
+											if ((j <= 4)
 													|| ((j > 5) && (j < 7))
 													|| (j >= 14)) {
 												var firstNameCell = row
@@ -930,6 +901,8 @@ function createInstance() {
 					drawHorizontalLinesInHorizontalLayer(linesToPaint, currentHorizontalCanvas, numFile, rgba(R[numFile], G[numFile], B[numFile], 1));
 				}
 				drawHorizontalLinesInHorizontalLayer(filteredLines, currentHorizontalCanvas, numFile, rgba(189, 195, 199, 0.5));
+
+				annotations[numFile] = annotationsAux;
 
 				//Draw Selected frags
 				drawSelectedFrags();
@@ -2001,4 +1974,141 @@ function activateBoard() {
 		board = false;
 		redraw();
 	}
+}
+
+
+
+function paintCodingRegions(numFile) {
+
+	createAnnotations(numFile);
+
+	var svg = d3.select("#canvasContainer").append("svg")
+				.attr("class", "annotationXLayer")
+				.attr("id","annotationXLayer")
+				.attr("width", 500)
+				.attr("height", 520)
+			  	.append("g");
+
+	var svgY = d3.select("#canvasContainer").append("svg")
+				.attr("class", "annotationYLayer")
+				.attr("id","annotationYLayer")
+				.attr("width", 520)
+				.attr("height", 500)
+			  	.append("g");
+
+
+	var svgAux = d3.select("#annotationXLayer");
+	var svgAuxY = d3.select("#annotationYLayer");
+
+	var w = parseInt(svgAux.style("width")),
+        h = parseInt(svgAux.style("height"));
+
+    var x = d3.scale.linear().domain([0,fileHeader[numFile].seqXLength]).range([0, w]),
+        y = d3.scale.linear().domain([0,fileHeader[numFile].seqYLength]).range([0, h]);
+
+
+	svg.selectAll("line")
+            .data(annotationsX).enter()
+            .append("line")          // attach a line
+            .style("stroke", "black")  // colour the line
+            .attr("x1", function(d) { return x(d.xStart);})     // x position of the first end of the line
+            .attr("y1", h-5)    // y position of the first end of the line
+            .attr("x2", function(d) { return x(d.xEnd);})     // x position of the second end of the line
+            .attr("y2", h-5)
+			.on("mouseover", function(){
+			d3.select(this)
+				.style("stroke-width", 5)
+				.style("stroke", "red");
+			})
+        	.on("mouseout", function(){
+            d3.select(this)
+                .style("stroke-width", 1)
+                .style("stroke", "black")
+        	});
+
+	    $('svg line').tipsy({
+        gravity: 'w',
+        html: true,
+        title: function() {
+            var d = this.__data__;
+            return d.Name;
+        }
+      });
+
+	var wY = parseInt(svgAux.style("width")),
+        hY = parseInt(svgAux.style("height"));
+
+	var xY = d3.scale.linear().domain([0,fileHeader[numFile].seqXLength]).range([0, wY]),
+        yY = d3.scale.linear().domain([0,fileHeader[numFile].seqYLength]).range([0, hY]);
+
+	svgY.selectAll("line")
+            .data(annotationsY).enter()
+            .append("line")          // attach a line
+            .style("stroke", "black")  // colour the line
+            .attr("x1", 5)     // x position of the first end of the line
+            .attr("y1", function(d) { return yY(d.yStart);})    // y position of the first end of the line
+            .attr("x2", 5)     // x position of the second end of the line
+            .attr("y2", function(d) { return yY(d.yEnd);})
+			.on("mouseover", function(){
+			d3.select(this)
+				.style("stroke-width", 5)
+				.style("stroke", "red");
+			})
+        	.on("mouseout", function(){
+            d3.select(this)
+                .style("stroke-width", 1)
+                .style("stroke", "black")
+        	});
+
+	    $('svg line').tipsy({
+        gravity: 'w',
+        html: true,
+        title: function() {
+            var d = this.__data__;
+            return d.Name;
+        }
+      });
+
+}
+
+function createAnnotations(numFile){
+	var fragment = 0;
+
+	var anntPrevX = annotations[numFile][fragment][18];
+	var xStart = annotations[numFile][fragment][1];
+	var xEnd = annotations[numFile][fragment][3];
+
+	var anntPrevY = annotations[numFile][fragment][21];
+	var yStart = annotations[numFile][fragment][2];
+	var yEnd = annotations[numFile][fragment][4];
+
+	while(fragment<annotations[numFile].length-1){
+
+		fragment++;
+		var anntNextX = annotations[numFile][fragment][18];
+		var anntNextY = annotations[numFile][fragment][21];
+
+		console.log("AnnotY: "+anntNextY)
+
+		if(anntPrevX == anntNextX){
+			xEnd = annotations[numFile][fragment][3]
+		} else {
+			annotationsX.push({'Name':anntPrevX, 'xStart':xStart, 'xEnd': xEnd});
+			anntPrevX = anntNextX;
+			xStart = annotations[numFile][fragment][1]
+
+		}
+
+		if(anntPrevY == anntNextY){
+			yEnd = annotations[numFile][fragment][4]
+		} else {
+			annotationsY.push({'Name':anntPrevY, 'yStart':yStart, 'yEnd': yEnd});
+			anntPrevY = anntNextY;
+			yStart = annotations[numFile][fragment][2]
+		}
+
+	}
+
+	console.log("AnnotationsX: "+annotationsX);
+	console.log("AnnotationsY: "+annotationsY);
 }

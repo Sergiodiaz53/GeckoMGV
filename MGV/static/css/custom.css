@@ -185,6 +185,28 @@ body {
     z-index: 1;
 }
 
+.annotationXLayer{
+    width: 80%;
+    margin-left: 10%;
+    margin-top: 5%;
+    height: auto;
+    display: block;
+    background-color: transparent;
+    position: absolute;
+    z-index: 2;
+}
+
+.annotationYLayer{
+    width: 80%;
+    margin-left: 8%;
+    margin-top: 5%;
+    height: auto;
+    display: block;
+    background-color: transparent;
+    position: absolute;
+    z-index: 2;
+}
+
 .horizontalCanvasLayer {
     width: 90%;
     margin-left: 5%;
