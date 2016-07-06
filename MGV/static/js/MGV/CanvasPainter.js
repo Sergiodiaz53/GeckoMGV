@@ -25,9 +25,13 @@ var lines = [];
 var evolutiveEvents = [];
 var currentLines = [];
 var selectedLines=[];
+
+
+//Annotations paint
 var annotations = [];
 var annotationsX = [];
 var annotationsY = [];
+var annotationsWorking = false;
 
 //Back zoom stuff
 var backZoomList=[];
@@ -501,7 +505,7 @@ function createComparisonCheck(numLayer){
 	var idMapimageLayer = "Maplayer"+numLayer;
 
 	var newLayerBoxElement =
-				$('<input type="checkbox" class="switchLayer" id="checklayer'+numLayer+'"checked="checked" value="'+numLayer+'"/> '+fileNames[numLayer]+'</input><button class="btn btn-info btn-xs" onclick="paintCodingRegions('+numLayer+')">Annot</button>');
+				$('<input type="checkbox" class="switchLayer" id="checklayer'+numLayer+'"checked="checked" value="'+numLayer+'"/> '+fileNames[numLayer]+'</input><button class="btn btn-info btn-xs btn-annt" onclick="paintCodingRegions('+numLayer+')">Annot</button>');
 
 	var row = $("<tr>");
 	var column = row.append( $("<td>").append(newLayerBoxElement));
@@ -860,7 +864,24 @@ function createInstance() {
 
 						if (currentLines[i].length==22) {
 								paint = filter(currentLines[i]);
-								if (paint == true) {
+
+							if (paint == true) {
+								if ((parseInt(currentLines[i][1]) >= (currentArea.x0
+										* xtotal / 500))
+										&& (parseInt(currentLines[i][2]) >= (currentArea.y0
+												* ytotal / 500))
+										&& (parseInt(currentLines[i][3]) <= (currentArea.x1
+												* xtotal / 500))
+										&& (parseInt(currentLines[i][4]) <= (currentArea.y1
+												* ytotal / 500))) {
+									paint = true;
+								} else {
+									paint = false;
+								}
+
+							}
+
+							if (paint == true) {
 									annotationsAux.push(currentLines[i]);
 									add2Table(i, table);
 									var row = annotationTable.insertRow(-1);
@@ -884,7 +905,6 @@ function createInstance() {
 										}
 									}
 								}
-							//}
 						}
 					}
 				}
@@ -903,6 +923,14 @@ function createInstance() {
 				drawHorizontalLinesInHorizontalLayer(filteredLines, currentHorizontalCanvas, numFile, rgba(189, 195, 199, 0.5));
 
 				annotations[numFile] = annotationsAux;
+
+				//Draw Annotations
+				if(annotationsWorking) {
+					d3.select("#annotationXLayer").remove();
+					d3.select("#annotationYLayer").remove();
+					annotationsWorking = false;
+					paintCodingRegions(numFile);
+				}
 
 				//Draw Selected frags
 				drawSelectedFrags();
@@ -1706,15 +1734,15 @@ function drawGrid(board, vertical, canvasName) {
         var ctx = canvasGrid.getContext("2d");
         var width = canvas.width;
         var height = canvas.height;
+
+		console.log("W: "+width+" H: "+height);
         if (vertical) {
 			clearCanvas(canvasName);
-
-			console.log("hola");
 
             //ctx.font = "bold 20px sans-serif";
             //ctx.fillText("Grid size: 500x500px, Step: 100px", 0, -23);
 
-            var stepVertical = (currentArea.x1 - currentArea.x0) / 5;
+            var stepVertical = (currentArea.x1 - currentArea.x0) / 4;
             var stepV = currentArea.x0;
 
 			for (var x = canvasGrid.width/10; x <= canvasGrid.width; x += canvasGrid.width/5) {
@@ -1727,18 +1755,16 @@ function drawGrid(board, vertical, canvasName) {
 				} else {
 					correctPositionX = Math.round(correctPositionX);
 				}
+
 				ctx.fillText(correctPositionX.toString(), x - 20, height + 45);
 				ctx.moveTo(x, canvasGrid.width/20);
 				ctx.lineTo(x, canvasGrid.height - canvasGrid.width/15);
 				stepV += stepVertical;
 			}
 
-			var stepHorizontal = Math.round((currentArea.y1 - currentArea.y0) / 5);
-			var stepH = currentArea.y0;
-
 			if (vertical) {
 
-				var stepHorizontal = (currentArea.y1 - currentArea.y0) / 5;
+				var stepHorizontal = (currentArea.y1 - currentArea.y0) / 4;
 				var stepH = currentArea.y0;
 
 				for (var y = canvasGrid.width/20; y <= canvasGrid.width; y += canvasGrid.width/5) {
@@ -1980,6 +2006,10 @@ function activateBoard() {
 
 function paintCodingRegions(numFile) {
 
+	if(annotationsWorking == false) {
+		annotationsWorking = true;
+
+
 	createAnnotations(numFile);
 
 	var svg = d3.select("#canvasContainer").append("svg")
@@ -2000,21 +2030,22 @@ function paintCodingRegions(numFile) {
 	var svgAux = d3.select("#annotationXLayer");
 	var svgAuxY = d3.select("#annotationYLayer");
 
-	var w = parseInt(svgAux.style("width")),
-        h = parseInt(svgAux.style("height"));
+	var w = parseInt(svgAux.attr("width"));
+	var h = parseInt(svgAux.style("height"));
 
-    var x = d3.scale.linear().domain([0,fileHeader[numFile].seqXLength]).range([0, w]),
-        y = d3.scale.linear().domain([0,fileHeader[numFile].seqYLength]).range([0, h]);
+	var correctPositionXmin = ((currentArea.x0) * parseInt(fileHeader[numFile].seqXLength)) / w;
+	var correctPositionXmax = ((currentArea.x1) * parseInt(fileHeader[numFile].seqXLength)) / w;
+    var x = d3.scale.linear().domain([correctPositionXmin,correctPositionXmax]).range([0, w]);
 
 
 	svg.selectAll("line")
             .data(annotationsX).enter()
             .append("line")          // attach a line
-            .style("stroke", "black")  // colour the line
+            .style("stroke", "#ec971f")  // colour the line
             .attr("x1", function(d) { return x(d.xStart);})     // x position of the first end of the line
-            .attr("y1", h-5)    // y position of the first end of the line
+            .attr("y1", h-10)    // y position of the first end of the line
             .attr("x2", function(d) { return x(d.xEnd);})     // x position of the second end of the line
-            .attr("y2", h-5)
+            .attr("y2", h-10)
 			.on("mouseover", function(){
 			d3.select(this)
 				.style("stroke-width", 5)
@@ -2023,7 +2054,7 @@ function paintCodingRegions(numFile) {
         	.on("mouseout", function(){
             d3.select(this)
                 .style("stroke-width", 1)
-                .style("stroke", "black")
+                .style("stroke", "#ec971f")
         	});
 
 	    $('svg line').tipsy({
@@ -2035,16 +2066,15 @@ function paintCodingRegions(numFile) {
         }
       });
 
-	var wY = parseInt(svgAux.style("width")),
-        hY = parseInt(svgAux.style("height"));
-
-	var xY = d3.scale.linear().domain([0,fileHeader[numFile].seqXLength]).range([0, wY]),
-        yY = d3.scale.linear().domain([0,fileHeader[numFile].seqYLength]).range([0, hY]);
+	var hY = parseInt(svgAuxY.attr("height"));
+	var correctPositionYmin =  ((currentArea.y0) * parseInt(fileHeader[numFile].seqYLength)) / hY;
+	var correctPositionYmax =  ((currentArea.y1) * parseInt(fileHeader[numFile].seqYLength)) / hY;
+	var yY = d3.scale.linear().domain([correctPositionYmin,correctPositionYmax]).range([0, hY]);
 
 	svgY.selectAll("line")
             .data(annotationsY).enter()
             .append("line")          // attach a line
-            .style("stroke", "black")  // colour the line
+            .style("stroke", "#ec971f")  // colour the line
             .attr("x1", 5)     // x position of the first end of the line
             .attr("y1", function(d) { return yY(d.yStart);})    // y position of the first end of the line
             .attr("x2", 5)     // x position of the second end of the line
@@ -2057,7 +2087,7 @@ function paintCodingRegions(numFile) {
         	.on("mouseout", function(){
             d3.select(this)
                 .style("stroke-width", 1)
-                .style("stroke", "black")
+                .style("stroke", "#ec971f")
         	});
 
 	    $('svg line').tipsy({
@@ -2068,6 +2098,11 @@ function paintCodingRegions(numFile) {
             return d.Name;
         }
       });
+	} else {
+		annotationsWorking = false;
+		d3.select("#annotationXLayer").remove();
+		d3.select("#annotationYLayer").remove();
+	}
 
 }
 
@@ -2082,17 +2117,19 @@ function createAnnotations(numFile){
 	var yStart = annotations[numFile][fragment][2];
 	var yEnd = annotations[numFile][fragment][4];
 
+	var moreThanOneX = false;
+	var moreThanOneY = false;
+
 	while(fragment<annotations[numFile].length-1){
 
 		fragment++;
 		var anntNextX = annotations[numFile][fragment][18];
 		var anntNextY = annotations[numFile][fragment][21];
 
-		console.log("AnnotY: "+anntNextY)
-
 		if(anntPrevX == anntNextX){
 			xEnd = annotations[numFile][fragment][3]
 		} else {
+			moreThanOneX = true;
 			annotationsX.push({'Name':anntPrevX, 'xStart':xStart, 'xEnd': xEnd});
 			anntPrevX = anntNextX;
 			xStart = annotations[numFile][fragment][1]
@@ -2102,6 +2139,7 @@ function createAnnotations(numFile){
 		if(anntPrevY == anntNextY){
 			yEnd = annotations[numFile][fragment][4]
 		} else {
+			moreThanOneY = true;
 			annotationsY.push({'Name':anntPrevY, 'yStart':yStart, 'yEnd': yEnd});
 			anntPrevY = anntNextY;
 			yStart = annotations[numFile][fragment][2]
@@ -2109,6 +2147,12 @@ function createAnnotations(numFile){
 
 	}
 
-	console.log("AnnotationsX: "+annotationsX);
-	console.log("AnnotationsY: "+annotationsY);
+	if(!moreThanOneX){
+		annotationsX.push({'Name':anntPrevX, 'xStart':xStart, 'xEnd': xEnd});
+	}
+
+	if(!moreThanOneY){
+		annotationsY.push({'Name':anntPrevY, 'yStart':yStart, 'yEnd': yEnd});
+	}
+
 }

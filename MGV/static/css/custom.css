@@ -82,6 +82,10 @@ body {
     width: 100%;
 }
 
+.btn-annt{
+    float: right;
+}
+
 #output {
     text-align: center;
 }
