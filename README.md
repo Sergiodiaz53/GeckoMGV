@@ -34,4 +34,4 @@ Finally, we should be able to run GeckoMGV with:
 
 *· Installing Werkzeug (`pip install Werkzeug`) you can use `python manage.py runserver_plus` for debug details*
 
-For extra documentation about how to register a service or, user guide for GeckoMGV, modules description... you can visit our server [PISTACHO](https://pistacho.ac.uma.es)
+For extra documentation about how to register a service, user guide for GeckoMGV, modules description... you can visit our server [PISTACHO](https://pistacho.ac.uma.es)
