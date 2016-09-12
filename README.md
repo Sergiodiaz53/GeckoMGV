@@ -14,8 +14,8 @@ Then, I recommend to create a virtualenv for this project:
 
 And activate it:
 
-* 'cd GeckoMGV/'
-* source bin/activate
+* `cd GeckoMGV/`
+* `source bin/activate`
 
 Now we should be working inside our virtualenv, so we are going to install django and its plugins
 
@@ -28,7 +28,7 @@ We are going to set Django up:
 
 Finally, we should be able to run GeckoMGV with:
 
-9. `python manage.py runserver`
+* `python manage.py runserver`
 ... You can modify the ip address and the port using `python manage.py runserver 0.0.0.0:8000`
 ... Installing Werkzeug (`pip install Werkzeug`) you can use `python manage.py runserver_plus` for debug details
 
