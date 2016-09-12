@@ -119,3 +119,5 @@ def consoleViewer_view(request):
             content=file.read()
             file.close()
             return render(request, 'fileViewer.html', {'fileName': "console.log", 'content': content})
+
+    

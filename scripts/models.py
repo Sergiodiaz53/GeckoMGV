@@ -9,7 +9,7 @@ class Script (models.Model):
     help = models.CharField(max_length=400, null=False)
     form = models.CharField(max_length=50, null=False)
     choices=(("Frags","Frags"),("Matrix","Matrix"),("External","External"),("Other","Other"))
-    returnType = models.CharField(max_length=10,choices=choices, null=False)
+    returnType = models.CharField(max_length=10,choices=choices, null=False, default="Frags")
 
     def __str__(self):
         return str(self.pk)
