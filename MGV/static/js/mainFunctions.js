@@ -248,6 +248,7 @@ function dialogFrags() {
             height: 400,
             widht: 800,
             title: 'CSB & Frag',
+            resize: function() { grid.resizeCanvas(); },
             buttons: [
                 {
                     text: "Selected",
@@ -282,6 +283,7 @@ function dialogFrags() {
             ],
             open: function () {
                 $detachedChildren.appendTo($dialogContainer);
+                grid.init();
             }
         });
     }else

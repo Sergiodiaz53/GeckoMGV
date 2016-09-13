@@ -39,6 +39,8 @@ var backCanvas =$('<canvas/>',{'class':'canvasLayer img-responsive'}).prop({widt
 var backCtx=backCanvas[0].getContext('2d');
 var currentZoomIndex=-1;
 
+var grid;
+
 
 var currentArea = {
 	x0 : 0,
@@ -855,7 +857,7 @@ function createInstance() {
 							if (paint == true && !(filtered[numFile]!=null&&filtered[numFile].indexOf(i)>-1)) {
 								// console.time("paint()");
 								linesToPaint.push(i);
-								add2Table(i,table);
+								//add2Table(i,table);
 								// console.timeEnd("paint()");
 							} else {
 								filteredLines.push(i);
@@ -915,13 +917,15 @@ function createInstance() {
 				drawVerticalLinesInVerticalLayer(filteredLines,currentVerticalCanvas,numFile,rgba(189, 195, 199, 0.5));
 
 				//Draw in horizontal layer
-				if(CSBLines.length>0) {
+				/*if(CSBLines.length>0) {
 					drawHorizontalLinesInHorizontalLayer(CSBLines, currentHorizontalCanvas, numFile, rgba(R[numFile], G[numFile], B[numFile], 1));
 				} else {
 					drawHorizontalLinesInHorizontalLayer(linesToPaint, currentHorizontalCanvas, numFile, rgba(R[numFile], G[numFile], B[numFile], 1));
 				}
 				drawHorizontalLinesInHorizontalLayer(filteredLines, currentHorizontalCanvas, numFile, rgba(189, 195, 199, 0.5));
+				*/
 
+				generateTable(currentLines);
 				annotations[numFile] = annotationsAux;
 
 				//Draw Annotations
@@ -995,11 +999,11 @@ function createInstance() {
 		for(var index=0;index<searchList.length;index++)
 			document.getElementById(searchList[index]).checked=false;
 		searchList=[];
-		prevFragsTable=document.getElementById("files-tab-content").cloneNode(true);
-        prevAnnotTable=document.getElementById("annotations-tab-content").cloneNode(true);
+		//prevFragsTable=document.getElementById("files-tab-content").cloneNode(true);
+        //prevAnnotTable=document.getElementById("annotations-tab-content").cloneNode(true);
 		console.timeEnd("reDraw()");
         loadingGif.hide();
-        drawSelectedFrags()
+        drawSelectedFrags();
 		$("#nextZoom").prop( "disabled", true);
 		$("#prevZoom").prop( "disabled", true);
 	};
@@ -1451,7 +1455,6 @@ function resetDraw() {
 	}
 }
 
-//Draw the lines to the lines to the annotation point
 /**
  * Draw annotations in canvas
  * @param  {String} seq   Sequence
@@ -1532,7 +1535,7 @@ function annotationDrawLines(seq,start,end,point){
 function showSelected(){
     if(!showingSelected){
 		$("#selButton").html("Selected");
-        currTable=document.getElementById("files-tab-content").cloneNode(true);
+        //currTable=document.getElementById("files-tab-content").cloneNode(true);
         document.getElementById("annotationsOutput").innerHTML = "<ul class='nav nav-tabs' id='annotations-tab'></ul>"
 				+ "<div class='tab-content' id='annotations-tab-content'></div>";
         for (var x = 0; x < lines.length; x++) {
@@ -1559,7 +1562,7 @@ function showSelected(){
     }else{
 		$("#selButton").html("All")
         showingSelected=false;
-        document.getElementById("files-tab-content").parentNode.replaceChild(currTable.cloneNode(true),document.getElementById("files-tab-content"));
+        //document.getElementById("files-tab-content").parentNode.replaceChild(currTable.cloneNode(true),document.getElementById("files-tab-content"));
     }
 }
 
