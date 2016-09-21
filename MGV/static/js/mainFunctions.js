@@ -261,15 +261,14 @@ function dialogFrags() {
                 {
                     text: "Upload",
                     click: function () {
-                        uploadCSV();
+                        uploadActualState();
                     },
                     "class": "ui-button-primary"
                 },
                 {
                     text: "Save",
                     click: function () {
-                        saveCSV()
-                        //redraw();
+                       saveActualState();
                     },
                     "class": "ui-button-primary"
                 },
@@ -283,7 +282,9 @@ function dialogFrags() {
             ],
             open: function () {
                 $detachedChildren.appendTo($dialogContainer);
-                grid.init();
+                FragsGrid.forEach(function(item) {
+                    item.init();
+                });
             }
         });
     }else
@@ -430,7 +431,7 @@ function createFile(){
     $.ajax({
             url:'/filemanager/createFile',
             type: "POST",
-            data: {filename: $("#name").val()+'.'+$("#format").val(),content:$("#content").val()},
+            data: {filename: $("#name").val()+'.'+$("#format").val(),content:$("#content").val()}
         });
 }
 

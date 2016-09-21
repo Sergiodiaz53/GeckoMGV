@@ -25,6 +25,7 @@ var lines = [];
 var evolutiveEvents = [];
 var currentLines = [];
 var selectedLines=[];
+var visualizedLines = [];
 
 
 //Annotations paint
@@ -38,9 +39,6 @@ var backZoomList=[];
 var backCanvas =$('<canvas/>',{'class':'canvasLayer img-responsive'}).prop({width: 500,height: 500 });
 var backCtx=backCanvas[0].getContext('2d');
 var currentZoomIndex=-1;
-
-var grid;
-
 
 var currentArea = {
 	x0 : 0,
@@ -68,6 +66,9 @@ var reset = false;
 var selected = false;
 //var shiftSel=false;
 var selectLayer=$("#selectLayer")[0];
+
+//Grids
+var FragsGrid = [];
 
 // Constants
 const headerSize = 12;
@@ -746,6 +747,8 @@ function createInstance() {
         loadingGif.show();
 		console.time("reDraw()");
 
+		FragsGrid = [];
+
 		// Clear previous data in HTML
 		document.getElementById("output").innerHTML = "<div class=\"SearchTitle\" > <div class=\"SearchTitleFilterButton\"> <span>Filter:</span> <input type=\"text\" class=\"SearchFilter\" /> <button class=\"SearchButton\" onclick=\"showResults($(\'.SearchFilter\').val(),true)\" ><span class=\"glyphicon glyphicon-search\"></span></button> </div> </div> <ul class='nav nav-tabs' id='files-tab'></ul>"
 				+ " <div class='tab-content' id='files-tab-content'></div>";
@@ -765,10 +768,6 @@ function createInstance() {
 			if (currentLines) {
 
 				var mode = document.option.tipo;
-
-				var table = document.createElement("table");
-				table.className = "table table-condensed";
-				table.id = "csvInfoTable" + numFile;
 
 				var annotationTable = document.createElement("table");
 				annotationTable.className = "table table-condensed table-striped";
@@ -808,19 +807,6 @@ function createInstance() {
 				for (i = fragsStarts; i < currentLines.length; i++) {
 
 					var paint = false;
-
-					
-					//Take headers of each column
-					if (i == fragsStarts) {
-						var row = table.insertRow(-1);
-						for (var j = 0; j < lines[0][14].length; j++) {
-							// if(j<14) {
-							var firstNameCell = row.insertCell(-1);
-							firstNameCell.appendChild(document
-									.createTextNode(lines[0][14][j]));
-							// }
-						}
-					}
 
 					if (currentLines[i][0]=='CSB' || currentLines[i][0] == 'Frag') {
 
@@ -885,7 +871,7 @@ function createInstance() {
 
 							if (paint == true) {
 									annotationsAux.push(currentLines[i]);
-									add2Table(i, table);
+									//add2Table(i, table);
 									var row = annotationTable.insertRow(-1);
 									for (var j = 0; j < currentLines[i].length; j++) {
 										if (currentLines[i].length > 10) {
@@ -925,7 +911,8 @@ function createInstance() {
 				drawHorizontalLinesInHorizontalLayer(filteredLines, currentHorizontalCanvas, numFile, rgba(189, 195, 199, 0.5));
 				*/
 
-				generateTable(currentLines);
+				visualizedLines[numFile] = linesToPaint;
+				generateFragTable(currentLines, numFile, linesToPaint);
 				annotations[numFile] = annotationsAux;
 
 				//Draw Annotations
@@ -939,15 +926,13 @@ function createInstance() {
 				//Draw Selected frags
 				drawSelectedFrags();
 
-				$("#files-tab").append(
-						"<li><a href='#file" + numFile + "' data-toggle='tab'>File "
-								+ numFile + "</a></li>");
 				$("#annotations-tab")
 						.append(
 								"<li><a href='#fileAnnotation" + numFile
 										+ "' data-toggle='tab'>File " + numFile
 										+ "</a></li>");
 
+				/*
 				var auxDiv = document.createElement("div");
 				var auxAnnotationsDiv = document.createElement("div");
 
@@ -969,7 +954,7 @@ function createInstance() {
 
 				auxAnnotationsDiv.appendChild(fileInfo[numFile]);
 				auxAnnotationsDiv.appendChild(annotationTable);
-				$("#annotations-tab-content").append(auxAnnotationsDiv);
+				$("#annotations-tab-content").append(auxAnnotationsDiv); */
 
 			}
 
@@ -984,8 +969,6 @@ function createInstance() {
 			if(RectInMap.tamx < 5 || RectInMap.tamy < 5) {
 				RectInMap.tamx = 5; RectInMap.tamy = 5;
 			}
-
-			//console.log("Map: "+RectInMap.x+", "+RectInMap.y+", "+RectInMap.tamx+", "+RectInMap.tamy);
 
 			redrawMap();
 
@@ -1528,7 +1511,6 @@ function annotationDrawLines(seq,start,end,point){
     ctx.stroke();
 }
 
-
 /**
  * Show selected frags in 'CSV & Frag info' table
  */
@@ -1560,7 +1542,7 @@ function showSelected(){
         }
         showingSelected=true;
     }else{
-		$("#selButton").html("All")
+		$("#selButton").html("All");
         showingSelected=false;
         //document.getElementById("files-tab-content").parentNode.replaceChild(currTable.cloneNode(true),document.getElementById("files-tab-content"));
     }

@@ -176,6 +176,13 @@ body {
     margin-left:-2%;
 }
 
+#output,
+#output *,
+.slick-header-column {
+    box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    -webkit-box-sizing: content-box;
+}
 
 .canvasLayer{
     width: 80%;
@@ -375,6 +382,11 @@ body {
     background-color: #99ccff;
     height: auto;
     width: 0;
+}
+
+#files-tab-content {
+    width: 100%;
+    height: 100%;
 }
 
 #fileName {
