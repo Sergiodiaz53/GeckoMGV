@@ -1,3 +1,9 @@
+30/09/2016
+- Frags info now working with Slickgrid
+-
+
+--------------------------------------------------
+
 09/03/2016
 - Services execution from index improvements.
     - Alerts added to service execution callback.

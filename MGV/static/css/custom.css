@@ -362,6 +362,21 @@ body {
     margin-bottom:1%;
 }
 
+.GBFButtons {
+    padding-top: -5%;
+    margin-bottom: 5%;
+}
+
+#annotationsOutput {
+    text-align: center;
+
+}
+
+#annotations-tab-content {
+    width: 100%;
+    height: 100%;
+}
+
 /* ----- Progress bar CSS ----- */
 
 #progress_bar {

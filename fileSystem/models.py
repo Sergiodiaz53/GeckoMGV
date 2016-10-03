@@ -16,3 +16,4 @@ class userFile(models.Model):
     filename = models.CharField(max_length=50, null=False)
     file = models.FileField(upload_to=generatePath)
 
+

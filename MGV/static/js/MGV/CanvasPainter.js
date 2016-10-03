@@ -49,6 +49,8 @@ var currentArea = {
 
 var minValue = 1;
 
+var AnotFiles = [];
+
 var canvasMap;
 var RectInMap = {
 	x : 0,
@@ -69,6 +71,10 @@ var selectLayer=$("#selectLayer")[0];
 
 //Grids
 var FragsGrid = [];
+var annotsGrid = [];
+
+//Dataviews
+var AnnotDataViews = [];
 
 // Constants
 const headerSize = 12;
@@ -753,8 +759,9 @@ function createInstance() {
 		document.getElementById("output").innerHTML = "<div class=\"SearchTitle\" > <div class=\"SearchTitleFilterButton\"> <span>Filter:</span> <input type=\"text\" class=\"SearchFilter\" /> <button class=\"SearchButton\" onclick=\"showResults($(\'.SearchFilter\').val(),true)\" ><span class=\"glyphicon glyphicon-search\"></span></button> </div> </div> <ul class='nav nav-tabs' id='files-tab'></ul>"
 				+ " <div class='tab-content' id='files-tab-content'></div>";
 
-		document.getElementById("annotationsOutput").innerHTML = "<div class=\"SearchTitleFilterButton\"><span>Search:</span> <input type=\"text\" class=\"SearchFilter3\" onkeypress=\"if (event.keyCode == 13) document.getElementById('btnSearch').click()\" /> <button id= \"btnSearch\" class=\"SearchButton\" onclick=\"showResults($('.SearchFilter3').val(),true)\"><span class=\"glyphicon glyphicon-search\"></span></button> </div><ul class='nav nav-tabs' id='annotations-tab'></ul>"
-				+ "<div class='tab-content' id='annotations-tab-content'></div>";
+		//document.getElementById("annotationsOutput").innerHTML = "<div class=\"SearchTitleFilterButton\"><span>Search:</span> <input type=\"text\" class=\"SearchFilter3\" onkeypress=\"if (event.keyCode == 13) document.getElementById('btnSearch').click()\" /> <button id= \"btnSearch\" class=\"SearchButton\" onclick=\"showResults($('.SearchFilter3').val(),true)\"><span class=\"glyphicon glyphicon-search\"></span></button> </div><ul class='nav nav-tabs' id='annotations-tab'></ul>"
+		//		+ "<div class='tab-content' id='annotations-tab-content'></div>";
+
 
 
 		// Draw Grid
@@ -912,7 +919,7 @@ function createInstance() {
 				*/
 
 				visualizedLines[numFile] = linesToPaint;
-				generateFragTable(currentLines, numFile, linesToPaint);
+				generateFragTable(currentLines, numFile, linesToPaint,false);
 				annotations[numFile] = annotationsAux;
 
 				//Draw Annotations
@@ -925,12 +932,6 @@ function createInstance() {
 
 				//Draw Selected frags
 				drawSelectedFrags();
-
-				$("#annotations-tab")
-						.append(
-								"<li><a href='#fileAnnotation" + numFile
-										+ "' data-toggle='tab'>File " + numFile
-										+ "</a></li>");
 
 				/*
 				var auxDiv = document.createElement("div");
