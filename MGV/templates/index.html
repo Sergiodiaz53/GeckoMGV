@@ -55,6 +55,7 @@
 				<div class="row row-centered">
                     <!-- ---------- CANVAS Vertical -------------------- -->
                     <div id="mainCanvas" class="canvasBlock my-container2">
+                        <img src="{% static "css/images/loading.gif" %}" id="loading-indicator" style="display:none" />
                         <div id="canvasContainer">
                             <div id="fileName">
                                 Upload a fragments file
@@ -65,7 +66,6 @@
                             </div>
 
                             <canvas id="myCanvasGrid" class="img-responsive" width="600" height="550"></canvas>
-                            <img src="{% static "css/images/loading.gif" %}" id="loading-indicator" style="display:none" />
                             <canvas id="myCanvas" class="img-responsive"  width="500" height="500"></canvas>
                             <canvas id="myCanvasLayer1" class="img-responsive canvasLayer"  width="500" height="500"></canvas>
                             <canvas id="myCanvasLayer2" class="img-responsive canvasLayer"  width="500" height="500"></canvas>

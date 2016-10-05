@@ -68,7 +68,7 @@ def loadFileFromServer(request):
             content = content_file.read()
         os.remove('Anot_'+fileObject.filename+'.ptt')
     else :
-        content = openFile(request.user,file)
+        content = openFile(request.user,fileObject)
 
     return HttpResponse(content, content_type="text/plain")
 

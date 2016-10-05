@@ -294,9 +294,9 @@ body {
 }
 
 #loading-indicator {
-  position: relative;
-  left: 50%;
-  top: 50%;
+    position: absolute;
+    left: 48%;
+    top: 27%;
     z-index: 100;
 }
 

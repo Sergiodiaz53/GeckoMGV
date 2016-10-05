@@ -228,6 +228,10 @@ function generateAnnotationTab(numFile, activate){
 
 function fillGeneratedAnnotationTab(numFile){
 
+    console.log("Filling:");
+    console.log(AnotFiles[numFile][0]);
+    console.log(AnotFiles[numFile][1]);
+
     var GBFloadButtons = $('<div class="btn-group GBFButtons" role="group">' +
                             '<button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Load GBF File for Genome X" onclick ="loadGBFFfile('+"'x',"+numFile+');"><span class="glyphicon glyphicon-floppy-save"></span> GBF X</button>' +
                             '<button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Load GBF File for Genome X" onclick ="loadGBFFfile('+"'y',"+numFile+');"><span class="glyphicon glyphicon-floppy-save"></span> GBF Y<button>' +
@@ -267,7 +271,8 @@ function fillGeneratedAnnotationTab(numFile){
     if(AnotFiles[numFile][0]==null) AnotFiles[numFile][0] =[];
     if(AnotFiles[numFile][1]==null) AnotFiles[numFile][1] =[];
 
-    var data = $.merge(AnotFiles[numFile][0], AnotFiles[numFile][1]);
+    var auxAnots = AnotFiles[numFile][0].slice();
+    var data = $.merge(auxAnots, AnotFiles[numFile][1]);
 
      $("#annotFile"+numFile).append(auxDiv);
 
@@ -295,7 +300,7 @@ function fillGeneratedAnnotationTab(numFile){
     updateAnnotsGrids();
 }
 
-  $("#search-annotation").keyup(function (e) {
+$("#search-annotation").keyup(function (e) {
     Slick.GlobalEditorLock.cancelCurrentEdit();
 
     // clear on Esc

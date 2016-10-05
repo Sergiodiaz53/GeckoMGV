@@ -136,6 +136,8 @@ function getFilesListFromServer(extension){
  */
 function handleFiles(files, type) {
 
+    console.log(files);
+
     if (files.length!=0) {
         $('#loading-indicator').show();
     }
@@ -197,6 +199,7 @@ function loadHandler(event, i) {
  * @param  {[type]} index Number of file
  */
 function processData(csv, index) {
+    console.log("Process index: "+index);
     if (fileType == 'csv') {
         document.getElementById("fileName").innerHTML = fileNames[index];
 
@@ -211,19 +214,22 @@ function processData(csv, index) {
             worker: true,
             delimiter:",",
             complete: function (results) {
-                parseCount--;
-                processEvolutiveEvents(results.data, index);
-                //lines[index] = results.data;
-                reset = true;
-                map = false;
-                generateAnnotationTab(index);
-                if(parseCount==0){
-                    //console.log(lines[index]);
-                    redraw();
-                    //calculateMatrix(lines[0]);
-                    addPrevZoom();
+                if(parseCount >= 1) {
+                    console.log("Reading FILE: " + index);
+                    console.log("ParseCountPRE: " + parseCount);
+                    parseCount--;
+                    console.log("ParseCountPOST: " + parseCount);
+                    processEvolutiveEvents(results.data, index);
+                    reset = true;
+                    map = false;
+                    generateAnnotationTab(index);
+                    if (parseCount == 0) {
+                        redraw();
+                        //calculateMatrix(lines[0]);
+                        addPrevZoom();
+                    }
+                    $('#loading-indicator').hide();
                 }
-                $('#loading-indicator').hide();
             },
             error: function(err,reason){
                 alert(err);
