@@ -41,25 +41,75 @@ function loadFileFromServer($fileName){
             'filename': $fileName // from form
         },
         success: function(content){
-            fileType = 'csv';
-            fileNames[lines.length] = $fileName;
-            multigenome = false;
-            parseCount = 1;
-            processData(content,lines.length);
+            var extension = $fileName.split('.').pop().toLowerCase();
+            switch (extension) {
+                case 'csv':
+                    fileType = 'csv';
+                    fileNames[lines.length] = $fileName;
+                    multigenome = false;
+                    parseCount = 1;
+                    processData(content,lines.length);
+                    break;
+                case 'gbff':
+                    console.log("GBFF FILE LOADING");
+                    processGBFF(content);
+                    break;
+            }
         }
     });
-    return false; //<---- move it here
 }
 
+function processGBFF(content){
+    console.log("PROCESSING");
+    $('#loading-indicator').show();
+    Papa.parse(content, {
+        worker: true,
+        header: true,
+        complete: function (results){
+            var id = $("ul#annotations-tab li.active a").attr('href');
+            id = id.substr(id.length-1);
+            id = parseInt(id);
+            console.log("Anots");
+            console.log(AnotFiles[id][0]);
+            console.log(AnotFiles[id][1]);
+            if(AnotFiles[id][0]==1){
+                console.log('entering X');
+                AnotFiles[id][0] = results.data.slice(0, results.data.length-1);
+            } else if(AnotFiles[id][1]==1) {
+                console.log('entering Y');
+                AnotFiles[id][1] = results.data.slice(0, results.data.length-1);
+            }
+            console.log("DI: "+id);
+            console.log(AnotFiles[id]);
+            fillGeneratedAnnotationTab(id);
+            $('#loading-indicator').hide();
+        }
+    });
+}
+
+
+function loadGBFFfile(genome, numFile){
+    console.log("First Step");
+    if(genome=='x'){
+        AnotFiles[numFile][0] = 1
+    } else {
+        AnotFiles[numFile][1] = 1
+    }
+
+    getFilesListFromServer('gbff');
+}
 /**
  * Load the file list from server side
  * @return {[type]} Array of file names
  */
-function getFilesListFromServer(){
+function getFilesListFromServer(extension){
+
+    var data = { "extension" : extension };
 
     $.ajax({
         type:"GET",
         url:"/getFileList/",
+        data: data,
         success: function(response){
 
                 BootstrapDialog.show({
@@ -85,6 +135,8 @@ function getFilesListFromServer(){
  * @param  {[type]} type  type of files
  */
 function handleFiles(files, type) {
+
+    console.log(files);
 
     if (files.length!=0) {
         $('#loading-indicator').show();
@@ -147,6 +199,7 @@ function loadHandler(event, i) {
  * @param  {[type]} index Number of file
  */
 function processData(csv, index) {
+    console.log("Process index: "+index);
     if (fileType == 'csv') {
         document.getElementById("fileName").innerHTML = fileNames[index];
 
@@ -161,19 +214,22 @@ function processData(csv, index) {
             worker: true,
             delimiter:",",
             complete: function (results) {
-                parseCount--;
-                processEvolutiveEvents(results.data, index);
-                //lines[index] = results.data;
-                reset = true;
-                map = false;
-
-                if(parseCount==0){
-                    //console.log(lines[index]);
-                    redraw();
-                    //calculateMatrix(lines[0]);
-                    addPrevZoom();
+                if(parseCount >= 1) {
+                    console.log("Reading FILE: " + index);
+                    console.log("ParseCountPRE: " + parseCount);
+                    parseCount--;
+                    console.log("ParseCountPOST: " + parseCount);
+                    processEvolutiveEvents(results.data, index);
+                    reset = true;
+                    map = false;
+                    generateAnnotationTab(index);
+                    if (parseCount == 0) {
+                        redraw();
+                        //calculateMatrix(lines[0]);
+                        addPrevZoom();
+                    }
+                    $('#loading-indicator').hide();
                 }
-                $('#loading-indicator').hide();
             },
             error: function(err,reason){
                 alert(err);

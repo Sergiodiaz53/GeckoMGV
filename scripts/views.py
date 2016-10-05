@@ -26,7 +26,7 @@ def executeService(request):
     if request.method == 'POST':
         if request.POST.get('exeName')!= 'clustal':
             service = Script.objects.get(exeName=request.POST.get('exeName'))
-            auxForm= getattr(forms, service.form)
+            auxForm = getattr(forms, service.form)
             form = auxForm(user = request.user, request=request)
             args = []
 

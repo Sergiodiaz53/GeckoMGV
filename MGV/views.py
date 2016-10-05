@@ -55,16 +55,30 @@ def uploadFrags(request):
 
 @csrf_exempt
 def loadFileFromServer(request):
-    file = userFile.objects.get(user = request.user, filename=request.GET.get('filename'))
-    content = openFile(request.user,file)
+    fileObject = userFile.objects.get(user = request.user, filename=request.GET.get('filename'))
+    extension = fileObject.filename.rsplit('.',1)[1]
+    args = [str(fileObject.file.file), 'Anot_'+fileObject.filename]
+
+    if extension == 'gbff' :
+        command = [os.path.join(settings.MEDIA_ROOT, 'scripts/WritePTT_FAAfromGBK')]
+        command.extend(args)
+        print command
+        output = subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0]
+        with open('Anot_'+fileObject.filename+'.ptt', 'r') as content_file:
+            content = content_file.read()
+        os.remove('Anot_'+fileObject.filename+'.ptt')
+    else :
+        content = openFile(request.user,fileObject)
+
     return HttpResponse(content, content_type="text/plain")
 
 
 @csrf_exempt
 def getFileList(request):
+    extension = request.GET.get('extension')
     fileNames = []
     for file in listUserFiles(request):
-        if file.filename[-3:] == 'csv':
+        if file.filename.split('.').pop() == extension:
             fileNames.append(file.filename)
     response = JsonResponse(fileNames, safe=False)
     return HttpResponse(response, content_type="application/json")

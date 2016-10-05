@@ -25,12 +25,11 @@ var lines = [];
 var evolutiveEvents = [];
 var currentLines = [];
 var selectedLines=[];
+var visualizedLines = [];
 
 
 //Annotations paint
-var annotations = [];
-var annotationsX = [];
-var annotationsY = [];
+var annotationsNumFile;
 var annotationsWorking = false;
 
 //Back zoom stuff
@@ -38,7 +37,6 @@ var backZoomList=[];
 var backCanvas =$('<canvas/>',{'class':'canvasLayer img-responsive'}).prop({width: 500,height: 500 });
 var backCtx=backCanvas[0].getContext('2d');
 var currentZoomIndex=-1;
-
 
 var currentArea = {
 	x0 : 0,
@@ -48,6 +46,8 @@ var currentArea = {
 };
 
 var minValue = 1;
+
+var AnotFiles = [];
 
 var canvasMap;
 var RectInMap = {
@@ -66,6 +66,13 @@ var reset = false;
 var selected = false;
 //var shiftSel=false;
 var selectLayer=$("#selectLayer")[0];
+
+//Grids
+var FragsGrid = [];
+var annotsGrid = [];
+
+//Dataviews
+var AnnotDataViews = [];
 
 // Constants
 const headerSize = 12;
@@ -744,13 +751,14 @@ function createInstance() {
         loadingGif.show();
 		console.time("reDraw()");
 
+		FragsGrid = [];
+
 		// Clear previous data in HTML
 		document.getElementById("output").innerHTML = "<div class=\"SearchTitle\" > <div class=\"SearchTitleFilterButton\"> <span>Filter:</span> <input type=\"text\" class=\"SearchFilter\" /> <button class=\"SearchButton\" onclick=\"showResults($(\'.SearchFilter\').val(),true)\" ><span class=\"glyphicon glyphicon-search\"></span></button> </div> </div> <ul class='nav nav-tabs' id='files-tab'></ul>"
 				+ " <div class='tab-content' id='files-tab-content'></div>";
 
-		document.getElementById("annotationsOutput").innerHTML = "<div class=\"SearchTitleFilterButton\"><span>Search:</span> <input type=\"text\" class=\"SearchFilter3\" onkeypress=\"if (event.keyCode == 13) document.getElementById('btnSearch').click()\" /> <button id= \"btnSearch\" class=\"SearchButton\" onclick=\"showResults($('.SearchFilter3').val(),true)\"><span class=\"glyphicon glyphicon-search\"></span></button> </div><ul class='nav nav-tabs' id='annotations-tab'></ul>"
-				+ "<div class='tab-content' id='annotations-tab-content'></div>";
-
+		//document.getElementById("annotationsOutput").innerHTML = "<div class=\"SearchTitleFilterButton\"><span>Search:</span> <input type=\"text\" class=\"SearchFilter3\" onkeypress=\"if (event.keyCode == 13) document.getElementById('btnSearch').click()\" /> <button id= \"btnSearch\" class=\"SearchButton\" onclick=\"showResults($('.SearchFilter3').val(),true)\"><span class=\"glyphicon glyphicon-search\"></span></button> </div><ul class='nav nav-tabs' id='annotations-tab'></ul>"
+		//		+ "<div class='tab-content' id='annotations-tab-content'></div>";
 
 		// Draw Grid
 		drawGrid(board, vertical, "myCanvasGrid");
@@ -763,10 +771,6 @@ function createInstance() {
 			if (currentLines) {
 
 				var mode = document.option.tipo;
-
-				var table = document.createElement("table");
-				table.className = "table table-condensed";
-				table.id = "csvInfoTable" + numFile;
 
 				var annotationTable = document.createElement("table");
 				annotationTable.className = "table table-condensed table-striped";
@@ -797,7 +801,6 @@ function createInstance() {
 				var linesToPaint = [];
 				var filteredLines = [];
 				var CSBLines = [];
-				var annotationsAux = [];
 
 				var currentVerticalCanvas = createVerticalComparisonLayer(numFile);
 				var currentHorizontalCanvas = createHorizontalComparisonLayer(numFile);
@@ -806,19 +809,6 @@ function createInstance() {
 				for (i = fragsStarts; i < currentLines.length; i++) {
 
 					var paint = false;
-
-					
-					//Take headers of each column
-					if (i == fragsStarts) {
-						var row = table.insertRow(-1);
-						for (var j = 0; j < lines[0][14].length; j++) {
-							// if(j<14) {
-							var firstNameCell = row.insertCell(-1);
-							firstNameCell.appendChild(document
-									.createTextNode(lines[0][14][j]));
-							// }
-						}
-					}
 
 					if (currentLines[i][0]=='CSB' || currentLines[i][0] == 'Frag') {
 
@@ -855,7 +845,7 @@ function createInstance() {
 							if (paint == true && !(filtered[numFile]!=null&&filtered[numFile].indexOf(i)>-1)) {
 								// console.time("paint()");
 								linesToPaint.push(i);
-								add2Table(i,table);
+								//add2Table(i,table);
 								// console.timeEnd("paint()");
 							} else {
 								filteredLines.push(i);
@@ -863,7 +853,7 @@ function createInstance() {
 						}
 
 						if (currentLines[i].length==22) {
-								paint = filter(currentLines[i]);
+							paint = filter(currentLines[i]);
 
 							if (paint == true) {
 								if ((parseInt(currentLines[i][1]) >= (currentArea.x0
@@ -880,31 +870,6 @@ function createInstance() {
 								}
 
 							}
-
-							if (paint == true) {
-									annotationsAux.push(currentLines[i]);
-									add2Table(i, table);
-									var row = annotationTable.insertRow(-1);
-									for (var j = 0; j < currentLines[i].length; j++) {
-										if (currentLines[i].length > 10) {
-											if ((j <= 4)
-													|| ((j > 5) && (j < 7))
-													|| (j >= 14)) {
-												var firstNameCell = row
-														.insertCell(-1);
-												firstNameCell
-														.appendChild(document
-																.createTextNode(currentLines[i][j]));
-											}
-										} else {
-											var firstNameCell = row
-													.insertCell(-1);
-											firstNameCell
-													.appendChild(document
-															.createTextNode(currentLines[i][j]));
-										}
-									}
-								}
 						}
 					}
 				}
@@ -918,14 +883,17 @@ function createInstance() {
 				if(CSBLines.length>0) {
 					drawHorizontalLinesInHorizontalLayer(CSBLines, currentHorizontalCanvas, numFile, rgba(R[numFile], G[numFile], B[numFile], 1));
 				} else {
-					drawHorizontalLinesInHorizontalLayer(linesToPaint, currentHorizontalCanvas, numFile, rgba(R[numFile], G[numFile], B[numFile], 1));
+					//drawHorizontalLinesInHorizontalLayer(linesToPaint, currentHorizontalCanvas, numFile, rgba(R[numFile], G[numFile], B[numFile], 1));
 				}
-				drawHorizontalLinesInHorizontalLayer(filteredLines, currentHorizontalCanvas, numFile, rgba(189, 195, 199, 0.5));
+				//drawHorizontalLinesInHorizontalLayer(filteredLines, currentHorizontalCanvas, numFile, rgba(189, 195, 199, 0.5));
 
-				annotations[numFile] = annotationsAux;
+				console.log("cucu1")
+				visualizedLines[numFile] = linesToPaint;
+				generateFragTable(currentLines, numFile, linesToPaint,false);
+				console.log("cucu2")
 
 				//Draw Annotations
-				if(annotationsWorking) {
+				if(annotationsWorking && numFile == annotationsNumFile) {
 					d3.select("#annotationXLayer").remove();
 					d3.select("#annotationYLayer").remove();
 					annotationsWorking = false;
@@ -935,42 +903,7 @@ function createInstance() {
 				//Draw Selected frags
 				drawSelectedFrags();
 
-				$("#files-tab").append(
-						"<li><a href='#file" + numFile + "' data-toggle='tab'>File "
-								+ numFile + "</a></li>");
-				$("#annotations-tab")
-						.append(
-								"<li><a href='#fileAnnotation" + numFile
-										+ "' data-toggle='tab'>File " + numFile
-										+ "</a></li>");
-
-				var auxDiv = document.createElement("div");
-				var auxAnnotationsDiv = document.createElement("div");
-
-				if (numFile == 0) {
-					auxDiv.className = "tab-pane active";
-					auxDiv.id = "file" + numFile;
-					auxAnnotationsDiv.className = "tab-pane active";
-					auxAnnotationsDiv.id = "fileAnnotation" + numFile;
-				} else {
-					auxDiv.className = "tab-pane";
-					auxDiv.id = "file" + numFile;
-					auxAnnotationsDiv.className = "tab-pane";
-					auxAnnotationsDiv.id = "fileAnnotation" + numFile;
-				}
-
-				auxDiv.appendChild(fileInfo[numFile]);
-				auxDiv.appendChild(table);
-				$("#files-tab-content").append(auxDiv);
-
-				auxAnnotationsDiv.appendChild(fileInfo[numFile]);
-				auxAnnotationsDiv.appendChild(annotationTable);
-				$("#annotations-tab-content").append(auxAnnotationsDiv);
-
 			}
-
-			// Hide filtered rows in the table (CSV&Frag Info button)
-			$('.hiddenRow').hide();
 
 			RectInMap.x = Math.min(currentArea.x0, currentArea.x1) * 2 / 5;
 			RectInMap.y = (canvas.width - Math.max(currentArea.y0, currentArea.y1)) * 2 / 5;
@@ -980,8 +913,6 @@ function createInstance() {
 			if(RectInMap.tamx < 5 || RectInMap.tamy < 5) {
 				RectInMap.tamx = 5; RectInMap.tamy = 5;
 			}
-
-			//console.log("Map: "+RectInMap.x+", "+RectInMap.y+", "+RectInMap.tamx+", "+RectInMap.tamy);
 
 			redrawMap();
 
@@ -995,11 +926,11 @@ function createInstance() {
 		for(var index=0;index<searchList.length;index++)
 			document.getElementById(searchList[index]).checked=false;
 		searchList=[];
-		prevFragsTable=document.getElementById("files-tab-content").cloneNode(true);
-        prevAnnotTable=document.getElementById("annotations-tab-content").cloneNode(true);
+		//prevFragsTable=document.getElementById("files-tab-content").cloneNode(true);
+        //prevAnnotTable=document.getElementById("annotations-tab-content").cloneNode(true);
 		console.timeEnd("reDraw()");
         loadingGif.hide();
-        drawSelectedFrags()
+        drawSelectedFrags();
 		$("#nextZoom").prop( "disabled", true);
 		$("#prevZoom").prop( "disabled", true);
 	};
@@ -1451,7 +1382,6 @@ function resetDraw() {
 	}
 }
 
-//Draw the lines to the lines to the annotation point
 /**
  * Draw annotations in canvas
  * @param  {String} seq   Sequence
@@ -1525,14 +1455,13 @@ function annotationDrawLines(seq,start,end,point){
     ctx.stroke();
 }
 
-
 /**
  * Show selected frags in 'CSV & Frag info' table
  */
 function showSelected(){
     if(!showingSelected){
 		$("#selButton").html("Selected");
-        currTable=document.getElementById("files-tab-content").cloneNode(true);
+        //currTable=document.getElementById("files-tab-content").cloneNode(true);
         document.getElementById("annotationsOutput").innerHTML = "<ul class='nav nav-tabs' id='annotations-tab'></ul>"
 				+ "<div class='tab-content' id='annotations-tab-content'></div>";
         for (var x = 0; x < lines.length; x++) {
@@ -1557,9 +1486,9 @@ function showSelected(){
         }
         showingSelected=true;
     }else{
-		$("#selButton").html("All")
+		$("#selButton").html("All");
         showingSelected=false;
-        document.getElementById("files-tab-content").parentNode.replaceChild(currTable.cloneNode(true),document.getElementById("files-tab-content"));
+        //document.getElementById("files-tab-content").parentNode.replaceChild(currTable.cloneNode(true),document.getElementById("files-tab-content"));
     }
 }
 
@@ -2006,106 +1935,122 @@ function activateBoard() {
 
 function paintCodingRegions(numFile) {
 
-	if(annotationsWorking == false) {
+	if(annotationsWorking == false && AnotFiles[numFile]) {
+
+		annotationsNumFile = numFile;
 		annotationsWorking = true;
 
+		var svg = d3.select("#canvasContainer").append("svg")
+					.attr("class", "annotationXLayer")
+					.attr("id","annotationXLayer")
+					.attr("width", 500)
+					.attr("height", 520)
+					.append("g");
 
-	createAnnotations(numFile);
-
-	var svg = d3.select("#canvasContainer").append("svg")
-				.attr("class", "annotationXLayer")
-				.attr("id","annotationXLayer")
-				.attr("width", 500)
-				.attr("height", 520)
-			  	.append("g");
-
-	var svgY = d3.select("#canvasContainer").append("svg")
-				.attr("class", "annotationYLayer")
-				.attr("id","annotationYLayer")
-				.attr("width", 520)
-				.attr("height", 500)
-			  	.append("g");
+		var svgY = d3.select("#canvasContainer").append("svg")
+					.attr("class", "annotationYLayer")
+					.attr("id","annotationYLayer")
+					.attr("width", 520)
+					.attr("height", 500)
+					.append("g");
 
 
-	var svgAux = d3.select("#annotationXLayer");
-	var svgAuxY = d3.select("#annotationYLayer");
+		var svgAux = d3.select("#annotationXLayer");
+		var svgAuxY = d3.select("#annotationYLayer");
 
-	var w = parseInt(svgAux.attr("width"));
-	var h = parseInt(svgAux.style("height"));
+		var w = parseInt(svgAux.attr("width"));
+		var h = parseInt(svgAux.style("height"));
 
-	var correctPositionXmin = ((currentArea.x0) * parseInt(fileHeader[numFile].seqXLength)) / w;
-	var correctPositionXmax = ((currentArea.x1) * parseInt(fileHeader[numFile].seqXLength)) / w;
-    var x = d3.scale.linear().domain([correctPositionXmin,correctPositionXmax]).range([0, w]);
+		if(AnotFiles[numFile][0]) {
+			console.log(AnotFiles[numFile][0]);
 
+			var correctPositionXmin = ((currentArea.x0) * parseInt(fileHeader[numFile].seqXLength)) / w;
+			var correctPositionXmax = ((currentArea.x1) * parseInt(fileHeader[numFile].seqXLength)) / w;
+			var x = d3.scale.linear().domain([correctPositionXmin,correctPositionXmax]).range([0, w]);
 
-	svg.selectAll("line")
-            .data(annotationsX).enter()
-            .append("line")          // attach a line
-            .style("stroke", "#ec971f")  // colour the line
-            .attr("x1", function(d) { return x(d.xStart);})     // x position of the first end of the line
-            .attr("y1", h-10)    // y position of the first end of the line
-            .attr("x2", function(d) { return x(d.xEnd);})     // x position of the second end of the line
-            .attr("y2", h-10)
-			.on("mouseover", function(){
-			d3.select(this)
-				.style("stroke-width", 5)
-				.style("stroke", "red");
-			})
-        	.on("mouseout", function(){
-            d3.select(this)
-                .style("stroke-width", 1)
-                .style("stroke", "#ec971f")
-        	});
+			svg.selectAll("line")
+					.data(AnotFiles[numFile][0]).enter()
+					.append("line")          // attach a line
+					.style("stroke", rgba(R[numFile], G[numFile], B[numFile], 1))  // colour the line
+					.attr("x1", function (d) {
+						return x(d.Start);
+					})     // x position of the first end of the line
+					.attr("y1", h - 10)    // y position of the first end of the line
+					.attr("x2", function (d) {
+						return x(d.Stop);
+					})     // x position of the second end of the line
+					.attr("y2", h - 10)
+					.on("mouseover", function () {
+						d3.select(this)
+								.style("stroke-width", 5)
+								.style("stroke", "red");
+					})
+					.on("mouseout", function () {
+						d3.select(this)
+								.style("stroke-width", 1)
+								.style("stroke", "#ec971f")
+					});
 
-	    $('svg line').tipsy({
-        gravity: 'w',
-        html: true,
-        title: function() {
-            var d = this.__data__;
-            return d.Name;
-        }
-      });
+			$('svg line').tipsy({
+				gravity: 'w',
+				html: true,
+				title: function () {
+					var d = this.__data__;
+					return d.Synonym;
+				}
+			});
+		}
 
-	var hY = parseInt(svgAuxY.attr("height"));
-	var correctPositionYmin =  ((currentArea.y0) * parseInt(fileHeader[numFile].seqYLength)) / hY;
-	var correctPositionYmax =  ((currentArea.y1) * parseInt(fileHeader[numFile].seqYLength)) / hY;
-	var yY = d3.scale.linear().domain([correctPositionYmin,correctPositionYmax]).range([0, hY]);
+		if(AnotFiles[numFile][1]) {
+			console.log( AnotFiles[numFile][1]);
 
-	svgY.selectAll("line")
-            .data(annotationsY).enter()
-            .append("line")          // attach a line
-            .style("stroke", "#ec971f")  // colour the line
-            .attr("x1", 5)     // x position of the first end of the line
-            .attr("y1", function(d) { return yY(d.yStart);})    // y position of the first end of the line
-            .attr("x2", 5)     // x position of the second end of the line
-            .attr("y2", function(d) { return yY(d.yEnd);})
-			.on("mouseover", function(){
-			d3.select(this)
-				.style("stroke-width", 5)
-				.style("stroke", "red");
-			})
-        	.on("mouseout", function(){
-            d3.select(this)
-                .style("stroke-width", 1)
-                .style("stroke", "#ec971f")
-        	});
+			var hY = parseInt(svgAuxY.attr("height"));
+			var correctPositionYmin = ((currentArea.y0) * parseInt(fileHeader[numFile].seqYLength)) / hY;
+			var correctPositionYmax = ((currentArea.y1) * parseInt(fileHeader[numFile].seqYLength)) / hY;
+			var yY = d3.scale.linear().domain([correctPositionYmin, correctPositionYmax]).range([0, hY]);
 
-	    $('svg line').tipsy({
-        gravity: 'w',
-        html: true,
-        title: function() {
-            var d = this.__data__;
-            return d.Name;
-        }
-      });
+			svgY.selectAll("line")
+					.data(AnotFiles[numFile][1]).enter()
+					.append("line")          // attach a line
+					.style("stroke", rgba(R[numFile], G[numFile], B[numFile], 1))  // colour the line
+					.attr("x1", 5)     // x position of the first end of the line
+					.attr("y1", function (d) {
+						return yY(d.Start);
+					})    // y position of the first end of the line
+					.attr("x2", 5)     // x position of the second end of the line
+					.attr("y2", function (d) {
+						return yY(d.Stop);
+					})
+					.on("mouseover", function () {
+						d3.select(this)
+								.style("stroke-width", 5)
+								.style("stroke", "red");
+					})
+					.on("mouseout", function () {
+						d3.select(this)
+								.style("stroke-width", 1)
+								.style("stroke", "#ec971f")
+					});
+
+			$('svg line').tipsy({
+				gravity: 'w',
+				html: true,
+				title: function () {
+					var d = this.__data__;
+					return d.Synonym;
+				}
+			});
+		}
 	} else {
 		annotationsWorking = false;
 		d3.select("#annotationXLayer").remove();
 		d3.select("#annotationYLayer").remove();
+		paintCodingRegions(numFile);
 	}
 
 }
 
+// Deprecated
 function createAnnotations(numFile){
 	var fragment = 0;
 

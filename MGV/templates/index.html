@@ -9,7 +9,7 @@
                 </div>
                     <div  class="col-md-6" id="toolmenu">
                         <div class="row row-centered top-buffer">
-                            <button type="button" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Load frags from server" onclick ="getFilesListFromServer()"><span class="glyphicon glyphicon-floppy-save"></span></button>
+                            <button type="button" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Load frags from server" onclick ="getFilesListFromServer('csv')"><span class="glyphicon glyphicon-floppy-save"></span></button>
                             <button type="button" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" id="prevZoom" title="Go back" onclick ="goToPrevZoom()" disabled><span class="glyphicon glyphicon-chevron-left"></span></button>
                             <button type="button" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" id="nextZoom" title="Go forward" onclick ="goToNextZoom()" disabled><span class="glyphicon glyphicon-chevron-right"></span></button>
                             <span class="btn btn-primary btn-file glyphicon glyphicon-floppy-disk" data-toggle="tooltip" data-placement="bottom" title="Load frags from local" ><input type="file" multiple="true" onchange="handleFiles(this.files,'csv')" accept=".csv"></span>
@@ -55,6 +55,7 @@
 				<div class="row row-centered">
                     <!-- ---------- CANVAS Vertical -------------------- -->
                     <div id="mainCanvas" class="canvasBlock my-container2">
+                        <img src="{% static "css/images/loading.gif" %}" id="loading-indicator" style="display:none" />
                         <div id="canvasContainer">
                             <div id="fileName">
                                 Upload a fragments file
@@ -65,7 +66,6 @@
                             </div>
 
                             <canvas id="myCanvasGrid" class="img-responsive" width="600" height="550"></canvas>
-                            <img src="{% static "css/images/loading.gif" %}" id="loading-indicator" style="display:none" />
                             <canvas id="myCanvas" class="img-responsive"  width="500" height="500"></canvas>
                             <canvas id="myCanvasLayer1" class="img-responsive canvasLayer"  width="500" height="500"></canvas>
                             <canvas id="myCanvasLayer2" class="img-responsive canvasLayer"  width="500" height="500"></canvas>
@@ -255,12 +255,13 @@
 	</div>
 
     <!--Dialog for CSB & Frag Info -->
-    <div id="output" class="ui-helper-hidden"><div class="SearchTitle" >
-        <div class="SearchTitleFilterButton">
-<span>Filter:</span>
-<input type="text" class="SearchFilter" />
-<button class="SearchButton" ><span class="glyphicon glyphicon-search"></span></button>
-</div>
+    <div id="output" class="ui-helper-hidden">
+        <div class="SearchTitle" >
+            <div class="SearchTitleFilterButton">
+                <span>Filter:</span>
+                <input type="text" class="SearchFilter" />
+                <button class="SearchButton" ><span class="glyphicon glyphicon-search"></span></button>
+            </div>
         </div>
     </div>
 
@@ -268,9 +269,11 @@
     <div id="annotationsOutput" class="ui-helper-hidden">
         <div class="SearchTitleFilterButton">
             <span>Search:</span>
-            <input type="text" class="SearchFilter3" onkeypress="if (event.keyCode == 13) document.getElementById('btnSearch').click()" />
+            <input type="text" id="search-annotation" class="SearchFilter3" onkeypress="if (event.keyCode == 13) document.getElementById('btnSearch').click()" />
             <button id= "btnSearch" class="SearchButton" onclick="showResults($('.SearchFilter3').val(),false)"><span class="glyphicon glyphicon-search"></span></button>
         </div>
+        <ul class='nav nav-tabs' id='annotations-tab'></ul>
+        <div class='tab-content' id='annotations-tab-content'></div>
     </div>
 
     <!-- Popover to show CSB Info in Canvas -->

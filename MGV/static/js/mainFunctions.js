@@ -245,30 +245,36 @@ function dialogFrags() {
         var $dialogContainer = $('#output');
         var $detachedChildren = $dialogContainer.children().detach();
         $('#output').dialog({
-            height: 400,
-            widht: 800,
+            height:500,
+            minHeight:500,
+            width: 500,
+            minWidth: 500,
             title: 'CSB & Frag',
+            resize: function() {
+                FragsGrid.forEach(function(grid) {
+                    grid.resizeCanvas();
+                });
+            },
             buttons: [
                 {
                     text: "Selected",
                     id: "selButton",
                     click: function () {
-                        showSelected()
+                        showSelectedFragsInGrid();
                     },
                     "class": "ui-button-primary"
                 },
                 {
                     text: "Upload",
                     click: function () {
-                        uploadCSV();
+                        uploadActualState();
                     },
                     "class": "ui-button-primary"
                 },
                 {
                     text: "Save",
                     click: function () {
-                        saveCSV()
-                        //redraw();
+                       saveActualState();
                     },
                     "class": "ui-button-primary"
                 },
@@ -282,6 +288,7 @@ function dialogFrags() {
             ],
             open: function () {
                 $detachedChildren.appendTo($dialogContainer);
+                updateFragsGrids()
             }
         });
     }else
@@ -293,13 +300,30 @@ function dialogAnnotations(){
         var $dialogContainer = $('#annotationsOutput');
         var $detachedChildren = $dialogContainer.children().detach();
         $('#annotationsOutput').dialog({
-            height:400,
-            widht: 800,
+            height:500,
+            minHeight:500,
+            width: 500,
+            minWidth: 500,
             title: 'Annotations',
+            resize: function() {
+                annotsGrid.forEach(function(grid) {
+                    grid.resizeCanvas();
+                });
+            },
+            buttons: [
+                {
+                    text: "Close",
+                    click: function () {
+                        $(this).dialog("close");
+                    }
+                }
+            ],
             open: function () {
                 $detachedChildren.appendTo($dialogContainer);
+                updateAnnotsGrids();
             }
         });
+
     }else
         $('#annotationsOutput').dialog("close");
 }
@@ -428,7 +452,10 @@ function createFile(){
     $.ajax({
             url:'/filemanager/createFile',
             type: "POST",
-            data: {filename: $("#name").val()+'.'+$("#format").val(),content:$("#content").val()},
+            data: {
+                filename: $("#name").val()+'.'+$("#format").val(),
+                content:$("#content").val()
+            }
         });
 }
 
@@ -461,7 +488,7 @@ function openCreationPad(){
 }
 
 function loadServiceForm(serviceExe, serviceName){
-        BootstrapDialog.closeAll()
+        BootstrapDialog.closeAll();
         $.ajax({
         type: 'POST',
         url: '/scripts/getServiceForm/',

@@ -176,6 +176,13 @@ body {
     margin-left:-2%;
 }
 
+#output,
+#output *,
+.slick-header-column {
+    box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    -webkit-box-sizing: content-box;
+}
 
 .canvasLayer{
     width: 80%;
@@ -287,9 +294,9 @@ body {
 }
 
 #loading-indicator {
-  position: relative;
-  left: 50%;
-  top: 50%;
+    position: absolute;
+    left: 48%;
+    top: 27%;
     z-index: 100;
 }
 
@@ -355,6 +362,21 @@ body {
     margin-bottom:1%;
 }
 
+.GBFButtons {
+    padding-top: -5%;
+    margin-bottom: 5%;
+}
+
+#annotationsOutput {
+    text-align: center;
+
+}
+
+#annotations-tab-content {
+    width: 100%;
+    height: 100%;
+}
+
 /* ----- Progress bar CSS ----- */
 
 #progress_bar {
@@ -375,6 +397,11 @@ body {
     background-color: #99ccff;
     height: auto;
     width: 0;
+}
+
+#files-tab-content {
+    width: 100%;
+    height: 100%;
 }
 
 #fileName {
