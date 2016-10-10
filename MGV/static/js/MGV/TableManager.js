@@ -216,7 +216,7 @@ function generateAnnotationTab(numFile, activate){
 
     var GBFloadButtons = $('<div class="btn-group GBFButtons" role="group">' +
                             '<button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Load GBF File for Genome X" onclick ="loadGBFFfile('+"'x',"+numFile+');"><span class="glyphicon glyphicon-floppy-save"></span> GBF X</button>' +
-                            '<button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Load GBF File for Genome X" onclick ="loadGBFFfile('+"'y',"+numFile+');"><span class="glyphicon glyphicon-floppy-save"></span> GBF Y<button>' +
+                            '<button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Load GBF File for Genome X" onclick ="loadGBFFfile('+"'y',"+numFile+');"><span class="glyphicon glyphicon-floppy-save"></span> GBF Y</button>' +
                             '</div>');
 
     AnotFiles[numFile] = [];
@@ -234,7 +234,7 @@ function fillGeneratedAnnotationTab(numFile){
 
     var GBFloadButtons = $('<div class="btn-group GBFButtons" role="group">' +
                             '<button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Load GBF File for Genome X" onclick ="loadGBFFfile('+"'x',"+numFile+');"><span class="glyphicon glyphicon-floppy-save"></span> GBF X</button>' +
-                            '<button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Load GBF File for Genome X" onclick ="loadGBFFfile('+"'y',"+numFile+');"><span class="glyphicon glyphicon-floppy-save"></span> GBF Y<button>' +
+                            '<button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Load GBF File for Genome X" onclick ="loadGBFFfile('+"'y',"+numFile+');"><span class="glyphicon glyphicon-floppy-save"></span> GBF Y</button>' +
                             '</div>');
 
     annotsGrid[numFile] = "";
@@ -300,20 +300,6 @@ function fillGeneratedAnnotationTab(numFile){
     updateAnnotsGrids();
 }
 
-$("#search-annotation").keyup(function (e) {
-    Slick.GlobalEditorLock.cancelCurrentEdit();
-
-    // clear on Esc
-    if (e.which == 27) {
-      this.value = "";
-    }
-
-    searchString = this.value;
-    updateFilter();
-
-    });
-
-
 function updateFilter() {
     AnnotDataViews.forEach(function (dataView) {
 
@@ -333,3 +319,16 @@ function myFilter(item, args) {
 
   return true;
 }
+
+$("#search-annotation").keyup(function (e) {
+    Slick.GlobalEditorLock.cancelCurrentEdit();
+
+    // clear on Esc
+    if (e.which == 27) {
+      this.value = "";
+    }
+
+    searchString = this.value;
+    updateFilter();
+
+    });

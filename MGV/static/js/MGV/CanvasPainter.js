@@ -5,32 +5,22 @@
  */
 
 //Global Variables
-var canvas;
-var canvasOffset;
-var offsetX;
-var offsetY;
-var redraw;
-var board = false;
-var zoomBoard = false;
-var vertical = true;
-var map = false;
-var dragInMap = false;
+var canvas, redraw;
+var offsetX, offsetY, canvasOffset;
+var board = false, zoomBoard = false, vertical = true;
+var map = false, dragInMap = false, canvasMap;
 var showingSelected=false;
 var mouseInRect = {
 	x : 0,
 	y : 0
 };
-var filtered=[];
-var lines = [];
-var evolutiveEvents = [];
-var currentLines = [];
-var selectedLines=[];
-var visualizedLines = [];
 
+var filtered=[], lines = [], evolutiveEvents = [];
+var currentLines = [], selectedLines=[];
 
 //Annotations paint
-var annotationsNumFile;
-var annotationsWorking = false;
+var annotationsNumFile, annotationsWorking = false;
+var AnotFiles = [], AnnotDataViews = [];
 
 //Back zoom stuff
 var backZoomList=[];
@@ -45,11 +35,7 @@ var currentArea = {
 	y1 : 0
 };
 
-var minValue = 1;
 
-var AnotFiles = [];
-
-var canvasMap;
 var RectInMap = {
 	x : 0,
 	y : 0,
@@ -57,22 +43,14 @@ var RectInMap = {
 	tamy : 0
 };
 
-var xtotal;
-var ytotal;
-var scaleX = 1;
-var scaleY = 1;
-var zoomed = false;
-var reset = false;
-var selected = false;
-//var shiftSel=false;
+var xTotal, yTotal;
+var scaleX = 1, scaleY = 1;
+var zoomed = false, reset = false, selected = false;
 var selectLayer=$("#selectLayer")[0];
 
 //Grids
 var FragsGrid = [];
 var annotsGrid = [];
-
-//Dataviews
-var AnnotDataViews = [];
 
 // Constants
 const headerSize = 12;
@@ -84,7 +62,7 @@ var R = [ 44, 192, 41, 230, 39, 241, 142, 22 ];
 var G = [ 62, 57, 128, 126, 174, 196, 68, 160 ];
 var B = [ 80, 43, 185, 34, 96, 15, 173, 133 ];
 
-// My Functions
+// Initial Functions
 window.onload = function() {
 	createInstance();
 };
@@ -106,7 +84,7 @@ function addPrevZoom(){
     }
 	var img=backCtx.getImageData(0,0,canvas.width,canvas.height);
 	backZoomList[++currentZoomIndex]=[$.extend(true, {},currentArea),img,$.extend(true, {},RectInMap),horizontalLayers];
-	console.log("modifying index: "+currentZoomIndex)
+	console.log("modifying index: "+currentZoomIndex);
 	backZoomList.length=currentZoomIndex+1;
 	if(currentZoomIndex>0)
 		$("#prevZoom").prop( "disabled",false);
@@ -115,22 +93,27 @@ function addPrevZoom(){
 //Go to the previous zoom
 function goToPrevZoom(){
 	if(currentZoomIndex>0) {
+
 		for (var i = 0; i < lines.length; i++) {
 			clearCanvas("layer" + i);
 		}
+
 		var l0Ctx = $("#layer0")[0].getContext('2d');
 		var last = backZoomList[--currentZoomIndex];
 		currentArea = $.extend(true, {},last[0]);
         RectInMap=$.extend(true, {},last[2]);
         redrawMap();
-        for(var i=0;i<last[3].length;i++){
-            clearCanvas(createHorizontalComparisonLayer(i).id);
-            createHorizontalComparisonLayer(i).getContext('2d').putImageData(last[3][i],0,0);
+
+        for(var j=0;j<last[3].length;j++){
+            clearCanvas(createHorizontalComparisonLayer(j).id);
+            createHorizontalComparisonLayer(j).getContext('2d').putImageData(last[3][j],0,0);
         }
+
 		scaleX = (currentArea.x1 - currentArea.x0) / canvas.width;
 		scaleY = (currentArea.y1 - currentArea.y0) / canvas.height;
 		l0Ctx.putImageData(last[1], 0, 0);
 		drawSelectedFrags();
+
 		if($("#nextZoom").prop( "disabled"))
 			$("#nextZoom").prop( "disabled",false);
 		if(currentZoomIndex<=0)
@@ -306,13 +289,13 @@ function drawLinesInLayer(linesToPaint, canvasLayer, numFile, color){
 	for (var x in linesToPaint){
 		line = linesToPaint[x];
 
-		var xIni = ((canvasLayer.width * (parseInt(lines[numFile][line][1]) / xtotal) - currentArea.x0) / (currentArea.x1 - currentArea.x0))
+		var xIni = ((canvasLayer.width * (parseInt(lines[numFile][line][1]) / xTotal) - currentArea.x0) / (currentArea.x1 - currentArea.x0))
 				* canvasLayer.width;
-		var yIni = ((canvasLayer.height * (parseInt(lines[numFile][line][2]) / ytotal) - currentArea.y0) / (currentArea.y1 - currentArea.y0))
+		var yIni = ((canvasLayer.height * (parseInt(lines[numFile][line][2]) / yTotal) - currentArea.y0) / (currentArea.y1 - currentArea.y0))
 				* canvasLayer.height;
-		var xFin = ((canvasLayer.width * (parseInt(lines[numFile][line][3]) / xtotal) - currentArea.x0) / (currentArea.x1 - currentArea.x0))
+		var xFin = ((canvasLayer.width * (parseInt(lines[numFile][line][3]) / xTotal) - currentArea.x0) / (currentArea.x1 - currentArea.x0))
 				* canvasLayer.width;
-		var yFin = ((canvasLayer.height * (parseInt(lines[numFile][line][4]) / ytotal) - currentArea.y0) / (currentArea.y1 - currentArea.y0))
+		var yFin = ((canvasLayer.height * (parseInt(lines[numFile][line][4]) / yTotal) - currentArea.y0) / (currentArea.y1 - currentArea.y0))
 				* canvasLayer.height;
 
 
@@ -349,13 +332,13 @@ function drawArrayFragsInLayer(arrayLinesToPaint, canvasLayer, numFile, color){
 	for (var x in arrayLinesToPaint){
 		line = arrayLinesToPaint[x];
 
-		var xIni = ((canvasLayer.width * (parseInt(line[1]) / xtotal) - currentArea.x0) / (currentArea.x1 - currentArea.x0))
+		var xIni = ((canvasLayer.width * (parseInt(line[1]) / xTotal) - currentArea.x0) / (currentArea.x1 - currentArea.x0))
 				* canvasLayer.width;
-		var yIni = ((canvasLayer.height * (parseInt(line[2]) / ytotal) - currentArea.y0) / (currentArea.y1 - currentArea.y0))
+		var yIni = ((canvasLayer.height * (parseInt(line[2]) / yTotal) - currentArea.y0) / (currentArea.y1 - currentArea.y0))
 				* canvasLayer.height;
-		var xFin = ((canvasLayer.width * (parseInt(line[3]) / xtotal) - currentArea.x0) / (currentArea.x1 - currentArea.x0))
+		var xFin = ((canvasLayer.width * (parseInt(line[3]) / xTotal) - currentArea.x0) / (currentArea.x1 - currentArea.x0))
 				* canvasLayer.width;
-		var yFin = ((canvasLayer.height * (parseInt(line[4]) / ytotal) - currentArea.y0) / (currentArea.y1 - currentArea.y0))
+		var yFin = ((canvasLayer.height * (parseInt(line[4]) / yTotal) - currentArea.y0) / (currentArea.y1 - currentArea.y0))
 				* canvasLayer.height;
 
 
@@ -378,7 +361,7 @@ function drawArrayFragsInLayer(arrayLinesToPaint, canvasLayer, numFile, color){
 	currentCtx.stroke();
 }
 
-
+/* Deprecated */
 function loadHorizontalView(){
 
     //change the main canvas to horizontal
@@ -397,7 +380,7 @@ function loadHorizontalView(){
     ctx.moveTo(0, canvas.height - padding / 2);
     ctx.lineTo(canvas.width, canvas.height - padding / 2);
     ctx.lineWidth = 4;
-    ctx.strokeStyle = "rgb(0,0,0)";
+    ctx.strokeStyle = rgb(0,0,0);
     ctx.fill();
     ctx.stroke();
     /*
@@ -554,13 +537,13 @@ function drawVerticalLinesInVerticalLayer(linesToPaint, canvasLayer, numFile, co
 	for (var x in linesToPaint){
 		var line = linesToPaint[x];
 
-		var xIni = ((canvasLayer.width * (parseInt(lines[numFile][line][1]) / xtotal) - currentArea.x0) / (currentArea.x1 - currentArea.x0))
+		var xIni = ((canvasLayer.width * (parseInt(lines[numFile][line][1]) / xTotal) - currentArea.x0) / (currentArea.x1 - currentArea.x0))
 				* canvasLayer.width;
-		var yIni = ((canvasLayer.height * (parseInt(lines[numFile][line][2]) / ytotal) - currentArea.y0) / (currentArea.y1 - currentArea.y0))
+		var yIni = ((canvasLayer.height * (parseInt(lines[numFile][line][2]) / yTotal) - currentArea.y0) / (currentArea.y1 - currentArea.y0))
 				* canvasLayer.height;
-		var xFin = ((canvasLayer.width * (parseInt(lines[numFile][line][3]) / xtotal) - currentArea.x0) / (currentArea.x1 - currentArea.x0))
+		var xFin = ((canvasLayer.width * (parseInt(lines[numFile][line][3]) / xTotal) - currentArea.x0) / (currentArea.x1 - currentArea.x0))
 				* canvasLayer.width;
-		var yFin = ((canvasLayer.height * (parseInt(lines[numFile][line][4]) / ytotal) - currentArea.y0) / (currentArea.y1 - currentArea.y0))
+		var yFin = ((canvasLayer.height * (parseInt(lines[numFile][line][4]) / yTotal) - currentArea.y0) / (currentArea.y1 - currentArea.y0))
 				* canvasLayer.height;
 	/*
 		if((xFin-xIni < 0.1)&&(xFin-xIni>0)){
@@ -574,7 +557,7 @@ function drawVerticalLinesInVerticalLayer(linesToPaint, canvasLayer, numFile, co
 
 		//console.log((lines[numFile][line][1])+" = "+xIni+"; "+(lines[numFile][line][2])+" = "+yIni+(lines[numFile][line][3])+" = "+xFin+"; "+(lines[numFile][line][4])+" = "+yFin);
 
-		var distance = calculateDistanceBetweenTwoPoints(xIni,yIni,xFin,yFin)
+		var distance = calculateDistanceBetweenTwoPoints(xIni,yIni,xFin,yFin);
 		//console.log("Distance: "+distance);
 		if(distance<=1){
 			count++;
@@ -598,7 +581,6 @@ function drawVerticalLinesInVerticalLayer(linesToPaint, canvasLayer, numFile, co
 
 	console.timeEnd("DrawComienzo")
 }
-
 
 /**
  * Return the distance between two given points
@@ -629,10 +611,10 @@ function drawHorizontalLinesInHorizontalLayer(linesToPaint, canvasLayer, numFile
 
 		var line = linesToPaint[x];
 
-		var xIni = (canvasLayer.width * parseInt(lines[numFile][line][1]) / xtotal);
-		var yIni = (canvasLayer.width * parseInt(lines[numFile][line][2]) / ytotal);
-		var xFin = (canvasLayer.width * parseInt(lines[numFile][line][3]) / xtotal);
-		var yFin = (canvasLayer.width * parseInt(lines[numFile][line][4]) / ytotal);
+		var xIni = (canvasLayer.width * parseInt(lines[numFile][line][1]) / xTotal);
+		var yIni = (canvasLayer.width * parseInt(lines[numFile][line][2]) / yTotal);
+		var xFin = (canvasLayer.width * parseInt(lines[numFile][line][3]) / xTotal);
+		var yFin = (canvasLayer.width * parseInt(lines[numFile][line][4]) / yTotal);
 
 		drawLine(xIni,xFin,yIni,yFin);
 	}
@@ -757,9 +739,6 @@ function createInstance() {
 		document.getElementById("output").innerHTML = "<div class=\"SearchTitle\" > <div class=\"SearchTitleFilterButton\"> <span>Filter:</span> <input type=\"text\" class=\"SearchFilter\" /> <button class=\"SearchButton\" onclick=\"showResults($(\'.SearchFilter\').val(),true)\" ><span class=\"glyphicon glyphicon-search\"></span></button> </div> </div> <ul class='nav nav-tabs' id='files-tab'></ul>"
 				+ " <div class='tab-content' id='files-tab-content'></div>";
 
-		//document.getElementById("annotationsOutput").innerHTML = "<div class=\"SearchTitleFilterButton\"><span>Search:</span> <input type=\"text\" class=\"SearchFilter3\" onkeypress=\"if (event.keyCode == 13) document.getElementById('btnSearch').click()\" /> <button id= \"btnSearch\" class=\"SearchButton\" onclick=\"showResults($('.SearchFilter3').val(),true)\"><span class=\"glyphicon glyphicon-search\"></span></button> </div><ul class='nav nav-tabs' id='annotations-tab'></ul>"
-		//		+ "<div class='tab-content' id='annotations-tab-content'></div>";
-
 		// Draw Grid
 		drawGrid(board, vertical, "myCanvasGrid");
 
@@ -772,49 +751,28 @@ function createInstance() {
 
 				var mode = document.option.tipo;
 
-				var annotationTable = document.createElement("table");
-				annotationTable.className = "table table-condensed table-striped";
-				annotationTable.id = "csvAnnotationTable" + numFile;
-
-				var row = annotationTable.insertRow(-1);
-				for (var j = 0; j < lines[0][14].length; j++) {
-					if ((j <= 4) || ((j > 5) && (j < 7)) || (j >= 12)) {
-						var firstNameCell = row.insertCell(-1);
-						firstNameCell.appendChild(document
-								.createTextNode(lines[0][14][j]));
-					}
-				}
-
 				// Store the file header
-				if (fileHeader.length < lines.length) {
-                    storeFileHeader(currentLines, numFile);
-				}
+				if (fileHeader.length < lines.length) storeFileHeader(currentLines, numFile);
 
 				//Reset if needed
-				if (!xtotal || !ytotal || reset) {
-                    resetZoom();
-				}
+				if (!xTotal || !yTotal || reset) resetZoom();
 
-				xtotal = fileHeader[0].seqXLength;
-				ytotal = fileHeader[0].seqYLength;
+				xTotal = fileHeader[0].seqXLength;
+				yTotal = fileHeader[0].seqYLength;
 
-				var linesToPaint = [];
-				var filteredLines = [];
-				var CSBLines = [];
+				var linesToPaint = [], filteredLines = [], CSBLines = [];
 
 				var currentVerticalCanvas = createVerticalComparisonLayer(numFile);
 				var currentHorizontalCanvas = createHorizontalComparisonLayer(numFile);
 
-				//Start the paint proccess 
+				//Start the paint proccess
 				for (i = fragsStarts; i < currentLines.length; i++) {
 
 					var paint = false;
 
 					if (currentLines[i][0]=='CSB' || currentLines[i][0] == 'Frag') {
 
-						if(currentLines[i][0]=='CSB') {
-							CSBLines.push(i);
-						}
+						if(currentLines[i][0]=='CSB') CSBLines.push(i);
 
 						//Check mode (HSP, CSB or both)
 						if ((mode[0].checked && mode[0].value == currentLines[i][0])
@@ -828,13 +786,13 @@ function createInstance() {
 							//Zoom filter
 							if (paint == true) {
 								if ((parseInt(currentLines[i][1]) >= (currentArea.x0
-										* xtotal / 500))
+										* xTotal / 500))
 										&& (parseInt(currentLines[i][2]) >= (currentArea.y0
-												* ytotal / 500))
+												* yTotal / 500))
 										&& (parseInt(currentLines[i][3]) <= (currentArea.x1
-												* xtotal / 500))
+												* xTotal / 500))
 										&& (parseInt(currentLines[i][4]) <= (currentArea.y1
-												* ytotal / 500))) {
+												* yTotal / 500))) {
 									paint = true;
 								} else {
 									paint = false;
@@ -843,32 +801,9 @@ function createInstance() {
 							}
 
 							if (paint == true && !(filtered[numFile]!=null&&filtered[numFile].indexOf(i)>-1)) {
-								// console.time("paint()");
 								linesToPaint.push(i);
-								//add2Table(i,table);
-								// console.timeEnd("paint()");
 							} else {
 								filteredLines.push(i);
-							}
-						}
-
-						if (currentLines[i].length==22) {
-							paint = filter(currentLines[i]);
-
-							if (paint == true) {
-								if ((parseInt(currentLines[i][1]) >= (currentArea.x0
-										* xtotal / 500))
-										&& (parseInt(currentLines[i][2]) >= (currentArea.y0
-												* ytotal / 500))
-										&& (parseInt(currentLines[i][3]) <= (currentArea.x1
-												* xtotal / 500))
-										&& (parseInt(currentLines[i][4]) <= (currentArea.y1
-												* ytotal / 500))) {
-									paint = true;
-								} else {
-									paint = false;
-								}
-
 							}
 						}
 					}
@@ -887,10 +822,7 @@ function createInstance() {
 				}
 				//drawHorizontalLinesInHorizontalLayer(filteredLines, currentHorizontalCanvas, numFile, rgba(189, 195, 199, 0.5));
 
-				console.log("cucu1")
-				visualizedLines[numFile] = linesToPaint;
-				generateFragTable(currentLines, numFile, linesToPaint,false);
-				console.log("cucu2")
+				generateFragTable(currentLines, numFile, linesToPaint, false);
 
 				//Draw Annotations
 				if(annotationsWorking && numFile == annotationsNumFile) {
@@ -1021,21 +953,21 @@ function createInstance() {
 	                    var mode = document.option.tipo;
                         $('#CSBPopover').hide();
                         for (var j = 0; j < lines.length; j++) {
-                        xtotal = fileHeader[0].seqXLength;
-                        ytotal = fileHeader[0].seqYLength;
+                        xTotal = fileHeader[0].seqXLength;
+                        yTotal = fileHeader[0].seqYLength;
                         var i = 17;
 
-                        console.log("X: " + xtotal + " Y:" + ytotal);
+                        console.log("X: " + xTotal + " Y:" + yTotal);
 
                         while (!linefound && i < lines[j].length) {
 
-                            x1 = ((((canvas.width * parseInt(lines[j][i][1])) / xtotal) - currentArea.x0) / ((currentArea.x1 - currentArea.x0)))
+                            x1 = ((((canvas.width * parseInt(lines[j][i][1])) / xTotal) - currentArea.x0) / ((currentArea.x1 - currentArea.x0)))
                                     * canvas.width;
-                            y1 = ((((canvas.height * parseInt(lines[j][i][2])) / ytotal) - currentArea.y0) /  ((currentArea.y1 - currentArea.y0)))
+                            y1 = ((((canvas.height * parseInt(lines[j][i][2])) / yTotal) - currentArea.y0) /  ((currentArea.y1 - currentArea.y0)))
                                     * canvas.height;
-                            x2 = (((canvas.width * (parseInt(lines[j][i][3])) / xtotal) - currentArea.x0) / ((currentArea.x1 - currentArea.x0)))
+                            x2 = (((canvas.width * (parseInt(lines[j][i][3])) / xTotal) - currentArea.x0) / ((currentArea.x1 - currentArea.x0)))
                                     * canvas.width;
-                            y2 = (((canvas.height * (parseInt(lines[j][i][4])) / ytotal) - currentArea.y0) / ((currentArea.y1 - currentArea.y0)))
+                            y2 = (((canvas.height * (parseInt(lines[j][i][4])) / yTotal) - currentArea.y0) / ((currentArea.y1 - currentArea.y0)))
                                     * canvas.height;
 
                             if ((mode[0].checked && mode[0].value == lines[j][i][0])
@@ -1156,13 +1088,13 @@ function createInstance() {
                                 if(paint=filter(currentLines[i]))
 
                                 if ((parseInt(currentLines[i][1]) >= ((currentArea.x0+scaleX * startX)
-                                    * xtotal / 500))
+                                    * xTotal / 500))
                                     && (parseInt(currentLines[i][2]) >= ((currentArea.y0+(canvas.height - mouseY) * scaleY)
-                                    * ytotal / 500))
+                                    * yTotal / 500))
                                     && (parseInt(currentLines[i][3]) <= ((currentArea.x0 + mouseX * scaleX)
-                                    * xtotal / 500))
+                                    * xTotal / 500))
                                     && (parseInt(currentLines[i][4]) <= ((currentArea.y0 + (canvas.height - startY)
-                                    * scaleY) * ytotal / 500))
+                                    * scaleY) * yTotal / 500))
 									&& select) {
                                     paint = true;
                                 } else {
@@ -1418,13 +1350,13 @@ function annotationDrawLines(seq,start,end,point){
 	var yIni;
 	var yFin;
 
-    xIni = ((c.width * (parseInt(pStartX) / xtotal) - currentArea.x0) / (currentArea.x1 - currentArea.x0))
+    xIni = ((c.width * (parseInt(pStartX) / xTotal) - currentArea.x0) / (currentArea.x1 - currentArea.x0))
 			* c.width;
-	yIni = ((c.height * (parseInt(pStartY) / ytotal) - currentArea.y0) / (currentArea.y1 - currentArea.y0))
+	yIni = ((c.height * (parseInt(pStartY) / yTotal) - currentArea.y0) / (currentArea.y1 - currentArea.y0))
 			* c.height;
-	xFin = ((c.width * (parseInt(pEndX) / xtotal) - currentArea.x0) / (currentArea.x1 - currentArea.x0))
+	xFin = ((c.width * (parseInt(pEndX) / xTotal) - currentArea.x0) / (currentArea.x1 - currentArea.x0))
 			* c.width;
-	yFin = ((c.height * (parseInt(pEndY) / ytotal) - currentArea.y0) / (currentArea.y1 - currentArea.y0))
+	yFin = ((c.height * (parseInt(pEndY) / yTotal) - currentArea.y0) / (currentArea.y1 - currentArea.y0))
 			* c.height;
 
 
@@ -1754,14 +1686,14 @@ function calculateDistance(position,frag){
 	var x1, x2, y1, y2;
 	var x0 = position.x;
 	var y0 = position.y;
-    x1 = ((((canvas.width * parseInt(frag[1])) / xtotal) - currentArea.x0) / ((currentArea.x1 - currentArea.x0)))
+    x1 = ((((canvas.width * parseInt(frag[1])) / xTotal) - currentArea.x0) / ((currentArea.x1 - currentArea.x0)))
 					* canvas.width;
-    y1 = ((((canvas.height * parseInt(frag[2])) / ytotal) - currentArea.y0) /  ((currentArea.y1 - currentArea.y0)))
+    y1 = ((((canvas.height * parseInt(frag[2])) / yTotal) - currentArea.y0) /  ((currentArea.y1 - currentArea.y0)))
             * canvas.height;
 
-    x2 = (((canvas.width * (parseInt(frag[3])) / xtotal) - currentArea.x0) / ((currentArea.x1 - currentArea.x0)))
+    x2 = (((canvas.width * (parseInt(frag[3])) / xTotal) - currentArea.x0) / ((currentArea.x1 - currentArea.x0)))
             * canvas.width;
-    y2 = (((canvas.height * (parseInt(frag[4])) / ytotal) - currentArea.y0) / ((currentArea.y1 - currentArea.y0)))
+    y2 = (((canvas.height * (parseInt(frag[4])) / yTotal) - currentArea.y0) / ((currentArea.y1 - currentArea.y0)))
             * canvas.height;
     //console.log(x1+" - "+y1+" - "+x2+" - "+y2);
     aux = Math.abs(((x2 - x1) * (y1 - y0))- ((x1 - x0) * (y2 - y1)));
@@ -1792,22 +1724,22 @@ function selectFrag(lines, position, evt) {
 	for (var j = 0; j < lines.length; j++) {
 
 		console.log("Checking lines" + j);
-		xtotal = fileHeader[0].seqXLength;
-		ytotal = fileHeader[0].seqYLength;
+		xTotal = fileHeader[0].seqXLength;
+		yTotal = fileHeader[0].seqYLength;
 		var i = 17;
 
-		console.log("X: " + xtotal + " Y:" + ytotal);
+		console.log("X: " + xTotal + " Y:" + yTotal);
 
 		while (!linefound && i < lines[j].length) {
 
-			x1 = ((((canvas.width * parseInt(lines[j][i][1])) / xtotal) - currentArea.x0) / ((currentArea.x1 - currentArea.x0)))
+			x1 = ((((canvas.width * parseInt(lines[j][i][1])) / xTotal) - currentArea.x0) / ((currentArea.x1 - currentArea.x0)))
 					* canvas.width;
-			y1 = ((((canvas.height * parseInt(lines[j][i][2])) / ytotal) - currentArea.y0) /  ((currentArea.y1 - currentArea.y0)))
+			y1 = ((((canvas.height * parseInt(lines[j][i][2])) / yTotal) - currentArea.y0) /  ((currentArea.y1 - currentArea.y0)))
 					* canvas.height;
 
-			x2 = (((canvas.width * (parseInt(lines[j][i][3])) / xtotal) - currentArea.x0) / ((currentArea.x1 - currentArea.x0)))
+			x2 = (((canvas.width * (parseInt(lines[j][i][3])) / xTotal) - currentArea.x0) / ((currentArea.x1 - currentArea.x0)))
 					* canvas.width;
-			y2 = (((canvas.height * (parseInt(lines[j][i][4])) / ytotal) - currentArea.y0) / ((currentArea.y1 - currentArea.y0)))
+			y2 = (((canvas.height * (parseInt(lines[j][i][4])) / yTotal) - currentArea.y0) / ((currentArea.y1 - currentArea.y0)))
 					* canvas.height;
 
 			if ((mode[0].checked && mode[0].value == lines[j][i][0])
@@ -1892,8 +1824,8 @@ function selectFrag(lines, position, evt) {
         }
 
 		selected = true;
-		xtotal = fileHeader[0].seqXLength;
-		ytotal = fileHeader[0].seqYLength;
+		xTotal = fileHeader[0].seqXLength;
+		yTotal = fileHeader[0].seqYLength;
 		drawLinesInLayer([lineIndex],selectLayer, arrayIndex, rgb(255,0,0))
 
 	}
@@ -1930,8 +1862,6 @@ function activateBoard() {
 		redraw();
 	}
 }
-
-
 
 function paintCodingRegions(numFile) {
 
@@ -2050,7 +1980,9 @@ function paintCodingRegions(numFile) {
 
 }
 
-// Deprecated
+/**
+ * Deprecated
+ */
 function createAnnotations(numFile){
 	var fragment = 0;
 
