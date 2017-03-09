@@ -57,9 +57,9 @@ def uploadFrags(request):
 def loadFileFromServer(request):
     fileObject = userFile.objects.get(user = request.user, filename=request.GET.get('filename'))
     extension = fileObject.filename.rsplit('.',1)[1]
-    args = [str(fileObject.file.file), 'Anot_'+fileObject.filename]
+    args = [str(fileObject.file), 'Anot_'+fileObject.filename]
 
-    if extension == 'gbff' :
+    if extension == 'gbff':
         command = [os.path.join(settings.MEDIA_ROOT, 'scripts/WritePTT_FAAfromGBK')]
         command.extend(args)
         print command
