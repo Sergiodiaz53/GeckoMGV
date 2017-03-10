@@ -61,6 +61,7 @@ function loadFileFromServer($fileName){
 
 function processGBFF(content){
     console.log("PROCESSING");
+    console.log(content)
     $('#loading-indicator').show();
     Papa.parse(content, {
         worker: true,
@@ -69,19 +70,63 @@ function processGBFF(content){
             var id = $("ul#annotations-tab li.active a").attr('href');
             id = id.substr(id.length-1);
             id = parseInt(id);
-            console.log("Anots");
+            anotButtonID = "#Anot" + id;
+            console.log("Anots: "+anotButtonID);
             console.log(AnotFiles[id][0]);
             console.log(AnotFiles[id][1]);
             if(AnotFiles[id][0]==1){
                 console.log('entering X');
+
+                var x_size, y_size;
+
+                //Able anotation button for this comparison
+                if($(anotButtonID).prop("disabled", true)){
+                    $(anotButtonID).prop("disabled", false)
+                }
+
                 AnotFiles[id][0] = results.data.slice(0, results.data.length-1);
+
+                x_size = AnotFiles[id][0].length;
+
+                for(i = 0; i < x_size; i++){
+                        AnotFiles[id][0][i].File = "X"
+                }
+
+                if(AnotFiles[id][1]!=null){
+                    x_size = AnotFiles[id][0].length;
+                    y_size = AnotFiles[id][1].length;
+                    for(i = 0; i < x_size; i++){
+                        AnotFiles[id][0][i]["ID"] = parseInt(AnotFiles[id][0][i]["ID"]) + y_size;
+                    }
+                }
+
             } else if(AnotFiles[id][1]==1) {
                 console.log('entering Y');
+
+                //Able anotation button for this comparison
+                if($(anotButtonID).prop("disabled", true)){
+                    $(anotButtonID).prop("disabled", false)
+                }
+
                 AnotFiles[id][1] = results.data.slice(0, results.data.length-1);
+                y_size = AnotFiles[id][1].length;
+                for(i = 0; i < y_size; i++){
+                        AnotFiles[id][1][i].File = "Y"
+                }
+
+                if(AnotFiles[id][0]!=null){
+                    x_size = AnotFiles[id][0].length;
+                    y_size = AnotFiles[id][1].length;
+                    for(i = 0; i < y_size; i++){
+                        AnotFiles[id][1][i]["ID"] = parseInt(AnotFiles[id][1][i]["ID"]) + x_size;
+                    }
+                }
+
             }
             console.log("DI: "+id);
             console.log(AnotFiles[id]);
             fillGeneratedAnnotationTab(id);
+            console.log("Finishing processing");
             $('#loading-indicator').hide();
         }
     });

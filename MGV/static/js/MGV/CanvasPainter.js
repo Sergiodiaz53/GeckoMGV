@@ -48,6 +48,7 @@ var scaleX = 1, scaleY = 1;
 var zoomed = false, reset = false, selected = false;
 var selectLayer=$("#selectLayer")[0];
 
+
 //Grids
 var FragsGrid = [];
 var annotsGrid = [];
@@ -114,6 +115,8 @@ function goToPrevZoom(){
 		l0Ctx.putImageData(last[1], 0, 0);
 		drawSelectedFrags();
 
+		paintCodingRegions(annotationsNumFile)
+
 		if($("#nextZoom").prop( "disabled"))
 			$("#nextZoom").prop( "disabled",false);
 		if(currentZoomIndex<=0)
@@ -157,6 +160,7 @@ function goToNextZoom(){
 			$("#prevZoom").prop( "disabled",false);
 		if(currentZoomIndex>=backZoomList.length-1)
 			$("#nextZoom").prop( "disabled", true );
+		paintCodingRegions(annotationsNumFile)
 	}
 }
 
@@ -495,7 +499,7 @@ function createComparisonCheck(numLayer){
 	var idMapimageLayer = "Maplayer"+numLayer;
 
 	var newLayerBoxElement =
-				$('<input type="checkbox" class="switchLayer" id="checklayer'+numLayer+'"checked="checked" value="'+numLayer+'"/> '+fileNames[numLayer]+'</input><button class="btn btn-info btn-xs btn-annt" onclick="paintCodingRegions('+numLayer+')">Annot</button>');
+				$('<input type="checkbox" class="switchLayer" id="checklayer'+numLayer+'"checked="checked" value="'+numLayer+'"/> '+fileNames[numLayer]+'</input><button class="btn btn-info btn-xs btn-annt" id="Anot'+numLayer+'" onclick="paintCodingRegions('+numLayer+')" disabled>Annot</button>');
 
 	var row = $("<tr>");
 	var column = row.append( $("<td>").append(newLayerBoxElement));
@@ -818,6 +822,10 @@ function createInstance() {
 				if(CSBLines.length>0) {
 					drawHorizontalLinesInHorizontalLayer(CSBLines, currentHorizontalCanvas, numFile, rgba(R[numFile], G[numFile], B[numFile], 1));
 				} else {
+					var context = currentHorizontalCanvas.getContext('2d');
+					context.textAlign = 'center';
+					context.font = "bold 24px Arial";
+					context.fillText('No CSB information', currentHorizontalCanvas.width / 2, currentHorizontalCanvas.height/2);
 					//drawHorizontalLinesInHorizontalLayer(linesToPaint, currentHorizontalCanvas, numFile, rgba(R[numFile], G[numFile], B[numFile], 1));
 				}
 				//drawHorizontalLinesInHorizontalLayer(filteredLines, currentHorizontalCanvas, numFile, rgba(189, 195, 199, 0.5));
@@ -1918,7 +1926,7 @@ function paintCodingRegions(numFile) {
 					.on("mouseout", function () {
 						d3.select(this)
 								.style("stroke-width", 1)
-								.style("stroke", "#ec971f")
+								.style("stroke", rgba(R[numFile], G[numFile], B[numFile], 1))
 					});
 
 			$('svg line').tipsy({
@@ -1959,7 +1967,7 @@ function paintCodingRegions(numFile) {
 					.on("mouseout", function () {
 						d3.select(this)
 								.style("stroke-width", 1)
-								.style("stroke", "#ec971f")
+								.style("stroke", rgba(R[numFile], G[numFile], B[numFile], 1))
 					});
 
 			$('svg line').tipsy({

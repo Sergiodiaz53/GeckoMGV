@@ -228,6 +228,7 @@ function generateAnnotationTab(numFile, activate){
 
 function fillGeneratedAnnotationTab(numFile){
 
+    console.log("numFile: "+numFile)
     console.log("Filling:");
     console.log(AnotFiles[numFile][0]);
     console.log(AnotFiles[numFile][1]);
@@ -257,7 +258,8 @@ function fillGeneratedAnnotationTab(numFile){
         {id: "size", name: "Size", field: "Size"},
         {id: "gene", name: "Gene", field: "Gene"},
         {id: "synonym", name: "Synonym", field: "Synonym"},
-        {id: "product", name: "Product", field: "Product"}
+        {id: "product", name: "Product", field: "Product"},
+        {id: "file", name:"File", field:"File"}
     ];
 
     var options = {

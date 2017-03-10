@@ -29,7 +29,7 @@ def login_view(request):
         if username is not None:
             return render(request, 'index.html')
         else:
-            return HttpResponse("ERROR", content_type="text/plain")
+            return render(request, 'loginrequired.html')
     else:
         return render(request, 'index.html')
 

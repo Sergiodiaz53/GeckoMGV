@@ -11,9 +11,11 @@ def uploadFile(request):
     print "UploadingFile..."
     if request.method == 'POST':
         form = FileForm(request.POST, request.FILES)
+        files = request.FILES.getlist('userfile')
         if form.is_valid():
-            newFile = userFile(user=request.user, filename=request.FILES['userfile'].name, file=request.FILES['userfile'])
-            newFile.save()
+            for f in files:
+                newFile = userFile(user=request.user, filename=f.name, file=f)
+                newFile.save()
     return userFile.objects.filter(user = request.user)
 
 @csrf_exempt
