@@ -132,7 +132,6 @@ function processGBFF(content){
     });
 }
 
-
 function loadGBFFfile(genome, numFile){
     console.log("First Step");
     if(genome=='x'){
@@ -143,6 +142,7 @@ function loadGBFFfile(genome, numFile){
 
     getFilesListFromServer('gbff');
 }
+
 /**
  * Load the file list from server side
  * @return {[type]} Array of file names

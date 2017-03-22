@@ -820,6 +820,7 @@ function createInstance() {
 
 				//Draw in horizontal layer
 				if(CSBLines.length>0) {
+					console.log("CSB: "+CSBLines)
 					drawHorizontalLinesInHorizontalLayer(CSBLines, currentHorizontalCanvas, numFile, rgba(R[numFile], G[numFile], B[numFile], 1));
 				} else {
 					var context = currentHorizontalCanvas.getContext('2d');
@@ -1162,6 +1163,7 @@ function createInstance() {
 				ctx1.beginPath();
 				ctx1.rect(startX, startY, mouseX - startX, mouseY - startY);
 				ctx1.stroke();
+
 			}
 	}, false);
 

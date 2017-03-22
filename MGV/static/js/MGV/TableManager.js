@@ -116,7 +116,7 @@ function uploadActualState(){
     $.ajax({
             url:'/upload/',
             type: "POST",
-            data: {name: fileNames[numFile], content: csvContent.toString()},
+            data: {name: fileNames[numFile], content: csvContent.join("\r\n")},
             success:function(){
                  newFileInformation();
             },
