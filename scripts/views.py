@@ -1,16 +1,11 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
-from django.core import serializers
-#from future.tests.test_httpservers import request_handler
 from scripts.forms import *
-from fileSystem.views import *
 from scripts import forms
 from scripts.workers.services import clustalomega as co
-#from MGV import views as co
 import subprocess
-import time
-
-# Create your views here.
+import threading
+from django.core.mail import send_mail
 
 def storeService(request):
     if request.method == 'POST':
@@ -33,45 +28,46 @@ def executeService(request):
             for i in xrange(1, (len(form.fields))+1):
                 idParamater = 'parameter'+str(i)
                 args.append(request.POST.get(idParamater))
-                #print "/**\n"
-                #print form
-                #print "\n**/"
 
             print os.path.join(settings.MEDIA_ROOT, service.path+request.POST.get('exeName'))
             command = [os.path.join(settings.MEDIA_ROOT, service.path+request.POST.get('exeName'))]
             command.extend(args)
-            output = subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0]
 
-            print args
+            ThreadProcess = threading.Thread(target=runServiceInThread, args=(command, request))
+            ThreadProcess.daemon = True
+            ThreadProcess.start()
 
-            #Read console output line by line example
-            """
-            p = Popen(command, stdout=PIPE, bufsize=1)
-            with p.stdout:
-                for line in iter(p.stdout.readline, b''):
-                    print line,
-            p.wait() # wait for the subprocess to exit
-
-            """
-            path= generatePath(request, 'log')
-
-            if not os.path.isfile(path):
-                print os.path.isfile(path)
-                file = open(path,'wb')
-                file.write(output)
-                file.close()
-            else:
-                print os.path.isfile(path)
-                file = open(path,'r+b')
-                content = file.read()
-                content+="\n\n-----------------------------------NEXT SERVICE-----------------------------------\n\n"+output
-                file.write(content)
-                file.close()
             #fileResult = createFile(request, output, request.POST.get('nameFileResult'))
             return render(request, 'filemanager.html')
         else:
             content=co.clustal_omega(request)
             return render(request, 'MSAvisualizer.html', {'content': content})
+
+def runServiceInThread (command, request):
+    output = subprocess.Popen(command, stdout=subprocess.PIPE, close_fds=True).communicate()[0]
+
+    path = generatePath(request, 'log')
+
+    if not os.path.isfile(path):
+        print os.path.isfile(path)
+        file = open(path, 'wb')
+        file.write(output)
+        file.close()
+    else:
+        print os.path.isfile(path)
+        file = open(path, 'r+b')
+        content = file.read()
+        content += "\n\n-----------------------------------NEXT SERVICE-----------------------------------\n\n" + output
+        file.write(content)
+        file.close()
+
+    send_mail(
+        'Subject here',
+        'Here is the message.',
+        'geckomgvsupport@gmail.com',
+        ['sergiodiazdp@gmail.com'],
+        fail_silently=False,
+    )
 
 
 @csrf_exempt
@@ -96,16 +92,6 @@ def executeServiceInBackground(request):
         output = subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0]
 
         print args
-
-        #Read console output line by line example
-        """
-        p = Popen(command, stdout=PIPE, bufsize=1)
-        with p.stdout:
-            for line in iter(p.stdout.readline, b''):
-                print line,
-        p.wait() # wait for the subprocess to exit
-
-        """
 
         createFile(request, output, request.POST.get('nameFileResult'))
         return HttpResponse("OK", content_type="text/plain")

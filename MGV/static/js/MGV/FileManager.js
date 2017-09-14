@@ -3,7 +3,6 @@
  Multigenome Visualizer
  Bitlab - Universidad de Málaga
  */
-
 //Global Variables
 var fileHeader = [];
 var fileNames = [];
@@ -260,10 +259,7 @@ function processData(csv, index) {
             delimiter:",",
             complete: function (results) {
                 if(parseCount >= 1) {
-                    console.log("Reading FILE: " + index);
-                    console.log("ParseCountPRE: " + parseCount);
                     parseCount--;
-                    console.log("ParseCountPOST: " + parseCount);
                     processEvolutiveEvents(results.data, index);
                     reset = true;
                     map = false;
@@ -282,7 +278,8 @@ function processData(csv, index) {
             }
         });
 
-    } else if (fileType == 'mvn') {
+    }
+    else if (fileType == 'mvn') {
         var title = fileNameMVN;
         if (multigenome)
             title = "Multigenome comparison";
@@ -346,7 +343,8 @@ function processData(csv, index) {
 
         redraw()
 
-    } else if (fileType == 'mat') {
+    }
+    else if (fileType == 'mat') {
 
         if (fileNameMAT == fileName) {
             loadMatrix(csv);
@@ -360,6 +358,7 @@ function processData(csv, index) {
             });
         }
     }
+
 }
 
 /**

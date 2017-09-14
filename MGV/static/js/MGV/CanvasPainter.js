@@ -532,11 +532,13 @@ function createComparisonCheck(numLayer){
  * @param  {Number} color        RGBa color
  */
 function drawVerticalLinesInVerticalLayer(linesToPaint, canvasLayer, numFile, color){
-	var currentCtx = canvasLayer.getContext('2d');
 
+	var currentCtx = canvasLayer.getContext('2d');
 	currentCtx.beginPath();
+
 	var count = 0;
 	var counttotal = 0;
+
 	console.time("DrawFiltrar");
 	for (var x in linesToPaint){
 		var line = linesToPaint[x];
@@ -549,15 +551,14 @@ function drawVerticalLinesInVerticalLayer(linesToPaint, canvasLayer, numFile, co
 				* canvasLayer.width;
 		var yFin = ((canvasLayer.height * (parseInt(lines[numFile][line][4]) / yTotal) - currentArea.y0) / (currentArea.y1 - currentArea.y0))
 				* canvasLayer.height;
-	/*
-		if((xFin-xIni < 0.1)&&(xFin-xIni>0)){
-			xFin = xIni + 0.1;
+
+		if((xFin-xIni < 1)&&(xFin-xIni>0)){
+			xFin = Math.floor(xIni + 1);
 		}
 
-		if((yFin-yIni < 0.1)&&(yFin-yIni >0)){
-			yFin = yIni +0.1 ;
-		} */
-
+		if((yFin-yIni < 1)&&(yFin-yIni>0)){
+			yFin = Math.floor(yIni +0.1);
+		}
 
 		//console.log((lines[numFile][line][1])+" = "+xIni+"; "+(lines[numFile][line][2])+" = "+yIni+(lines[numFile][line][3])+" = "+xFin+"; "+(lines[numFile][line][4])+" = "+yFin);
 
@@ -879,7 +880,8 @@ function createInstance() {
 	var lastX = canvas.width / 2, lastY = canvas.height / 2;
 	var dragStart, dragged, area = false, mousedown = false, startX, startY, mouseX, mouseY,squared ,shiftSel,filterSel,ctrlZoom= false;
 
-	window.addEventListener('keydown', function(evt) {
+	window.addEventListener('keydown',
+			function(evt) {
 
 		switch(evt.keyCode) {
 			case 16:
@@ -900,7 +902,8 @@ function createInstance() {
 
 	}, false);
 
-	window.addEventListener('keyup', function(evt) {
+	window.addEventListener('keyup',
+			function(evt) {
 
 		switch(evt.keyCode) {
 
@@ -922,8 +925,7 @@ function createInstance() {
 	}, false);
 
 	canvas
-		.addEventListener(
-            'mousedown',
+		.addEventListener('mousedown',
             function(evt) {
                 document.body.style.mozUserSelect = document.body.style.webkitUserSelect = document.body.style.userSelect = 'none';
                 lastX = evt.offsetX || (evt.pageX - canvas.offsetLeft);
@@ -1128,7 +1130,8 @@ function createInstance() {
 			}, false);
 
 	canvas
-        .addEventListener('mousemove', function(evt) {
+        .addEventListener('mousemove',
+			function(evt) {
 
 			lastX = evt.offsetX || (evt.pageX - canvas.offsetLeft);
 			lastY = evt.offsetY || (evt.pageY - canvas.offsetTop);
@@ -1256,11 +1259,6 @@ function filter(line) {
                 paint = true;
             }
             break;
-        case -2:
-            if (!filterOverlapped) {
-                paint = true;
-            }
-            break;
         default:
             if (filterLenght) {
                 var lenghtFilter = document.getElementById("filterLenghtNumber").value
@@ -1295,6 +1293,13 @@ function filter(line) {
 
 	if(filterIdentity){
 		if((line[9]/line[7]).toFixed(2)*100 <= identityLine.identityValue) {
+			paint = false;
+		}
+	}
+
+
+	if (filterOverlapped) {
+		if (parseFloat(line[13]) > 0) {
 			paint = false;
 		}
 	}

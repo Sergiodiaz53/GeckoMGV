@@ -1,5 +1,9 @@
 var evolutiveIndex = -1;
 var evolutiveFrags = [];
+var huge_file = false;
+
+//Constants
+HUGE_FILE_NUM = 10000;
 
 /**
  * Store evolutionary events information in a data estructure 
@@ -15,25 +19,43 @@ function processEvolutiveEvents(frags, index){
     evolutiveFrags[index] = [];
     evolutiveFrags[index][eeIndex] = [];
     evolutiveEvents[index] = [];
-    for(var i = 0; i < frags.length; i++){
-        if(frags[i][0] != "StartEE"){
-            lines[index].push(frags[i]);
-            originalComparison[index].push(frags[i]);
-        } else if (frags[i][0] == "StartEE"){
-            i++;
+
+
+    //Filter huge_file
+    if((frags.length > HUGE_FILE_NUM) && !huge_file) {
+        activateFilters();
+        huge_file = true;
+	}
+
+	console.time("HugeFiltering");
+    /*for (var i = frags.length - 1; i >= 0; i--){
+        if(frags[i][0] != "EndEE"){
+
+            if (filter(frags[i]) && huge_file) {
+                frags.splice(i, 1);
+            }
+
+        } else if (frags[i][0] == "EndEE"){
+            i--;
             evolutiveEvents[index][eeIndex] = [];
             evolutiveFrags[index][eeIndex] = [];
-            while (frags[i][0] != "EndEE"){
+            while (frags[i][0] != "StartEE"){
                 if ((frags[i][0] == "PrevFrag") || frags[i][0] == "NextFrag"){
                     evolutiveFrags[index][eeIndex].push(frags[i]);
                 } else {
                     evolutiveEvents[index][eeIndex].push(frags[i]);
                 }
-                i++;
+                i--;
             }
             eeIndex++;
         }
-    }
+    }*/
+    console.timeEnd("HugeFiltering");
+
+    lines[index] = frags.slice(0);
+    originalComparison[index] = frags.slice(0)  ;
+
+    huge_file = false;
     if(eeIndex) $("#EEmanag").show();
 }
 
@@ -73,6 +95,16 @@ function nextEE (){
         },3000);
 
     }
+}
+
+function activateFilters(){
+	$('#filterLenght').prop('checked', true);
+	$('#filterSimilarity').prop('checked', true);
+	$('#filterIdentity').prop('checked', true);
+
+	$('#filterLenghtNumber').val(1200);
+	$('#filterSimilarityNumber').val(65);
+	$('#filterIdentityNumber').val(70);
 }
 
 /**
