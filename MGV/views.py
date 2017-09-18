@@ -11,6 +11,10 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 import json
 
+from django.core.files.storage import default_storage
+from fileSystem import views as fs
+import os
+
 # Create your views here.
 
 
@@ -52,6 +56,87 @@ def uploadFrags(request):
         return HttpResponse(status=201)
     else:
         return HttpResponse(status=501)
+
+@login_required()
+def removeRepetitions(request):
+    print "REQUEST METHOD : " + request.method
+    # ----
+    fileObject = userFile.objects.get(user = request.user, filename=request.GET.get('filename'))
+    extension = fileObject.filename.rsplit('.',1)[1]
+    file_location = str(fileObject.file).rsplit('/')
+    file_name = file_location[-1]
+    # Create Path
+    file_dir = ""
+    for fl in file_location[:-1]:
+        file_dir += fl + '/'
+
+    print "File Object: " + str(fileObject.file)
+    print "File Directory: " + file_dir
+    print "Extension: " + extension
+
+    print "------ DEBUG BEGIN -----"
+    #with fs.openFile(request.user, fileObject) as full_csv:
+    full_csv = fs.openFile(request.user, fileObject)
+    print "------ DEBUG OPEN FILE -----"
+    lines = full_csv.split('\n')
+    #lines = full_csv.readlines()
+    headers = lines[0:16] # 16 HEADER LINES
+    header = ""
+
+    # Create CSVs
+    # CSB
+    #repetitions_csv = default_storage.open(file_dir + "REPETITIONS_" + file_name,'wb')
+    #clean_csv = default_storage.open(file_dir + "CLEAN_" + file_name, 'wb')
+    content_clean_csv = ""
+    content_rep_csv = ""
+
+    # FASTA
+    #repetitions_fasta = default_storage.open(file_dir + "REPETITIONS_" + file_name.replace(extension,"fasta"),'wb')
+    #clean_fasta = default_storage.open(file_dir + "CLEAN_" + file_name.replace(extension,"fasta"),'wb')
+
+    content_clean_fasta = ""
+    content_rep_fasta = ""
+    # Create HEADER
+    for h in headers:
+        header += h
+
+    content_clean_csv += header
+    content_rep_csv += header
+    #repetitions_csv.write(header)
+    #clean_csv.write(header)
+
+    # Filter LINES CONTENT
+    print "------ DEBUG LINE CONTENT-----"
+    for line in lines[16:]:
+        items = line.split(',')
+        rep_flag = items[-1].replace('\n', '')
+        coords = items[1:5]
+        if rep_flag == '0':
+            content_clean_csv += line
+            content_clean_fasta += str(coords) + "\n"
+            #clean_csv.write(line)
+            #clean_fasta.write(str(coords) + "\n")
+        else:
+            content_rep_csv += line
+            content_rep_fasta += str(coords) + "\n"
+            #repetitions_csv.write(line)
+            #repetitions_fasta.write(str(coords) + "\n")
+    
+    # Close CSVs
+    fs.createFile(request=request, content=content_clean_csv, filename="CLEAN_" + file_name)
+    fs.createFile(request=request, content=content_rep_csv, filename="REPETITIONS_" + file_name)
+
+    fs.createFile(request=request, content=content_clean_fasta, filename="CLEAN_" + file_name.replace(extension,"fasta"))
+    fs.createFile(request=request, content=content_rep_fasta, filename="REPETITIONS_" + file_name.replace(extension,"fasta"))
+    #clean_csv.close()
+    #repetitions_csv.close()
+    #clean_fasta.close()
+    #repetitions_fasta.close()
+
+    print "------ DEBUG END -----"
+    print "LENGTH IN LINES: " + str(len(lines))
+    # ----
+    return HttpResponse(status=200)
 
 @csrf_exempt
 def loadFileFromServer(request):

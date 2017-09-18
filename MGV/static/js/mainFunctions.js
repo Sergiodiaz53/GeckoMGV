@@ -257,6 +257,13 @@ function dialogFrags() {
             },
             buttons: [
                 {
+                    text: "Remove Repetions",
+                    click: function () {
+                        removeRepetitions();
+                    },
+                    "class": "ui-button-primary"
+                },
+                {
                     text: "Selected",
                     id: "selButton",
                     click: function () {
