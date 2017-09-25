@@ -126,25 +126,6 @@ function uploadActualState(){
     });
 }
 
-function removeRepetitions(){
-    // DEBUG:
-    console.log("HELLO WORLD!");
-    
-    var numFile = getActiveNumFileInFileTab();
-
-    $.ajax({
-            url: '/removeRepetitions/',
-            type: "GET",
-            data: {filename: fileNames[numFile]},
-            success:function(){
-                console.log("SUCCESS FULL RESPONSE! - EZPZ")
-            },
-            error:function (error){
-                console.log(error)
-            }
-    });
-}
-
 function getCSVContent(){
 
     var numFile = getActiveNumFileInFileTab();

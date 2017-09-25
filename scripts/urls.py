@@ -10,5 +10,6 @@ urlpatterns = patterns(
         url(r'^ServiceInterface/$', views.serviceInterface, name='serviceInterface'),
         url(r'^testForm/$', views.testForm, name='testForm'),
         url(r'^getServiceList/$', views.getServiceList, name='getServiceList'),
-        url(r'^getServiceForm/$', views.getServiceForm, name='getServiceForm')
+        url(r'^getServiceForm/$', views.getServiceForm, name='getServiceForm'),
+        url(r'^executeInternalService$', views.executeInternalService, name='executeInternalService'),
 )

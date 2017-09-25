@@ -54,25 +54,6 @@ class clustalForm(forms.Form):
         super(clustalForm, self).__init__(*args, **kwargs)
         self.fields['parameter1'] = forms.ChoiceField(choices=[(file.file.name, file.filename)  for file in userFile.objects.filter(user=self.user)], label="Multifasta file", widget=forms.Select(attrs={'class':'selector','id': 'multifile'}))
 
-class extractSeqFromFragsForm(forms.Form):
-    parameter1 = forms.ChoiceField(label="frags file", widget=forms.Select(attrs={'class':'selector','id': 'fragsFile'}))
-    parameter2 = forms.ChoiceField(label="X Fasta file", widget=forms.Select(attrs={'class':'selector','id': 'xFastaFile'}))
-    parameter3 = forms.ChoiceField(label="Y Fasta file", widget=forms.Select(attrs={'class':'selector','id': 'yFastaFile'}))
-    parameter4 = forms.ChoiceField(label="Y-reversed Fasta file", widget=forms.Select(attrs={'class':'selector','id': 'yReversedFastaFile'}))
-    parameter5 = forms.CharField(label="Output FragFile", widget=forms.TextInput(attrs={'class':'file','id': 'outputFragFile'}))
-    parameter6 = forms.CharField(label='Block', max_length=4, widget=forms.TextInput(attrs={'id': 'block', 'placeholder':'e.g: 0'}))
-
-    def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop('user', None)
-        self.request = kwargs.pop('request', None)
-        super(extractSeqFromFragsForm, self).__init__(*args, **kwargs)
-        self.fields['parameter1'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="frags file", widget=forms.Select(attrs={'class':'selector','id': 'fragsFile'}))
-        self.fields['parameter2'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="X Fasta file", widget=forms.Select(attrs={'class':'selector','id': 'xFastaFile'}))
-        self.fields['parameter3'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="Y Fasta file", widget=forms.Select(attrs={'class':'selector','id': 'yFastaFile'}))
-        self.fields['parameter4'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="Y-reversed Fasta file", widget=forms.Select(attrs={'class':'selector','id': 'yReversedFastaFile'}))
-
-        #self.fields['parameter5'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="Output FragFile", widget=forms.Select(attrs={'class':'selector','id': 'outputFragFile'}))
-
 class reverseComplementForm(forms.Form):
     parameter1 = forms.ChoiceField(label="Fasta to reverse", widget=forms.Select(attrs={'class':'selector','id': 'fastaToReverse'}))
     parameter2 = forms.CharField(label="Output file", widget=forms.TextInput(attrs={'class':'file','id': 'outputFile'}))
@@ -220,3 +201,31 @@ class geckoForm(forms.Form):
         super(geckoForm, self).__init__(*args, **kwargs)
         self.fields['parameter1'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="Sequence X FASTA", widget=forms.Select(attrs={'class':'selector','id': 'seqx'}))
         self.fields['parameter2'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="Sequence Y FASTA", widget=forms.Select(attrs={'class':'selector','id': 'seqy'}))
+
+###
+class extractRepetitionsForm(forms.Form):
+    parameter1 =forms.ChoiceField(label="CSV file", widget=forms.Select(attrs={'class':'selector','id':'CSVfile'}))
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        self.request = kwargs.pop('request', None)
+        super(extractRepetitionsForm, self).__init__(*args, **kwargs)
+        self.fields['parameter1'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="CSV file", widget=forms.Select(attrs={'class':'selector','id':'CSVfile'}))
+
+
+class extractSeqFromCSVForm(forms.Form):
+    parameter1 = forms.ChoiceField(label="frags file", widget=forms.Select(attrs={'class':'selector','id': 'fragsFile'}))
+    parameter2 = forms.ChoiceField(label="X Fasta file", widget=forms.Select(attrs={'class':'selector','id': 'xFastaFile'}))
+    parameter3 = forms.ChoiceField(label="Y Fasta file", widget=forms.Select(attrs={'class':'selector','id': 'yFastaFile'}))
+    parameter4 = forms.ChoiceField(label="Y-reversed Fasta file", widget=forms.Select(attrs={'class':'selector','id': 'yReversedFastaFile'}))
+    parameter5 = forms.CharField(label="Output FragFile", widget=forms.TextInput(attrs={'class':'file','id': 'outputFragFile'}))
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        self.request = kwargs.pop('request', None)
+        super(extractSeqFromFragsForm, self).__init__(*args, **kwargs) # extractSeqFromFragsForm???
+        self.fields['parameter1'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="frags file", widget=forms.Select(attrs={'class':'selector','id': 'fragsFile'}))
+        self.fields['parameter2'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="X Fasta file", widget=forms.Select(attrs={'class':'selector','id': 'xFastaFile'}))
+        self.fields['parameter3'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="Y Fasta file", widget=forms.Select(attrs={'class':'selector','id': 'yFastaFile'}))
+        self.fields['parameter4'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="Y-reversed Fasta file", widget=forms.Select(attrs={'class':'selector','id': 'yReversedFastaFile'}))
+        self.fields['parameter5'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="Output FragFile", widget=forms.Select(attrs={'class':'selector','id': 'outputFragFile'}))
