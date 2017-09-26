@@ -80,3 +80,5 @@ def extractSequenceFromCSV(args, request):
     # Load CSV and read line by line
     #   Per line: extract from X and extract from Y depending on strand (create extract function)
     #   Rewind FASTAS used
+    print "hi"
+    

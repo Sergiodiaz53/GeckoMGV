@@ -33,8 +33,8 @@ def executeService(request):
 
             # Check ServiceType (Internal or External)
             if service.returnType == 'Internal':
-                # If -1 service is not registered
-                intService.executeInternalService(eval(request.POST.get('exeName')), args, request)
+                thread_name = "intService."+request.POST.get('exeName')
+                intService.executeInternalService(eval(thread_name), args, request)
                 return render(request, 'filemanager.html')
             else:
                 print os.path.join(settings.MEDIA_ROOT, service.path+request.POST.get('exeName'))
