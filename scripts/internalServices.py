@@ -80,27 +80,28 @@ def extractSequenceFromCSVService(args, request):
     print "X ID: " + str(x_seq_info[0])
     print "Y ID: " + str(y_seq_info[0])
     print "YR ID: " + str(yr_seq_info[0])
+
     # Create OUTPUT content
     output_content = ""
     id_counter = 0
     # Read CSV lines
     #   Per line: extract from X and extract from Y depending on strand (create extract function)
     for line in csv_lines[16:]:
-        info = line.split(',')[1:6] # 0-xi 1-yi 2-xf 3-yf 4-strand
+        info = line.split(',')[0:6] # 0-frag/csb 1-xi 2-yi 3-xf 4-yf 5-strand
 
-        output_content += ">ID:" + str(id_counter) + " | X: " + x_seq_info[0] + " | Start: " + str(info[0]) + " | End: " + str(info[2]) + " |\n"
-        output_content += extractSequenceFromFastaCoords(x_seq, int(info[0]), int(info[2])) + "\n"
+        if info[0] == 'Frag':
+            output_content += ">ID:" + str(id_counter) + " | X: " + x_seq_info[0] + " | Start: " + str(info[1]) + " | End: " + str(info[3]) + " |\n"
+            output_content += extractSequenceFromFastaCoords(x_seq, int(info[1]), int(info[3])) + "\n"
 
-        if info[4] == 'f':
-            output_content += ">ID:" + str(id_counter) + " | Y: " + y_seq_info[0] + " | Start: " + str(info[1]) + " | End: " + str(info[3]) + " |\n"
-            output_content += extractSequenceFromFastaCoords(y_seq, int(info[1]), int(info[3])) + "\n"
-        elif info[4] == 'r':
-            output_content += ">ID:" + str(id_counter) + " | Yr: " + yr_seq_info[0] + " | Start: " + str(info[1]) + " | End: " + str(info[3]) + " |\n"
-            output_content += extractSequenceFromFastaCoords(yr_seq, int(info[1]), int(info[3])) + "\n"
+            if info[5] == 'f':
+                output_content += ">ID:" + str(id_counter) + " | Y: " + y_seq_info[0] + " | Start: " + str(info[2]) + " | End: " + str(info[4]) + " |\n"
+                output_content += extractSequenceFromFastaCoords(y_seq, int(info[2]), int(info[4])) + "\n"
+            elif info[5] == 'r':
+                output_content += ">ID:" + str(id_counter) + " | Yr: " + yr_seq_info[0] + " | Start: " + str(info[2]) + " | End: " + str(info[4]) + " |\n"
+                output_content += extractSequenceFromFastaCoords(yr_seq, int(info[2]), int(info[4])) + "\n"
 
     # Create Files
     fs.createFile(request=request, content=output_content, filename=args[4].rsplit('/')[-1])#"SEQUENCES_" + csv_filename.replace('csv', 'fasta'))
-    print "DONE"
 
 def extractSequenceFromFastaCoords(fasta_sequence, start_n, end_n):
     if start_n > end_n:
