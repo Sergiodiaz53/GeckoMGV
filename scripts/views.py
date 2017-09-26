@@ -31,10 +31,10 @@ def executeService(request):
                 idParamater = 'parameter'+str(i)
                 args.append(request.POST.get(idParamater))
 
-            # Check ServiceType (Internal or External)
-            if service.returnType == 'Internal':
-                thread_name = "intService."+request.POST.get('exeName')
-                intService.executeInternalService(eval(thread_name), args, request)
+            # Check Service PATH (Internal or External)
+            if service.path == 'Internal':
+                internal_service_name = "intService."+request.POST.get('exeName')
+                intService.executeInternalService(eval(internal_service_name), args, request)
                 return render(request, 'filemanager.html')
             else:
                 print os.path.join(settings.MEDIA_ROOT, service.path+request.POST.get('exeName'))
