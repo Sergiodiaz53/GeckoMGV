@@ -7,7 +7,7 @@ import subprocess
 import threading
 from django.core.mail import send_mail
 
-from fileSystem import views as fs
+from scripts import internalServices as intService
 
 def storeService(request):
     if request.method == 'POST':
@@ -34,8 +34,7 @@ def executeService(request):
             # Check ServiceType (Internal or External)
             if service.returnType == 'Internal':
                 # If -1 service is not registered
-                #executeInternalService(registeredInternalServices(request.POST.get('exeName')), args, request)
-                executeInternalService(eval(request.POST.get('exeName')), args, request)
+                intService.executeInternalService(eval(request.POST.get('exeName')), args, request)
                 return render(request, 'filemanager.html')
             else:
                 print os.path.join(settings.MEDIA_ROOT, service.path+request.POST.get('exeName'))
@@ -158,79 +157,3 @@ def getServiceForm(request):
         print "\n**/"
         return render(request, 'modalForm.html', {'name': service.name, 'exeName': service.exeName,
                                                          'files': files, 'form': form})
-
-# Propietary functions
-
-def executeInternalService(function_name, params, request):
-    print "BEGIN PROPIETARY SERVICE"
-
-    ThreadProcess = threading.Thread(target=function_name, args=[params, request])
-    ThreadProcess.daemon = True
-    ThreadProcess.start()
-
-    print "END PROPIETARY SERVICE"
-
-def registeredInternalServices(function_name):
-    internal_services = {'extractRepetitionsService' : extractRepetitionsService}
-
-    if function_name in internal_services:
-        return internal_services[function_name]
-    else:
-        return -1
-
-def extractRepetitionsService(args, request):
-    # Unregistered Service
-    #fileObject = userFile.objects.get(user = request.user, filename=request.GET.get('filename'))
-    '''# Registered Service
-    print "ARGS - " + str(args)
-    print "REQUEST - " + str(request.user)
-    fileObject = userFile.objects.get(user = request.user, filename=args[0])
-    '''
-    fileObject = userFile.objects.get(user = request.user, filename=args[0].rsplit('/')[-1])
-    extension = fileObject.filename.rsplit('.',1)[1]
-    file_location = str(fileObject.file).rsplit('/')
-    file_name = file_location[-1]
-    
-    # Create PATH
-    file_dir = ""
-    for fl in file_location[:-1]:
-        file_dir += fl + '/'
-
-    full_csv = fs.openFile(request.user, fileObject)
-    lines = full_csv.split('\n')
-    headers = lines[0:16] # 16 HEADER LINES
-    header = ""
-
-    # Create CONTENT
-    # CSV
-    content_clean_csv = ""
-    content_rep_csv = ""
-    # FASTA
-    content_clean_fasta = ""
-    content_rep_fasta = ""
-
-    # Create HEADER
-    for h in headers:
-        header += h + "\n"
-
-    content_clean_csv += header
-    content_rep_csv += header
-
-    # Filter LINES CONTENT
-    for line in lines[16:]:
-        items = line.split(',')
-        rep_flag = items[-1].replace('\n', '')
-        coords = items[1:5]
-        if rep_flag == '0':
-            content_clean_csv += line + "\n"
-            content_clean_fasta += str(coords) + "\n"
-        else:
-            content_rep_csv += line + "\n"
-            content_rep_fasta += str(coords) + "\n"
-    
-    # Create Files
-    fs.createFile(request=request, content=content_clean_csv, filename="CLEAN_" + file_name)
-    fs.createFile(request=request, content=content_rep_csv, filename="REPETITIONS_" + file_name)
-
-    fs.createFile(request=request, content=content_clean_fasta, filename="CLEAN_" + file_name.replace(extension,"fasta"))
-    fs.createFile(request=request, content=content_rep_fasta, filename="REPETITIONS_" + file_name.replace(extension,"fasta"))
