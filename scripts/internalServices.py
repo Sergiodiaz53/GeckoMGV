@@ -2,7 +2,6 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 from scripts.forms import *
 from scripts import forms
-from scripts.workers.services import clustalomega as co
 import subprocess
 import threading
 from django.core.mail import send_mail
@@ -46,7 +45,7 @@ def extractRepetitionsService(args, request):
         coords = items[1:5]
         if rep_flag == '0':
             content_clean_csv += line + "\n"
-        else:
+        elif rep_flag == '1':
             content_rep_csv += line + "\n"
     
     # Create Files
@@ -84,14 +83,14 @@ def extractSequenceFromCSVService(args, request):
         info = line.split(',')[0:6] # 0-frag/csb 1-xi 2-yi 3-xf 4-yf 5-strand
 
         if info[0] == 'Frag':
-            output_content += ">ID:" + str(id_counter) + " | X: " + x_seq_info[0] + " | Start: " + str(info[1]) + " | End: " + str(info[3]) + " |\n"
+            output_content += ">ID:" + str(id_counter) + ".0 |X: " + x_seq_info[0] + "|Start:" + str(info[1]) + "|End:" + str(info[3]) + "|\n"
             output_content += extractSequenceFromFastaCoords(x_seq, int(info[1]), int(info[3])) + "\n"
 
             if info[5] == 'f':
-                output_content += ">ID:" + str(id_counter) + " | Y: " + y_seq_info[0] + " | Start: " + str(info[2]) + " | End: " + str(info[4]) + " |\n"
+                output_content += ">ID:" + str(id_counter) + ".1 |Y: " + y_seq_info[0] + "|Start:" + str(info[2]) + "|End:" + str(info[4]) + "|\n"
                 output_content += extractSequenceFromFastaCoords(y_seq, int(info[2]), int(info[4])) + "\n"
             elif info[5] == 'r':
-                output_content += ">ID:" + str(id_counter) + " | Yr: " + yr_seq_info[0] + " | Start: " + str(info[2]) + " | End: " + str(info[4]) + " |\n"
+                output_content += ">ID:" + str(id_counter) + ".2 |Yr: " + yr_seq_info[0] + "|Start:" + str(info[2]) + "|End:" + str(info[4]) + "|\n"
                 output_content += extractSequenceFromFastaCoords(yr_seq, int(info[2]), int(info[4])) + "\n"
 
             id_counter += 1

@@ -3,6 +3,7 @@ from MGV.views import *
 from fileSystem.models import *
 from fileSystem.forms import *
 
+from django.core.servers.basehttp import FileWrapper
 
 # Methods
 
@@ -122,4 +123,16 @@ def consoleViewer_view(request):
             file.close()
             return render(request, 'fileViewer.html', {'fileName': "console.log", 'content': content})
 
-    
+def downloadFile_view(request):
+    if request.user.is_authenticated():
+        path = request.POST.get('filename')
+        wrapper = FileWrapper(path)
+        response = HttpResponse(content_type="application/force-download")
+        response['Content-Disposition'] = 'attachment; filename=' + path.split('/')[-1]
+        return response
+
+def renameFile_view(request):
+    if request.user.is_authenticated():
+        path = request.POST.get('filename')
+        fileObject = userFile.objects.get(user = request.user, filename=csv_filename)
+        newFile.save()

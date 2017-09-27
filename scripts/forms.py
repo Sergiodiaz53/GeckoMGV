@@ -202,7 +202,8 @@ class geckoForm(forms.Form):
         self.fields['parameter1'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="Sequence X FASTA", widget=forms.Select(attrs={'class':'selector','id': 'seqx'}))
         self.fields['parameter2'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="Sequence Y FASTA", widget=forms.Select(attrs={'class':'selector','id': 'seqy'}))
 
-###
+### Internal Services Form
+
 class extractRepetitionsForm(forms.Form):
     parameter1 =forms.ChoiceField(label="CSV file", widget=forms.Select(attrs={'class':'selector','id':'CSVfile'}))
 
