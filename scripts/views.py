@@ -31,11 +31,13 @@ def executeService(request):
                 idParamater = 'parameter'+str(i)
                 args.append(request.POST.get(idParamater))
 
+            form = FileForm()
+            files = userFile.objects.filter(user = request.user)
+
             # Check Service PATH (Internal or External)
             if service.path == 'Internal':
                 internal_service_name = "intService."+request.POST.get('exeName')
                 intService.executeInternalService(eval(internal_service_name), args, request)
-                return render(request, 'filemanager.html')
             else:
                 print os.path.join(settings.MEDIA_ROOT, service.path+request.POST.get('exeName'))
                 command = [os.path.join(settings.MEDIA_ROOT, service.path+request.POST.get('exeName'))]
@@ -46,7 +48,7 @@ def executeService(request):
                 ThreadProcess.start()
 
                 #fileResult = createFile(request, output, request.POST.get('nameFileResult'))
-                return render(request, 'filemanager.html')
+            return render(request, 'filemanager.html', {'form': form, 'files': files})
         else:
             content=co.clustal_omega(request)
             return render(request, 'MSAvisualizer.html', {'content': content})

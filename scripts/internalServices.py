@@ -83,15 +83,24 @@ def extractSequenceFromCSVService(args, request):
         info = line.split(',')[0:6] # 0-frag/csb 1-xi 2-yi 3-xf 4-yf 5-strand
 
         if info[0] == 'Frag':
-            output_content += ">ID:" + str(id_counter) + ".0 |X: " + x_seq_info[0] + "|Start:" + str(info[1]) + "|End:" + str(info[3]) + "|\n"
-            output_content += extractSequenceFromFastaCoords(x_seq, int(info[1]), int(info[3])) + "\n"
+            x_extracted = extractSequenceFromFastaCoords(x_seq, int(info[1]), int(info[3]))
+            if len(x_extracted) > 0:
+                head = ">ID:" + str(id_counter) + ".0 |X: " + x_seq_info[0] + "|Start:" + str(info[1]) + "|End:" + str(info[3])
+                output_content += head.replace('\n','') + "|\n"
+                output_content += x_extracted + "\n"
 
             if info[5] == 'f':
-                output_content += ">ID:" + str(id_counter) + ".1 |Y: " + y_seq_info[0] + "|Start:" + str(info[2]) + "|End:" + str(info[4]) + "|\n"
-                output_content += extractSequenceFromFastaCoords(y_seq, int(info[2]), int(info[4])) + "\n"
+                y_extracted = extractSequenceFromFastaCoords(y_seq, int(info[2]), int(info[4]))
+                if len(x_extracted) > 0:
+                    head = ">ID:" + str(id_counter) + ".1 |Y: " + y_seq_info[0] + "|Start:" + str(info[2]) + "|End:" + str(info[4])
+                    output_content += head.replace('\n','') + "|\n"
+                    output_content += y_extracted + "\n"
             elif info[5] == 'r':
-                output_content += ">ID:" + str(id_counter) + ".2 |Yr: " + yr_seq_info[0] + "|Start:" + str(info[2]) + "|End:" + str(info[4]) + "|\n"
-                output_content += extractSequenceFromFastaCoords(yr_seq, int(info[2]), int(info[4])) + "\n"
+                yr_extracted = extractSequenceFromFastaCoords(yr_seq, int(info[2]), int(info[4]))
+                if len(x_extracted) > 0:
+                    head = ">ID:" + str(id_counter) + ".2 |Yr: " + yr_seq_info[0] + "|Start:" + str(info[2]) + "|End:" + str(info[4])
+                    output_content += head.replace('\n','') + "|\n"
+                    output_content += yr_extracted + "\n"
 
             id_counter += 1
 

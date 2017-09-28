@@ -126,13 +126,7 @@ def consoleViewer_view(request):
 def downloadFile_view(request):
     if request.user.is_authenticated():
         path = request.POST.get('filename')
-        wrapper = FileWrapper(path)
-        response = HttpResponse(content_type="application/force-download")
-        response['Content-Disposition'] = 'attachment; filename=' + path.split('/')[-1]
+        with open(path, 'rb') as f:
+            response = HttpResponse(f.read(), content_type="application/force-download")
+            response['Content-Disposition'] = 'attachment; filename=' + path.split('/')[-1]
         return response
-
-def renameFile_view(request):
-    if request.user.is_authenticated():
-        path = request.POST.get('filename')
-        fileObject = userFile.objects.get(user = request.user, filename=csv_filename)
-        newFile.save()
