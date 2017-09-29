@@ -141,7 +141,7 @@ function getCSVContent(){
         //Add to file the lines represented in the canvas
         visualizedLines[numFile].forEach(function(lineNumber){
             csvContent.push(lines[numFile][lineNumber]);
-        });
+        }); 
     } else {
         selectedLines[numFile].forEach(function(lineNumber){
             csvContent.push(lines[numFile][lineNumber]);

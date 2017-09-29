@@ -109,9 +109,11 @@ def executeServiceInBackground(request):
             ThreadProcess.daemon = True
             ThreadProcess.start()
 
+
         print args
 
         #createFile(request, output, request.POST.get('nameFileResult'))
+        return HttpResponse("OK", content_type="text/plain")
 
 def listServices(request):
     print "listServices_scripts"

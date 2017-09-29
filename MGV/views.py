@@ -50,7 +50,7 @@ def services_view(request):
 @login_required()
 def uploadFrags(request):
     if request.method == 'POST':
-        createFile(request,request.POST['content'],request.POST['name'])
+        createFile(request=request, content=request.POST['content'], filename=request.POST['name'])
         return HttpResponse(status=201)
     else:
         return HttpResponse(status=501)

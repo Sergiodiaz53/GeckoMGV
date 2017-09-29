@@ -36,6 +36,11 @@
                         <button type="button" class="close" aria-hidden="true">&times;</button>
                         <p> New file avaliable </p>
                     </div>
+
+                    <div class="alert alert-info hidden alert-dismissable" role="alert" id="executingServicePopup">
+                        <button type="button" class="close" aria-hidden="true">&times;</button>
+                        <p> Executing service </p>
+                    </div>
                 </div>
         </div>
 
@@ -340,5 +345,6 @@
 							}
 						});
 	</script>
-
+    
+    <script type="text/javascript" src="{% static "js/MGV/CanvasPainter.js" %}"></script>
 {% endblock %}
