@@ -64,7 +64,7 @@ def loadFileFromServer(request):
     if extension == 'gbff':
         command = [os.path.join(settings.MEDIA_ROOT, 'scripts/WritePTT_FAAfromGBK')]
         command.extend(args)
-        print command
+        print "COMMAND:" + str(command)
         output = subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0]
         with open('Anot_'+fileObject.filename+'.ptt', 'r') as content_file:
             content = content_file.read()

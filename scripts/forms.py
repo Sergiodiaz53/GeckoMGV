@@ -205,14 +205,16 @@ class geckoForm(forms.Form):
 ### Internal Services Form
 
 class extractRepetitionsForm(forms.Form):
-    parameter1 =forms.ChoiceField(label="CSV file", widget=forms.Select(attrs={'class':'selector','id':'CSVfile'}))
+    choice=(("0","All"),("1", "Specific"))
+    parameter1 = forms.ChoiceField(label="CSV file", widget=forms.Select(attrs={'class':'selector','id':'CSVfile'}))
+    parameter2 = forms.ChoiceField(label="Extract Synteny Blocks", choices=choice, widget=forms.Select(attrs={'class':'selector','id':'boolSB'}))
+    parameter3 = forms.IntegerField(label="Synteny Block ID (Optional)", required=False, widget=forms.TextInput(attrs={'id':'SID'}))
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
         self.request = kwargs.pop('request', None)
         super(extractRepetitionsForm, self).__init__(*args, **kwargs)
         self.fields['parameter1'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="CSV file", widget=forms.Select(attrs={'class':'selector','id':'CSVfile'}))
-
 
 class extractSequenceFromCSVForm(forms.Form):
     parameter1 = forms.ChoiceField(label="CSV frags file", widget=forms.Select(attrs={'class':'selector','id': 'fragsFile'}))

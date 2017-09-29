@@ -17,7 +17,9 @@ def executeInternalService(function_name, args, request):
     print "### End Internal Service"
 
 def extractRepetitionsService(args, request):
-    # <a0::frags.csv>
+    # <a0::frags.csv> <a1::boolSB> <a2::SBID>
+    boolSB = args[1]
+    CSB_id = args[2]
     # Load CSV
     file_name = args[0].rsplit('/')[-1]
     fileObject = userFile.objects.get(user = request.user, filename=file_name)
@@ -39,15 +41,23 @@ def extractRepetitionsService(args, request):
     content_rep_csv += header
 
     # Filter LINES in CONTENT
-    for line in lines[16:]:
-        items = line.split(',')
-        rep_flag = items[-1].replace('\n', '')
-        coords = items[1:5]
-        if rep_flag == '0':
-            content_clean_csv += line + "\n"
-        elif rep_flag == '1':
-            content_rep_csv += line + "\n"
-    
+    if boolSB == "0":
+        for line in lines[16:-1]:
+            items = line.split(',')
+            rep_flag = items[-1].replace('\n', '')
+            if rep_flag == '0':
+                content_clean_csv += line + "\n"
+            elif rep_flag == '1':
+                content_rep_csv += line + "\n"
+    elif boolSB == "1":
+        for line in lines[16:-1]:
+            items = line.split(',')
+            csb_flag = items[6]
+
+            if csb_flag != CSB_id:
+                content_clean_csv += line + "\n"
+            elif csb_flag == CSB_id:
+                content_rep_csv += line + "\n"
     # Create Files
     fs.createFile(request=request, content=content_clean_csv, filename="CLEAN_" + file_name)
     fs.createFile(request=request, content=content_rep_csv, filename="REPETITIONS_" + file_name)

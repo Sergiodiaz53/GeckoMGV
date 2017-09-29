@@ -96,15 +96,22 @@ def executeServiceInBackground(request):
             #print form
             #print "\n**/"
 
-        print os.path.join(settings.MEDIA_ROOT, service.path+request.POST.get('exeName'))
-        command = [os.path.join(settings.MEDIA_ROOT, service.path+request.POST.get('exeName'))]
-        command.extend(args)
-        output = subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0]
+        # Check Service PATH (Internal or External)
+        if service.path == 'Internal':
+            internal_service_name = "intService."+request.POST.get('exeName')
+            intService.executeInternalService(eval(internal_service_name), args, request)
+        else:
+            print os.path.join(settings.MEDIA_ROOT, service.path+request.POST.get('exeName'))
+            command = [os.path.join(settings.MEDIA_ROOT, service.path+request.POST.get('exeName'))]
+            command.extend(args)
+
+            ThreadProcess = threading.Thread(target=runServiceInThread, args=(command, request))
+            ThreadProcess.daemon = True
+            ThreadProcess.start()
 
         print args
 
-        createFile(request, output, request.POST.get('nameFileResult'))
-        return HttpResponse("OK", content_type="text/plain")
+        #createFile(request, output, request.POST.get('nameFileResult'))
 
 def listServices(request):
     print "listServices_scripts"

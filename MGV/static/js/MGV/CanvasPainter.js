@@ -121,19 +121,8 @@ function goToPrevZoom(){
 			$("#nextZoom").prop( "disabled",false);
 		if(currentZoomIndex<=0)
 			$("#prevZoom").prop( "disabled",true);
-	}
-}
 
-//Draw in red frag that have been selected (Storaged in SelectedLines)
-function drawSelectedFrags(){
-	if(selectedLines.length>0) {
-		clearCanvas("selectLayer");
-		$('#executeServiceButton').prop('disabled', false);
-		for (var i = 0; i < selectedLines.length; i++)
-			if ($("#checklayer" + i)[0].checked) {
-				drawLinesInLayer(selectedLines[i], selectLayer, i, rgb(255, 0, 0));
-				drawHorizontalLinesInHorizontalLayer(selectedLines[i], document.getElementById("hSel" + i), i, rgb(255, 0, 0))
-			}
+		console.log("------- CURRENT INDEX: "+ currentZoomIndex);
 	}
 }
 
@@ -161,6 +150,20 @@ function goToNextZoom(){
 		if(currentZoomIndex>=backZoomList.length-1)
 			$("#nextZoom").prop( "disabled", true );
 		paintCodingRegions(annotationsNumFile)
+	}
+	console.log("------- CURRENT INDEX: "+ currentZoomIndex);
+}
+
+//Draw in red frag that have been selected (Storaged in SelectedLines)
+function drawSelectedFrags(){
+	if(selectedLines.length>0) {
+		clearCanvas("selectLayer");
+		$('#executeServiceButton').prop('disabled', false);
+		for (var i = 0; i < selectedLines.length; i++)
+			if ($("#checklayer" + i)[0].checked) {
+				drawLinesInLayer(selectedLines[i], selectLayer, i, rgb(255, 0, 0));
+				drawHorizontalLinesInHorizontalLayer(selectedLines[i], document.getElementById("hSel" + i), i, rgb(255, 0, 0))
+			}
 	}
 }
 
@@ -499,7 +502,7 @@ function createComparisonCheck(numLayer){
 	var idMapimageLayer = "Maplayer"+numLayer;
 
 	var newLayerBoxElement =
-				$('<input type="checkbox" class="switchLayer" id="checklayer'+numLayer+'"checked="checked" value="'+numLayer+'"/> '+fileNames[numLayer]+'</input><button class="btn btn-info btn-xs btn-annt" id="Anot'+numLayer+'" onclick="paintCodingRegions('+numLayer+')" disabled>Annot</button>');
+				$('<input type="checkbox" class="switchLayer" id="checklayer'+numLayer+'"checked="checked" value="'+numLayer+'"/> '+fileNames[numLayer]+'</input><button class="btn btn-info btn-xs btn-annt" id="Anot'+numLayer+'" onclick="annotOnClick('+numLayer+')" disabled>Annot</button>');
 
 	var row = $("<tr>");
 	var column = row.append( $("<td>").append(newLayerBoxElement));
@@ -1875,6 +1878,18 @@ function activateBoard() {
 	} else {
 		board = false;
 		redraw();
+	}
+}
+
+annot_state = false;
+function annotOnClick(numFile) {
+	if (!annot_state){
+		annot_state = true;
+		paintCodingRegions(numFile);
+	}else{
+		annot_state = false;
+		d3.select("#annotationXLayer").remove();
+		d3.select("#annotationYLayer").remove();
 	}
 }
 
