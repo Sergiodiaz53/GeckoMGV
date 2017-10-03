@@ -28,42 +28,54 @@
                     </div>
                 </div>
                 <div id='createFile' class="col-md-2 col-centered">
-                    <button onclick="openCreationPad()" class="btn btn-success glyphicon glyphicon-plus-sign"> new</button>
+                    <button onclick="openCreationPad()" class="btn btn-lg btn-default glyphicon glyphicon-plus-sign"> New</button>
                     <form role="form" action="{% url 'createFile_view' %}" method="POST" id=newFileForm">
                                 {% csrf_token %}
                                 <input type="text" class="hidden" name="filename" value="">
                     </form>
                 </div>
                 <div id='createFile' class="col-md-2 col-centered">
-                    <a href="/filemanager/console" class="btn btn-success glyphicon glyphicon-align-justify "> Console log</a>
+                    <a href="/filemanager/console" class="btn btn-lg btn-default glyphicon glyphicon-align-justify "> Console log</a>
                 </div>
             </div>
-
             <div class="row row-centered">
             <table class="table table-striped">
                 <thead>
                   <tr>
-                      <th>Filename</th>
-                      <th>Size</th>
-                      <th class="center">Options</th>
+                      <th class="col-md-7">Filename</th>
+                      <th class="col-md-1">Size</th>
+                      <th class="center col-md-4">Options<br>( Open | Download | Delete )</th>
                   </tr>
                 </thead>
                 {% for file in files %}
                     <thead>
                     <tr>
-                        <th>{{ file.filename }} </th>
-                        <th>{{ file.file.size|filesizeformat}} </th>
-                        <th class="center">
-                            <form role="form" action="{% url 'deleteFile_view' %}" method="POST">
-                                {% csrf_token %}
-                                <input type="text" class="hidden" name="filename" value="{{ file.file.name }}">
-                                <button type="submit" class="btn btn-xs btn-danger glyphicon glyphicon-remove"> Delete</button>
-                            </form>
-                            <form role="form" action="{% url 'fileViewer_view' %}" method="POST">
-                                {% csrf_token %}
-                                <input type="text" class="hidden" name="filename" value="{{ file.file.name }}">
-                                <button type="submit" class="btn btn-xs btn-warning glyphicon glyphicon-eye-open"> Open</button>
-                            </form>
+                        <th class="col-md-7">{{ file.filename }} </th>
+                        <th class="col-md-1">{{ file.file.size|filesizeformat}} </th>
+                        <th class="col-md-4">
+                            <div class = "row">
+                                <div class="col-md-2 col-md-offset-3">
+                                    <form role="form" action="{% url 'fileViewer_view' %}" method="POST">
+                                        {% csrf_token %}
+                                        <input type="text" class="hidden" name="filename" value="{{ file.file.name }}">
+                                        <button type="submit" class="btn btn-md btn-info glyphicon glyphicon-eye-open"></button>
+                                    </form>
+                                </div>
+                                <div class="col-md-2">
+                                    <form role="form" action="{% url 'downloadFile_view' %}" method="POST">
+                                        {% csrf_token %}
+                                        <input type="text" class="hidden" name="filename" value="{{ file.file.name }}">
+                                        <button type="submit" class="btn btn-md btn-success glyphicon glyphicon-download"></button>
+                                    </form>
+                                </div>
+                                <div class="col-md-2">
+                                    <form role="form" action="{% url 'deleteFile_view' %}" method="POST">
+                                        {% csrf_token %}
+                                        <input type="text" class="hidden" name="filename" value="{{ file.file.name }}">
+                                        <button type="submit" class="btn btn-md btn-danger glyphicon glyphicon-remove"></button>
+                                    </form>
+                                </div>
+                            </div>
                         </th>
                     </tr>
                     </thead>

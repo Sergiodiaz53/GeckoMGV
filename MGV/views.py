@@ -11,6 +11,8 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 import json
 
+import os
+
 # Create your views here.
 
 
@@ -48,7 +50,7 @@ def services_view(request):
 @login_required()
 def uploadFrags(request):
     if request.method == 'POST':
-        createFile(request,request.POST['content'],request.POST['name'])
+        createFile(request=request, content=request.POST['content'], filename=request.POST['name'])
         return HttpResponse(status=201)
     else:
         return HttpResponse(status=501)
@@ -62,7 +64,7 @@ def loadFileFromServer(request):
     if extension == 'gbff':
         command = [os.path.join(settings.MEDIA_ROOT, 'scripts/WritePTT_FAAfromGBK')]
         command.extend(args)
-        print command
+        print "COMMAND:" + str(command)
         output = subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0]
         with open('Anot_'+fileObject.filename+'.ptt', 'r') as content_file:
             content = content_file.read()

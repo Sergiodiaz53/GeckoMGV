@@ -204,6 +204,7 @@ function uploadCSV(){
             complete:function(){},
             error:function (xhr, textStatus, thrownError){console.log("error")}
         });
+        console.log("NEW FILE");
         newFileInformation();
         selectedAsText = ""
     }
@@ -383,15 +384,25 @@ $("#serviceForm").submit(function(e){
                 files++;
             },
             success:function(response){
-                console.log($(serviceForm[i]).val())
+                console.log($(serviceForm[i]).val());
                 $(serviceForm[i]).val(response);
-                console.log($(serviceForm[i]).val())
+                console.log($(serviceForm[i]).val());
             },
             complete:function(){
             },
             error:function (xhr, textStatus, thrownError){console.log("error")}
         });
     }
+
+    $.ajax({
+            type: 'POST',
+            url: $(this).attr('action'),
+            data: $(this).serialize(),
+            success: function(data) {
+                console.log("BACKGROUND:" + data);
+                executingServiceInformation(data);
+            }
+    });
 
     return true;
 });
@@ -421,13 +432,14 @@ $("#serviceFormModal").submit(function(e){
             error:function (xhr, textStatus, thrownError){console.log("error")}
         });
     }
-
+    
     $.ajax({
             type: 'POST',
             url: $(this).attr('action'),
             data: $(this).serialize(),
             success: function(data) {
-                newFileInformation(data)
+                console.log("BACKGROUND:" + data)
+                executingServiceInformation(data);
             }
     });
 
@@ -436,9 +448,18 @@ $("#serviceFormModal").submit(function(e){
     return false;
 });
 
-function newFileInformation(data){
+function executingServiceInformation(data){
+    if(!$("#newFilePopup").hasClass("hidden")){
+        $("#newFilePopup").removeClass("hidden");
+    }
+    $("#executingServicePopup").removeClass("hidden");
+}
 
-    $("#newFilePopup").removeClass("hidden")
+function newFileInformation(data){
+    if(!$("#executingServicePopup").hasClass("hidden")){
+        $("#executingServicePopup").removeClass("hidden");
+    }
+    $("#newFilePopup").removeClass("hidden");
 }
 
 $(".alert button.close").click(function (e) {
