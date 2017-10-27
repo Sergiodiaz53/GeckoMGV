@@ -19,7 +19,7 @@ And activate it:
 
 Now we should be working inside our virtualenv, so we are going to install django and its plugins
 
-* pip install django==179 django-forms-builder django_extensions
+* pip install django==1.7.9 django-forms-builder django_extensions
 
 We are going to set Django up:
 

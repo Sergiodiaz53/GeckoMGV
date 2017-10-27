@@ -432,7 +432,7 @@ $("#serviceFormModal").submit(function(e){
             error:function (xhr, textStatus, thrownError){console.log("error")}
         });
     }
-    
+
     $.ajax({
             type: 'POST',
             url: $(this).attr('action'),
@@ -527,4 +527,23 @@ function loadServiceForm(serviceExe, serviceName){
         }
         });
         return false;
+}
+
+function spinnerOn(loadText){
+  var spinner = document.getElementById("spinner");
+  spinner.style.display = "block";
+
+  $("#loadingtext").text(loadText);
+}
+function spinnerOff(){
+  var spinner = document.getElementById("spinner");
+  spinner.style.display = "none";
+}
+function overlayOn(){
+  var overlay = document.getElementById("overlay");
+  overlay.style.display = "block";
+}
+function overlayOff(){
+  var overlay = document.getElementById("overlay");
+  overlay.style.display = "none";
 }

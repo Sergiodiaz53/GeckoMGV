@@ -184,7 +184,7 @@ function clearCanvas(canvasName) {
 }
 
 /**
- * Parse the header of a loaded file, store it in a data structure and generate the table to be consulted 
+ * Parse the header of a loaded file, store it in a data structure and generate the table to be consulted
  * by the interface. The generated tables have the ID 'csvInfoTable2-[NUMFILE]'. The file header structure is defined as an object in the
  * FileManager.js as 'CSVHeader'
  * @param  {Array} currentLines Group of lines which we are currently working
@@ -585,6 +585,8 @@ function drawVerticalLinesInVerticalLayer(linesToPaint, canvasLayer, numFile, co
 	currentCtx.closePath();
 	currentCtx.lineWidth = 2;
 	currentCtx.strokeStyle = color;
+
+
 	currentCtx.stroke();
 
 	console.timeEnd("DrawComienzo")
@@ -718,7 +720,6 @@ function roundRect(currentCtx, x, y, width, height, radius, fill) {
  * Create an instance of the program. Contains the Redraw function
  */
 function createInstance() {
-    var loadingGif = $('#loadin.g-indicator');
 
 	canvas = document.getElementById("myCanvas");
 	canvasMap = document.getElementById("myMap");
@@ -738,7 +739,7 @@ function createInstance() {
 	};
 
 	redraw = function redraw() {
-        loadingGif.show();
+		overlayOn();
 		console.time("reDraw()");
 
 		FragsGrid = [];
@@ -750,6 +751,8 @@ function createInstance() {
 		// Draw Grid
 		drawGrid(board, vertical, "myCanvasGrid");
 
+
+		spinnerOn("Filtering lines in CSV...");
 		for (var numFile = 0; numFile < lines.length; numFile++) {
             console.log("Round: "+numFile);
 
@@ -819,12 +822,13 @@ function createInstance() {
 
 				//Draw in vertical layer
 				clearCanvas(currentVerticalCanvas.id);
+				spinnerOn("Drawing Frags on Grid...");
 				drawVerticalLinesInVerticalLayer(linesToPaint,currentVerticalCanvas,numFile,rgba(R[numFile], G[numFile], B[numFile], 0.7));
 				drawVerticalLinesInVerticalLayer(filteredLines,currentVerticalCanvas,numFile,rgba(189, 195, 199, 0.5));
 
 				//Draw in horizontal layer
+				spinnerOn("Drawing Computational Syntheny Blocks...");
 				if(CSBLines.length>0) {
-					console.log("CSB: "+CSBLines)
 					drawHorizontalLinesInHorizontalLayer(CSBLines, currentHorizontalCanvas, numFile, rgba(R[numFile], G[numFile], B[numFile], 1));
 				} else {
 					var context = currentHorizontalCanvas.getContext('2d');
@@ -833,12 +837,14 @@ function createInstance() {
 					context.fillText('No CSB information', currentHorizontalCanvas.width / 2, currentHorizontalCanvas.height/2);
 					//drawHorizontalLinesInHorizontalLayer(linesToPaint, currentHorizontalCanvas, numFile, rgba(R[numFile], G[numFile], B[numFile], 1));
 				}
+
 				//drawHorizontalLinesInHorizontalLayer(filteredLines, currentHorizontalCanvas, numFile, rgba(189, 195, 199, 0.5));
 
 				generateFragTable(currentLines, numFile, linesToPaint, false);
 
 				//Draw Annotations
 				if(annotationsWorking && numFile == annotationsNumFile) {
+					spinnerOn("Writing Annotations...");
 					d3.select("#annotationXLayer").remove();
 					d3.select("#annotationYLayer").remove();
 					annotationsWorking = false;
@@ -846,6 +852,7 @@ function createInstance() {
 				}
 
 				//Draw Selected frags
+				spinnerOn("Drawing Selected Frags...");
 				drawSelectedFrags();
 
 			}
@@ -874,8 +881,11 @@ function createInstance() {
 		//prevFragsTable=document.getElementById("files-tab-content").cloneNode(true);
         //prevAnnotTable=document.getElementById("annotations-tab-content").cloneNode(true);
 		console.timeEnd("reDraw()");
-        loadingGif.hide();
-        drawSelectedFrags();
+
+		overlayOff();
+		spinnerOff();
+    drawSelectedFrags();
+
 		$("#nextZoom").prop( "disabled", true);
 		$("#prevZoom").prop( "disabled", true);
 	};
@@ -904,7 +914,6 @@ function createInstance() {
 		}
 
 	}, false);
-
 	window.addEventListener('keyup',
 			function(evt) {
 
@@ -926,9 +935,7 @@ function createInstance() {
 		}
 
 	}, false);
-
-	canvas
-		.addEventListener('mousedown',
+	canvas.addEventListener('mousedown',
             function(evt) {
                 document.body.style.mozUserSelect = document.body.style.webkitUserSelect = document.body.style.userSelect = 'none';
                 lastX = evt.offsetX || (evt.pageX - canvas.offsetLeft);
@@ -942,9 +949,7 @@ function createInstance() {
                 startY=canvas.width-getMousePos(canvas,evt).y;
                 //startY = parseInt(evt.clientY - offsetY);
             }, false);
-
-	canvas
-        .addEventListener('mouseup',
+	canvas.addEventListener('mouseup',
 			function(evt) {
 				console.log("MouseUP");
 				mousedown = false;
@@ -1119,7 +1124,7 @@ function createInstance() {
                                     if(selectedLines[x].indexOf(i)==-1)
                                         selectedLines[x].push(i);
                                 }
-                                
+
                             }
                         }
                     }
@@ -1131,11 +1136,7 @@ function createInstance() {
                 }
 
 			}, false);
-
-	canvas
-        .addEventListener('mousemove',
-			function(evt) {
-
+	canvas.addEventListener('mousemove',function(evt) {
 			lastX = evt.offsetX || (evt.pageX - canvas.offsetLeft);
 			lastY = evt.offsetY || (evt.pageY - canvas.offsetTop);
 
@@ -1173,19 +1174,7 @@ function createInstance() {
 			}
 	}, false);
 
-	var handleScroll = function(evt) {
-		/*var delta = evt.wheelDelta ? evt.wheelDelta / 60
-				: evt.detail ? -evt.detail : 0;
-		if (delta)
-			zoom(delta);
-		return evt.preventDefault() && false;*/
-	};
-
-	canvas.addEventListener('DOMMouseScroll', handleScroll, false);
-	canvas.addEventListener('mousewheel', handleScroll, false);
-
 	// MOUSE ON MAP
-
 	canvasMap.onmousedown = function(e) {
 		if (map) {
 			var mapoffset = $("#myMap").offset();
@@ -1198,7 +1187,6 @@ function createInstance() {
 			}
 		}
 	}
-
 	canvasMap.onmouseup = function() {
 		if (map && dragInMap) {
 			dragInMap = false;
@@ -1227,7 +1215,6 @@ function createInstance() {
 			redraw();
 		}
 	}
-
 	canvasMap.onmousemove = function(e) {
 		if (map && dragInMap) {
 			var mapoffset = $("#myMap").offset();
@@ -1236,7 +1223,6 @@ function createInstance() {
 			redrawMap();
 		}
 	};
-    loadingGif.hide();
 }
 
 /**
@@ -1313,7 +1299,7 @@ function filter(line) {
 
 
 /**
- * Reset all canvas 
+ * Reset all canvas
  */
 function resetDraw() {
 	if ((canvas) && (vertical)) {
@@ -1694,7 +1680,7 @@ function drawGrid(board, vertical, canvasName) {
 
 /**
  * Calculate the distance between a Frag and a point. Used to select frags with a mouse click
- * @param  {Array} position X,Y point 
+ * @param  {Array} position X,Y point
  * @param  {Array} frag     Regular fragment
  * @return {Number}          Distance
  */
@@ -1851,7 +1837,7 @@ function selectFrag(lines, position, evt) {
 }
 
 /**
- * Get mouse position 
+ * Get mouse position
  * @param  {String} canvas Active canvas
  * @param  {Event} evt    Click event
  * @return {Array}        X,Y Position

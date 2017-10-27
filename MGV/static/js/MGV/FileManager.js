@@ -40,6 +40,10 @@ function loadFileFromServer($fileName){
             'filename': $fileName // from form
         },
         success: function(content){
+            // START SPINNER - HOW???
+            overlayOn();
+            spinnerOn("Loading File...");
+
             var extension = $fileName.split('.').pop().toLowerCase();
             switch (extension) {
                 case 'csv':
@@ -183,7 +187,8 @@ function handleFiles(files, type) {
     console.log(files);
 
     if (files.length!=0) {
-        $('#loading-indicator').show();
+        overlayOn();
+        spinnerOn("Reading file...");
     }
 
     console.time("ReadingFile()");
@@ -252,7 +257,9 @@ function processData(csv, index) {
             $("#infoPopover").popover();
         });
 
-        $('#loading-indicator').show();
+
+      		overlayOn();
+          spinnerOn("Processing Data...");
 
         Papa.parse(csv, {
             worker: true,
@@ -269,8 +276,10 @@ function processData(csv, index) {
                         //calculateMatrix(lines[0]);
                         addPrevZoom();
                     }
-                    $('#loading-indicator').hide();
+
                 }
+                spinnerOff();
+                overlayOff();
             },
             error: function(err,reason){
                 alert(err);
