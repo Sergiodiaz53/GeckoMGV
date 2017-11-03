@@ -44,16 +44,6 @@ class csb2csvForm(forms.Form):
         self.fields['parameter1'] = forms.ChoiceField(choices=[(file.file.name, file.filename)  for file in userFile.objects.filter(user=self.user)], label="CSB file", widget=forms.Select(attrs={'class':'selector','id': 'CSBfile'}))
         self.fields['parameter2'] = forms.ChoiceField(choices=[(file.file.name, file.filename)  for file in userFile.objects.filter(user=self.user)], label="Master file", widget=forms.Select(attrs={'class':'selector','id': 'Masterfile'}))
 
-class clustalForm(forms.Form):
-    parameter1 = forms.ChoiceField(label="Multifasta file", widget=forms.Select(attrs={'class':'selector','id': 'multifile'}))
-
-
-    def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop('user', None)
-        self.request = kwargs.pop('request', None)
-        super(clustalForm, self).__init__(*args, **kwargs)
-        self.fields['parameter1'] = forms.ChoiceField(choices=[(file.file.name, file.filename)  for file in userFile.objects.filter(user=self.user)], label="Multifasta file", widget=forms.Select(attrs={'class':'selector','id': 'multifile'}))
-
 class reverseComplementForm(forms.Form):
     parameter1 = forms.ChoiceField(label="Fasta to reverse", widget=forms.Select(attrs={'class':'selector','id': 'fastaToReverse'}))
     parameter2 = forms.CharField(label="Output file", widget=forms.TextInput(attrs={'class':'file','id': 'outputFile'}))
@@ -232,3 +222,35 @@ class extractSequenceFromCSVForm(forms.Form):
         self.fields['parameter3'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="Y Fasta file", widget=forms.Select(attrs={'class':'selector','id': 'yFastaFile'}))
         self.fields['parameter4'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="Y-Reversed Fasta file", widget=forms.Select(attrs={'class':'selector','id': 'yReversedFastaFile'}))
         self.fields['parameter5'] = forms.CharField(label="Output FastaFile", widget=forms.TextInput(attrs={'id': 'outputFastaFile'}))
+
+class repKillerForm(forms.Form):
+    parameter1 = forms.ChoiceField(label="CSV frags file", widget=forms.Select(attrs={'class':'selector','id': 'fragsFile'}))
+    parameter2 = forms.IntegerField(label="Similarity Length", required=False, widget=forms.TextInput(attrs={'id':'SIM_POS'}))
+    parameter3 = forms.IntegerField(label="Similarity Position", required=False, widget=forms.TextInput(attrs={'id':'SIM_LEN'}))
+    parameter4 =forms.CharField(label="Output Marked CSV", widget=forms.TextInput(attrs={'class':'file','id': 'outputCSVFile'}))
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        self.request = kwargs.pop('request', None)
+        super(repKillerForm, self).__init__(*args, **kwargs)
+        self.fields['parameter1'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="CSV frags file", widget=forms.Select(attrs={'class':'selector','id': 'fragsFile'}))
+        self.fields['parameter4'] = forms.CharField(label="Output Marked CSV", widget=forms.TextInput(attrs={'id': 'outputCSVFile'}))
+
+class muscleForm(forms.Form):
+    parameter1 = forms.ChoiceField(label="Multifasta file", widget=forms.Select(attrs={'class':'selector','id': 'in'}))
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        self.request = kwargs.pop('request', None)
+        super(muscleForm, self).__init__(*args, **kwargs)
+        self.fields['parameter1'] = forms.ChoiceField(choices=[(file.file.name, file.filename)  for file in userFile.objects.filter(user=self.user)], label="Multifasta file", widget=forms.Select(attrs={'class':'selector','id': 'in'}))
+
+class clustalForm(forms.Form):
+    parameter1 = forms.ChoiceField(label="Multifasta file", widget=forms.Select(attrs={'class':'selector','id': 'multifile'}))
+
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        self.request = kwargs.pop('request', None)
+        super(clustalForm, self).__init__(*args, **kwargs)
+        self.fields['parameter1'] = forms.ChoiceField(choices=[(file.file.name, file.filename)  for file in userFile.objects.filter(user=self.user)], label="Multifasta file", widget=forms.Select(attrs={'class':'selector','id': 'multifile'}))
