@@ -7,6 +7,8 @@ import subprocess
 import threading
 from django.core.mail import send_mail
 
+from scripts import internalServices as intService
+
 def storeService(request):
     if request.method == 'POST':
         form = RegisterService(request.POST)
@@ -29,16 +31,24 @@ def executeService(request):
                 idParamater = 'parameter'+str(i)
                 args.append(request.POST.get(idParamater))
 
-            print os.path.join(settings.MEDIA_ROOT, service.path+request.POST.get('exeName'))
-            command = [os.path.join(settings.MEDIA_ROOT, service.path+request.POST.get('exeName'))]
-            command.extend(args)
+            form = FileForm()
+            files = userFile.objects.filter(user = request.user)
 
-            ThreadProcess = threading.Thread(target=runServiceInThread, args=(command, request))
-            ThreadProcess.daemon = True
-            ThreadProcess.start()
+            # Check Service PATH (Internal or External)
+            if service.path == 'Internal':
+                internal_service_name = "intService."+request.POST.get('exeName')
+                intService.executeInternalService(eval(internal_service_name), args, request)
+            else:
+                print os.path.join(settings.MEDIA_ROOT, service.path+request.POST.get('exeName'))
+                command = [os.path.join(settings.MEDIA_ROOT, service.path+request.POST.get('exeName'))]
+                command.extend(args)
 
-            #fileResult = createFile(request, output, request.POST.get('nameFileResult'))
-            return render(request, 'filemanager.html')
+                ThreadProcess = threading.Thread(target=runServiceInThread, args=(command, request))
+                ThreadProcess.daemon = True
+                ThreadProcess.start()
+
+                #fileResult = createFile(request, output, request.POST.get('nameFileResult'))
+            return render(request, 'filemanager.html', {'form': form, 'files': files})
         else:
             content=co.clustal_omega(request)
             return render(request, 'MSAvisualizer.html', {'content': content})
@@ -86,14 +96,23 @@ def executeServiceInBackground(request):
             #print form
             #print "\n**/"
 
-        print os.path.join(settings.MEDIA_ROOT, service.path+request.POST.get('exeName'))
-        command = [os.path.join(settings.MEDIA_ROOT, service.path+request.POST.get('exeName'))]
-        command.extend(args)
-        output = subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0]
+        # Check Service PATH (Internal or External)
+        if service.path == 'Internal':
+            internal_service_name = "intService."+request.POST.get('exeName')
+            intService.executeInternalService(eval(internal_service_name), args, request)
+        else:
+            print os.path.join(settings.MEDIA_ROOT, service.path+request.POST.get('exeName'))
+            command = [os.path.join(settings.MEDIA_ROOT, service.path+request.POST.get('exeName'))]
+            command.extend(args)
+
+            ThreadProcess = threading.Thread(target=runServiceInThread, args=(command, request))
+            ThreadProcess.daemon = True
+            ThreadProcess.start()
+
 
         print args
 
-        createFile(request, output, request.POST.get('nameFileResult'))
+        #createFile(request, output, request.POST.get('nameFileResult'))
         return HttpResponse("OK", content_type="text/plain")
 
 def listServices(request):
