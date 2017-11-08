@@ -21,39 +21,41 @@ def storeService(request):
 def executeService(request):
     print request.POST
     if request.method == 'POST':
-        if request.POST.get('exeName')!= 'clustal':
-            service = Script.objects.get(exeName=request.POST.get('exeName'))
-            auxForm = getattr(forms, service.form)
-            form = auxForm(user = request.user, request=request)
-            args = []
+        service = Script.objects.get(exeName=request.POST.get('exeName'))
+        auxForm = getattr(forms, service.form)
+        form = auxForm(user = request.user, request=request)
+        args = []
 
-            for i in xrange(1, (len(form.fields))+1):
-                idParamater = 'parameter'+str(i)
-                args.append(request.POST.get(idParamater))
+        for i in xrange(1, (len(form.fields))+1):
+            idParamater = 'parameter'+str(i)
+            args.append(request.POST.get(idParamater))
 
-            form = FileForm()
-            files = userFile.objects.filter(user = request.user)
+        form = FileForm()
+        files = userFile.objects.filter(user = request.user)
 
-            # Check Service PATH (Internal or External)
-            if service.path == 'Internal':
-                internal_service_name = "intService."+request.POST.get('exeName')
-                intService.executeInternalService(eval(internal_service_name), args, request)
-            else:
-                print os.path.join(settings.MEDIA_ROOT, service.path+request.POST.get('exeName'))
-                command = [os.path.join(settings.MEDIA_ROOT, service.path+request.POST.get('exeName'))]
-                command.extend(args)
-
-                ThreadProcess = threading.Thread(target=runServiceInThread, args=(command, request))
-                ThreadProcess.daemon = True
-                ThreadProcess.start()
-
-                #fileResult = createFile(request, output, request.POST.get('nameFileResult'))
-            return render(request, 'filemanager.html', {'form': form, 'files': files})
+        # Check Service PATH (Internal or External)
+        if service.path == 'Internal':
+            module = __import__('scripts.internalServices')
+            #internal_service_func = getattr(module, request.POST.get('exeName'))
+            internal_service_name = request.POST.get('exeName')
+            intService.executeInternalService(internal_service_name, args, request)
         else:
-            content=co.clustal_omega(request)
-            return render(request, 'MSAvisualizer.html', {'content': content})
+            print "PATH : " + os.path.join(settings.MEDIA_ROOT, service.path+request.POST.get('exeName'))
+            command = [os.path.join(settings.MEDIA_ROOT, service.path+request.POST.get('exeName'))]
+            command.extend(args)
+
+            ThreadProcess = threading.Thread(target=runServiceInThread, args=(command, request))
+            ThreadProcess.daemon = True
+            ThreadProcess.start()
+
+            #fileResult = createFile(request, output, request.POST.get('nameFileResult'))
+        return render(request, 'filemanager.html', {'form': form, 'files': files})
+        #return render(request, 'MSAvisualizer.html', {'content': content})
 
 def runServiceInThread (command, request):
+    print "###########"
+    print "COMMAND: " + str(command)
+    print "###########"
     output = subprocess.Popen(command, stdout=subprocess.PIPE, close_fds=True).communicate()[0]
 
     path = generatePath(request, 'log')
@@ -71,6 +73,7 @@ def runServiceInThread (command, request):
         file.write(content)
         file.close()
 
+    """
     send_mail(
         'Subject here',
         'Here is the message.',
@@ -78,6 +81,7 @@ def runServiceInThread (command, request):
         ['sergiodiazdp@gmail.com'],
         fail_silently=False,
     )
+    """
 
 
 @csrf_exempt

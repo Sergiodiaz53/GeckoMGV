@@ -11,7 +11,7 @@ from fileSystem import views as fs
 
 def executeInternalService(function_name, args, request):
     print "### Begin Internal Service"
-    ThreadProcess = threading.Thread(target=function_name, args=[args, request])
+    ThreadProcess = threading.Thread(target=eval(function_name), args=(args, request))
     ThreadProcess.daemon = True
     ThreadProcess.start()
     print "### End Internal Service"
@@ -45,9 +45,9 @@ def extractRepetitionsService(args, request):
         for line in lines[16:-1]:
             items = line.split(',')
             rep_flag = items[-1].replace('\n', '')
-            if rep_flag == '0':
+            if rep_flag == '0' or rep_flag == '1':
                 content_clean_csv += line + "\n"
-            elif rep_flag == '1':
+            elif rep_flag == '2':
                 content_rep_csv += line + "\n"
     elif boolSB == "1":
         for line in lines[16:-1]:
@@ -59,8 +59,8 @@ def extractRepetitionsService(args, request):
             elif csb_flag == CSB_id:
                 content_rep_csv += line + "\n"
     # Create Files
-    fs.createFile(request=request, content=content_clean_csv, filename="CLEAN_" + file_name)
-    fs.createFile(request=request, content=content_rep_csv, filename="REPETITIONS_" + file_name)
+    fileResult1 = fs.createFile(request=request, content=content_clean_csv, filename="CLEAN_" + file_name)
+    fileResult2 = fs.createFile(request=request, content=content_rep_csv, filename="REPETITIONS_" + file_name)
 
 
 def extractSequenceFromCSVService(args, request):
@@ -115,7 +115,7 @@ def extractSequenceFromCSVService(args, request):
             id_counter += 1
 
     # Create Files
-    fs.createFile(request=request, content=output_content, filename=args[4].rsplit('/')[-1])
+    fileResult = fs.createFile(request=request, content=output_content, filename=args[4].rsplit('/')[-1])
 
 ### Helpers
 

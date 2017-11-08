@@ -192,7 +192,29 @@ class geckoForm(forms.Form):
         self.fields['parameter1'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="Sequence X FASTA", widget=forms.Select(attrs={'class':'selector','id': 'seqx'}))
         self.fields['parameter2'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="Sequence Y FASTA", widget=forms.Select(attrs={'class':'selector','id': 'seqy'}))
 
-### Internal Services Form
+class repKillerForm(forms.Form):
+    parameter1 = forms.ChoiceField(label="CSV frags file", widget=forms.Select(attrs={'class':'selector','id': 'fragsFile'}))
+    parameter2 = forms.CharField(label="Output Marked CSV", widget=forms.TextInput(attrs={'class':'file','id': 'outputFile'}))
+    parameter3 = forms.IntegerField(label="Similarity Length", widget=forms.TextInput(attrs={'id':'SIM_POS'}))
+    parameter4 = forms.IntegerField(label="Similarity Position", widget=forms.TextInput(attrs={'id':'SIM_LEN'}))
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        self.request = kwargs.pop('request', None)
+        super(repKillerForm, self).__init__(*args, **kwargs)
+        self.fields['parameter1'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="CSV frags file", widget=forms.Select(attrs={'class':'selector','id': 'fragsFile'}))
+
+class muscleForm(forms.Form):
+    parameter1 = forms.ChoiceField(label="Multifasta file", widget=forms.Select(attrs={'class':'selector','id': 'in'}))
+    parameter2 =forms.CharField(label="Multiple Alignment Output", widget=forms.TextInput(attrs={'class':'file','id': 'output'}))
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        self.request = kwargs.pop('request', None)
+        super(muscleForm, self).__init__(*args, **kwargs)
+        self.fields['parameter1'] = forms.ChoiceField(choices=[(file.file.name, file.filename)  for file in userFile.objects.filter(user=self.user)], label="Multifasta file", widget=forms.Select(attrs={'class':'selector','id': 'in'}))
+
+### Internal Services Form - DONT USE class=file FOR OUTPUTE --> USE SIMPLE TEXT INSTEAD
 
 class extractRepetitionsForm(forms.Form):
     choice=(("0","All"),("1", "Specific"))
@@ -211,7 +233,7 @@ class extractSequenceFromCSVForm(forms.Form):
     parameter2 = forms.ChoiceField(label="X Fasta file", widget=forms.Select(attrs={'class':'selector','id': 'xFastaFile'}))
     parameter3 = forms.ChoiceField(label="Y Fasta file", widget=forms.Select(attrs={'class':'selector','id': 'yFastaFile'}))
     parameter4 = forms.ChoiceField(label="Y-Reversed Fasta file", widget=forms.Select(attrs={'class':'selector','id': 'yReversedFastaFile'}))
-    parameter5 = forms.CharField(label="Output FastaFile", widget=forms.TextInput(attrs={'class':'file','id': 'outputFastaFile'}))
+    parameter5 = forms.CharField(label="Output FastaFile", widget=forms.TextInput(attrs={'id': 'outputFastaFile'}))
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
@@ -221,32 +243,12 @@ class extractSequenceFromCSVForm(forms.Form):
         self.fields['parameter2'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="X Fasta file", widget=forms.Select(attrs={'class':'selector','id': 'xFastaFile'}))
         self.fields['parameter3'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="Y Fasta file", widget=forms.Select(attrs={'class':'selector','id': 'yFastaFile'}))
         self.fields['parameter4'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="Y-Reversed Fasta file", widget=forms.Select(attrs={'class':'selector','id': 'yReversedFastaFile'}))
-        self.fields['parameter5'] = forms.CharField(label="Output FastaFile", widget=forms.TextInput(attrs={'id': 'outputFastaFile'}))
 
-class repKillerForm(forms.Form):
-    parameter1 = forms.ChoiceField(label="CSV frags file", widget=forms.Select(attrs={'class':'selector','id': 'fragsFile'}))
-    parameter2 = forms.IntegerField(label="Similarity Length", required=False, widget=forms.TextInput(attrs={'id':'SIM_POS'}))
-    parameter3 = forms.IntegerField(label="Similarity Position", required=False, widget=forms.TextInput(attrs={'id':'SIM_LEN'}))
-    parameter4 =forms.CharField(label="Output Marked CSV", widget=forms.TextInput(attrs={'class':'file','id': 'outputCSVFile'}))
-
-    def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop('user', None)
-        self.request = kwargs.pop('request', None)
-        super(repKillerForm, self).__init__(*args, **kwargs)
-        self.fields['parameter1'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="CSV frags file", widget=forms.Select(attrs={'class':'selector','id': 'fragsFile'}))
-        self.fields['parameter4'] = forms.CharField(label="Output Marked CSV", widget=forms.TextInput(attrs={'id': 'outputCSVFile'}))
-
-class muscleForm(forms.Form):
-    parameter1 = forms.ChoiceField(label="Multifasta file", widget=forms.Select(attrs={'class':'selector','id': 'in'}))
-
-    def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop('user', None)
-        self.request = kwargs.pop('request', None)
-        super(muscleForm, self).__init__(*args, **kwargs)
-        self.fields['parameter1'] = forms.ChoiceField(choices=[(file.file.name, file.filename)  for file in userFile.objects.filter(user=self.user)], label="Multifasta file", widget=forms.Select(attrs={'class':'selector','id': 'in'}))
+### ----- DEPRECATED
 
 class clustalForm(forms.Form):
     parameter1 = forms.ChoiceField(label="Multifasta file", widget=forms.Select(attrs={'class':'selector','id': 'multifile'}))
+    parameter2 =forms.CharField(label="Multiple Alignment Output", widget=forms.TextInput(attrs={'class':'file','id': 'output'}))
 
 
     def __init__(self, *args, **kwargs):
