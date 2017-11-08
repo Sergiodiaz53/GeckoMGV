@@ -28,7 +28,7 @@ function processEvolutiveEvents(frags, index){
 	}
 
 	console.time("HugeFiltering");
-    /*for (var i = frags.length - 1; i >= 0; i--){
+    for (var i = frags.length - 1; i >= 0; i--){
         if(frags[i][0] != "EndEE"){
 
             if (filter(frags[i]) && huge_file) {
@@ -49,11 +49,14 @@ function processEvolutiveEvents(frags, index){
             }
             eeIndex++;
         }
-    }*/
+    }
     console.timeEnd("HugeFiltering");
 
     lines[index] = frags.slice(0);
-    originalComparison[index] = frags.slice(0)  ;
+    originalComparison[index] = frags.slice(0);
+
+    evolutiveFrags[index] = evolutiveFrags[index].reverse();
+    evolutiveEvents[index] = evolutiveEvents[index].reverse();
 
     huge_file = false;
     if(eeIndex) $("#EEmanag").show();
