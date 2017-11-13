@@ -369,7 +369,8 @@ function showConsole(){
 }
 //...........................................................................................................
 $("#serviceForm").submit(function(e){
-
+    e.preventDefault();
+    
     serviceForm=$('#serviceForm :input');
     files=0;
 
@@ -380,6 +381,7 @@ $("#serviceForm").submit(function(e){
             type: "POST",
             async: false,
             data: {filename: $(serviceForm[i]).val(), content:''},
+            console.log("-- Service Submit --")
             beforeSend:function(){
                 files++;
             },
@@ -408,6 +410,7 @@ $("#serviceForm").submit(function(e){
 });
 
 $("#serviceFormModal").submit(function(e){
+    e.preventDefault();
 
     serviceForm=$('#serviceFormModal :input');
     files=0;

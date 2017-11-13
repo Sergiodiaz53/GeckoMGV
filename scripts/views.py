@@ -19,7 +19,7 @@ def storeService(request):
 
 @login_required()
 def executeService(request):
-    print request.POST
+    print "REQUEST --- " + str(request.POST)
     if request.method == 'POST':
         service = Script.objects.get(exeName=request.POST.get('exeName'))
         auxForm = getattr(forms, service.form)
@@ -35,8 +35,6 @@ def executeService(request):
 
         # Check Service PATH (Internal or External)
         if service.path == 'Internal':
-            module = __import__('scripts.internalServices')
-            #internal_service_func = getattr(module, request.POST.get('exeName'))
             internal_service_name = request.POST.get('exeName')
             intService.executeInternalService(internal_service_name, args, request)
         else:
@@ -89,7 +87,7 @@ def executeServiceInBackground(request):
 
     if request.method == 'POST':
         service = Script.objects.get(exeName=request.POST.get('exeName'))
-        auxForm= getattr(forms, service.form)
+        auxForm = getattr(forms, service.form)
         form = auxForm(user = request.user, request=request)
         args = []
 
@@ -102,8 +100,9 @@ def executeServiceInBackground(request):
 
         # Check Service PATH (Internal or External)
         if service.path == 'Internal':
-            internal_service_name = "intService."+request.POST.get('exeName')
-            intService.executeInternalService(eval(internal_service_name), args, request)
+            print "OK"
+            #internal_service_name = "intService."+request.POST.get('exeName')
+            #intService.executeInternalService(eval(internal_service_name), args, request)
         else:
             print os.path.join(settings.MEDIA_ROOT, service.path+request.POST.get('exeName'))
             command = [os.path.join(settings.MEDIA_ROOT, service.path+request.POST.get('exeName'))]

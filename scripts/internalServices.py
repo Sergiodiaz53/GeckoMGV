@@ -1,20 +1,27 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 from scripts.forms import *
+from fileSystem.models import *
 from scripts import forms
 import subprocess
 import threading
 from django.core.mail import send_mail
+from django.core.exceptions import ObjectDoesNotExist
 
 from fileSystem import views as fs
 
 
 def executeInternalService(function_name, args, request):
     print "### Begin Internal Service"
-    ThreadProcess = threading.Thread(target=eval(function_name), args=(args, request))
+    ThreadProcess = threading.Thread(target=threadInit, args=(function_name, args, request))
     ThreadProcess.daemon = True
-    ThreadProcess.start()
+    ThreadProcess.run()
     print "### End Internal Service"
+
+def threadInit(function_name, args, request):
+    print "--- Thread Init ---"
+    eval(function_name+'(args,request)')
+    print "--- Thread End ---"
 
 def extractRepetitionsService(args, request):
     # <a0::frags.csv> <a1::boolSB> <a2::SBID>
@@ -29,6 +36,7 @@ def extractRepetitionsService(args, request):
     headers = lines[0:16] # 16 HEADER LINES
     header = ""
 
+    print "--------------------- fuck this -------------------"
     # Create CSV
     content_clean_csv = ""
     content_rep_csv = ""
@@ -59,8 +67,42 @@ def extractRepetitionsService(args, request):
             elif csb_flag == CSB_id:
                 content_rep_csv += line + "\n"
     # Create Files
-    fileResult1 = fs.createFile(request=request, content=content_clean_csv, filename="CLEAN_" + file_name)
-    fileResult2 = fs.createFile(request=request, content=content_rep_csv, filename="REPETITIONS_" + file_name)
+    #fs.createFile(request=request, content=content_clean_csv, filename="CLEAN_" + file_name)
+    #fs.createFile(request=request, content=content_rep_csv, filename="REPETITIONS_" + file_name)
+    try:
+        auxname = "CLEAN_" + file_name
+        fo = userFile.objects.get(user = request.user, filename=auxname)
+        """
+
+            file = open(path,'wb')
+            file.write(content_clean_csv)
+            file.close()
+            newFile = userFile(user=request.user, filename=auxname, file=path)
+            newFile.save()
+        """
+    except ObjectDoesNotExist:
+        path = generatePath(request, auxname)
+        print "TESTING - SAVING" + str(path)
+        if not os.path.exists(path):
+            print "WORKING - SAVING" + str(path)
+            fs.createFile(request=request, content=content_clean_csv, filename="CLEAN_" + file_name)
+
+    try:
+        auxname = "REPETITIONS_" + file_name
+        fo = userFile.objects.get(user = request.user, filename=auxname)
+        """
+            file = open(path,'wb')
+            file.write(content_rep_csv)
+            file.close()
+            newFile = userFile(user=request.user, filename=auxname, file=path)
+            newFile.save()
+        """
+    except ObjectDoesNotExist:
+        path = generatePath(request, auxname)
+        print "TESTING - SAVING" + str(path)
+        if not os.path.exists(path):
+            print "WORKING - SAVING" + str(path)
+            fs.createFile(request=request, content=content_rep_csv, filename="REPETITIONS_" + file_name)
 
 
 def extractSequenceFromCSVService(args, request):
@@ -115,7 +157,15 @@ def extractSequenceFromCSVService(args, request):
             id_counter += 1
 
     # Create Files
-    fileResult = fs.createFile(request=request, content=output_content, filename=args[4].rsplit('/')[-1])
+    try:
+        auxname = args[4].rsplit('/')[-1]
+        fo = userFile.objects.get(user = request.user, filename=auxname)
+    except ObjectDoesNotExist:
+        print "TESTING - SAVING FASTA"
+        path = generatePath(request, auxname)
+        if not os.path.exists(path):
+            print "WORKING - SAVING FASTA"
+            fileResult = fs.createFile(request=request, content=output_content, filename=args[4].rsplit('/')[-1])
 
 ### Helpers
 
