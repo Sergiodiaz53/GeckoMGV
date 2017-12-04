@@ -5,7 +5,6 @@ from fileSystem.models import *
 from scripts import forms
 import subprocess
 import threading
-from django.core.mail import send_mail
 from django.core.exceptions import ObjectDoesNotExist
 
 from fileSystem import views as fs
@@ -36,7 +35,6 @@ def extractRepetitionsService(args, request):
     headers = lines[0:16] # 16 HEADER LINES
     header = ""
 
-    print "--------------------- fuck this -------------------"
     # Create CSV
     content_clean_csv = ""
     content_rep_csv = ""
@@ -67,42 +65,8 @@ def extractRepetitionsService(args, request):
             elif csb_flag == CSB_id:
                 content_rep_csv += line + "\n"
     # Create Files
-    #fs.createFile(request=request, content=content_clean_csv, filename="CLEAN_" + file_name)
-    #fs.createFile(request=request, content=content_rep_csv, filename="REPETITIONS_" + file_name)
-    try:
-        auxname = "CLEAN_" + file_name
-        fo = userFile.objects.get(user = request.user, filename=auxname)
-        """
-
-            file = open(path,'wb')
-            file.write(content_clean_csv)
-            file.close()
-            newFile = userFile(user=request.user, filename=auxname, file=path)
-            newFile.save()
-        """
-    except ObjectDoesNotExist:
-        path = generatePath(request, auxname)
-        print "TESTING - SAVING" + str(path)
-        if not os.path.exists(path):
-            print "WORKING - SAVING" + str(path)
-            fs.createFile(request=request, content=content_clean_csv, filename="CLEAN_" + file_name)
-
-    try:
-        auxname = "REPETITIONS_" + file_name
-        fo = userFile.objects.get(user = request.user, filename=auxname)
-        """
-            file = open(path,'wb')
-            file.write(content_rep_csv)
-            file.close()
-            newFile = userFile(user=request.user, filename=auxname, file=path)
-            newFile.save()
-        """
-    except ObjectDoesNotExist:
-        path = generatePath(request, auxname)
-        print "TESTING - SAVING" + str(path)
-        if not os.path.exists(path):
-            print "WORKING - SAVING" + str(path)
-            fs.createFile(request=request, content=content_rep_csv, filename="REPETITIONS_" + file_name)
+    fs.createFile(request=request, content=content_clean_csv, filename="CLEAN_" + file_name)
+    fs.createFile(request=request, content=content_rep_csv, filename="REPETITIONS_" + file_name)
 
 
 def extractSequenceFromCSVService(args, request):
@@ -132,40 +96,36 @@ def extractSequenceFromCSVService(args, request):
     id_counter = 0
     # Read CSV lines and extract from X and Y/Yr
     for line in csv_lines[16:]:
+        print line
         info = line.split(',')[0:6] # 0-frag/csb 1-xi 2-yi 3-xf 4-yf 5-strand
 
         if info[0] == 'Frag':
             x_extracted = extractSequenceFromFastaCoords(x_seq, int(info[1]), int(info[3]))
-            if len(x_extracted) > 0:
-                head = ">ID:" + str(id_counter) + ".0 |X: " + x_seq_info[0] + "|Start:" + str(info[1]) + "|End:" + str(info[3])
-                output_content += head.replace('\n','') + "|\n"
+            if x_extracted != '':
+                head = ">ID-" + str(id_counter) + ".0 X_" + str(info[1]) + "_" + str(info[3]) + "_" + x_seq_info[0][1:].replace('|','_').replace(' ','-').replace(',', '')
+                output_content += head.replace('\n','') + "\n"
                 output_content += x_extracted + "\n"
 
             if info[5] == 'f':
                 y_extracted = extractSequenceFromFastaCoords(y_seq, int(info[2]), int(info[4]))
-                if len(x_extracted) > 0:
-                    head = ">ID:" + str(id_counter) + ".1 |Y: " + y_seq_info[0] + "|Start:" + str(info[2]) + "|End:" + str(info[4])
-                    output_content += head.replace('\n','') + "|\n"
+                print y_extracted + " :: " + info[2] + " :: " + info[4] + " :: " + str(len(y_extracted))
+                if y_extracted != '':
+                    print "IN --- " + str(len(y_extracted))
+                    head = ">ID-" + str(id_counter) + ".1 Y_" + str(info[2]) + "_" + str(info[4]) + "_"  + y_seq_info[0][1:].replace('|','_').replace(' ','-').replace(',', '')
+                    output_content += head.replace('\n','') + "\n"
                     output_content += y_extracted + "\n"
+                    print output_content
             elif info[5] == 'r':
                 yr_extracted = extractSequenceFromFastaCoords(yr_seq, int(info[2]), int(info[4]))
-                if len(x_extracted) > 0:
-                    head = ">ID:" + str(id_counter) + ".2 |Yr: " + yr_seq_info[0] + "|Start:" + str(info[2]) + "|End:" + str(info[4])
-                    output_content += head.replace('\n','') + "|\n"
+                if yr_extracted != '':
+                    head = ">ID-" + str(id_counter) + ".2 Yr_" + str(info[2]) + "_" + str(info[4]) + "_" + yr_seq_info[0][1:].replace('|','_').replace(' ','-').replace(',', '')
+                    output_content += head.replace('\n','') + "\n"
                     output_content += yr_extracted + "\n"
 
             id_counter += 1
 
     # Create Files
-    try:
-        auxname = args[4].rsplit('/')[-1]
-        fo = userFile.objects.get(user = request.user, filename=auxname)
-    except ObjectDoesNotExist:
-        print "TESTING - SAVING FASTA"
-        path = generatePath(request, auxname)
-        if not os.path.exists(path):
-            print "WORKING - SAVING FASTA"
-            fileResult = fs.createFile(request=request, content=output_content, filename=args[4].rsplit('/')[-1])
+    fs.createFile(request=request, content=output_content, filename=args[4].rsplit('/')[-1])
 
 ### Helpers
 

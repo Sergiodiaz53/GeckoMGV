@@ -370,7 +370,7 @@ function showConsole(){
 //...........................................................................................................
 $("#serviceForm").submit(function(e){
     e.preventDefault();
-    
+
     serviceForm=$('#serviceForm :input');
     files=0;
 
@@ -381,8 +381,8 @@ $("#serviceForm").submit(function(e){
             type: "POST",
             async: false,
             data: {filename: $(serviceForm[i]).val(), content:''},
-            console.log("-- Service Submit --")
             beforeSend:function(){
+                console.log("-- Service Submit --");
                 files++;
             },
             success:function(response){
@@ -402,6 +402,8 @@ $("#serviceForm").submit(function(e){
             data: $(this).serialize(),
             success: function(data) {
                 console.log("BACKGROUND:" + data);
+                //$("html").html(data);
+                window.location.href = "/filemanager/";
                 executingServiceInformation(data);
             }
     });

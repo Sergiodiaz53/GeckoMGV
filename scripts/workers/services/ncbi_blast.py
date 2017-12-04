@@ -1,0 +1,107 @@
+__author__ = 'pabrod'
+from django.shortcuts import render, redirect
+from django.http import HttpResponse, JsonResponse
+
+from scripts.workers.EBI import EBI
+from scripts.forms import *
+
+from fileSystem.forms import *
+from fileSystem.views import *
+from fileSystem.models import *
+
+turl = "https://blast.ncbi.nlm.nih.gov/Blast.cgi?QUERY=%3EHSBGPG%20Human%20gene%20for%20bone%20gla%20protein%20(BGP)%0AGGCAGATTCCCCCTAGACCCGCCCGCACCATGGTCAGGCATGCCCCTCCTCATCGCTGGGCACAGCCCAGAGGGT%0AATAAACAGTGCTGGAGGCTGGCGGGGCAGGCCAGCTGAGTCCTGAGCAGCAGCCCAGCGCAGCCACCGAGACACC%0AATGAGAGCCCTCACACTCCTCGCCCTATTGGCCCTGGCCGCACTTTGCATCGCTGGCCAGGCAGGTGAGTGCCCC%0ACACCTCCCCTCAGGCCGCATTGCAGTGGGGGCTGAGAGGAGGAAGCACCATGGCCCACCTCTTCTCACCCCTTTG%0AGCTGGCAGTCCCTTTGCAGTCTAACCACCTTGTTGCAGGCTCAATCCATTTGCCCCAGCTCTGCCCTTGCAGAGG%0AGAGAGGAGGGAAGAGCAAGCTGCCCGAGACGCAGGGGAAGGAGGATGAGGGCCCTGGGGATGAGCTGGGGTGAAC%0ACAGGCTCCCTTTCCTTTGCAGGTGCGAAGCCCAGCGGTGCAGAGTCCAGCAAAGGTGCAGGTATGAGGATGGACC%0ATGATGGGTTCCTGGACCCTCCCCTCTCACCCTGGTCCCTCAGTCTCATTCCCCCACTCCTGCCACCTCCTGTCTG%0AGCCATCAGGAAGGCCAGCCTGCTCCCCACCTGATCCTCCCAAACCCAGAGCCACCTGATGCCTGCCCCTCTGCTC%0ACACAGCCTTTGTGTCCAAGCAGGAGGGCAGCGAGGTAGTGAAGAGACCCAGGCGCTACCTGTATCAATGGCTGGG%0AGTGAGAGAAAAGGCAGAGCTGGGCCAAGGCCCTGCCTCTCCGGGATGGTCTGTGGGGGAGCTGCAGCAGGGAGTG%0AGCCTCTCTGGGTTGTGGTGGGGGTACAGGCAGCCTGCCCTGGTGGGCACCCTGGAGCCCCATGTGTAGGGAGAGG%0AAGGGATGGGCATTTTGCACGGGGGCTGATGCCACCACGTCGGGTGTCTCAGAGCCCCAGTCCCCTACCCGGATCC%0ACCTGGAGCCCAGGAGGGAGGTGTGTGAGCTCAATCCGGACTGTGACGAGTTGGCTGACCACATCGGCTTTCAGGA%0AGGCCTATCGGCGCTTCTACGGCCCGGTCTAGGGTGTCGCTCTGCTGGCCTGGCCGGCAACCCCAGTTCTGCTCCT%0ACTCCAGGCACCCTTCTTTCCTCTTCCCCTTGCCCTTGCC&DATABASE=nt&PROGRAM=blastn&CMD=Put"
+
+turl2= "https://blast.ncbi.nlm.nih.gov/Blast.cgi?CMD=Get&FORMAT_OBJECT=SearchInfo&RID=20E3UFWB015"
+turl3= "https://blast.ncbi.nlm.nih.gov/Blast.cgi?CMD=Get&RID=20E3UFWB01"
+test = """
+>HSBGPG Human gene for bone gla protein (BGP)
+GGCAGATTCCCCCTAGACCCGCCCGCACCATGGTCAGGCATGCCCCTCCTCATCGCTGGGCACAGCCCAGAGGGT
+ATAAACAGTGCTGGAGGCTGGCGGGGCAGGCCAGCTGAGTCCTGAGCAGCAGCCCAGCGCAGCCACCGAGACACC
+ATGAGAGCCCTCACACTCCTCGCCCTATTGGCCCTGGCCGCACTTTGCATCGCTGGCCAGGCAGGTGAGTGCCCC
+CACCTCCCCTCAGGCCGCATTGCAGTGGGGGCTGAGAGGAGGAAGCACCATGGCCCACCTCTTCTCACCCCTTTG
+GCTGGCAGTCCCTTTGCAGTCTAACCACCTTGTTGCAGGCTCAATCCATTTGCCCCAGCTCTGCCCTTGCAGAGG
+GAGAGGAGGGAAGAGCAAGCTGCCCGAGACGCAGGGGAAGGAGGATGAGGGCCCTGGGGATGAGCTGGGGTGAAC
+CAGGCTCCCTTTCCTTTGCAGGTGCGAAGCCCAGCGGTGCAGAGTCCAGCAAAGGTGCAGGTATGAGGATGGACC
+TGATGGGTTCCTGGACCCTCCCCTCTCACCCTGGTCCCTCAGTCTCATTCCCCCACTCCTGCCACCTCCTGTCTG
+GCCATCAGGAAGGCCAGCCTGCTCCCCACCTGATCCTCCCAAACCCAGAGCCACCTGATGCCTGCCCCTCTGCTC
+CACAGCCTTTGTGTCCAAGCAGGAGGGCAGCGAGGTAGTGAAGAGACCCAGGCGCTACCTGTATCAATGGCTGGG
+GTGAGAGAAAAGGCAGAGCTGGGCCAAGGCCCTGCCTCTCCGGGATGGTCTGTGGGGGAGCTGCAGCAGGGAGTG
+GCCTCTCTGGGTTGTGGTGGGGGTACAGGCAGCCTGCCCTGGTGGGCACCCTGGAGCCCCATGTGTAGGGAGAGG
+AGGGATGGGCATTTTGCACGGGGGCTGATGCCACCACGTCGGGTGTCTCAGAGCCCCAGTCCCCTACCCGGATCC
+CCTGGAGCCCAGGAGGGAGGTGTGTGAGCTCAATCCGGACTGTGACGAGTTGGCTGACCACATCGGCTTTCAGGA
+GGCCTATCGGCGCTTCTACGGCCCGGTCTAGGGTGTCGCTCTGCTGGCCTGGCCGGCAACCCCAGTTCTGCTCCT
+CTCCAGGCACCCTTCTTTCCTCTTCCCCTTGCCCTTGCC
+"""
+
+def ncbi_blast(request):
+	baseUrl = u'http://www.ebi.ac.uk/Tools/services/rest/ncbiblast'
+	params = {}
+	fh = open("/home/pablorod/Documents/4Mycos/test-mh232.fasta", "r")
+	content = fh.read()
+	fh.close()
+
+	params['sequence'] = content
+	#
+	params['database'] = "ENA Sequence Release"
+	params['program'] = "blastn"
+	params['task'] = "blastn"
+	# STRING :: blastn; blastp; blastx; tblastx; tblastn
+	params['stype'] = "DNA/RNA"
+	# STRING :: PROTEIN, DNA/RNA
+	#params['exp'] = 1e-3
+	# STRING :: 1e-200, 1e-100, 1e-50, 1e-10, 1e-5, 1e-4, 1e-3. 1e-2, 1e-1, 1.0, 10, 100, 1000
+	#params['filter'] = yes
+	# STRING :: no, yes
+	#params['alignments'] = 10
+	#params['scores'] = 10
+	# INT :: 5, 10, 20, 50, 100, 150, 200, 250, 500, 750, 1000
+	#params['gapopen'] = 5
+	#params['gapext'] = 5
+	# INT :: default(-1), 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ... 25
+
+	jobid = EBI.serviceRun("sabega@uma.es", "Test-Blast", params, baseUrl)
+
+	inner = EBI.getResult(jobid, 'blast', baseUrl)
+
+	filename = generatePath(request, inner[0])
+	p = createFile(request=request, content=inner[1], filename=inner[0])
+
+	blast_file = userFile.objects.get(user = request.user, filename=inner[0])
+
+	content = openFile(request.user, blast_file)
+
+	print content
+
+	return content
+
+"""
+if options.program:
+        params['program'] = options.program
+    if options.database:
+        params['database'] = re.split('[ \t\n,;]+', options.database)
+    if options.stype:
+        params['stype'] = options.stype
+    if options.matrix:
+        params['matrix'] = options.matrix
+    if options.exp:
+        params['exp'] = options.exp
+    if options.filter:
+        params['filter'] = options.filter
+    if options.alignments:
+        params['alignments'] = options.alignments
+    if options.scores:
+        params['scores'] = options.scores
+    if options.dropoff:
+        params['dropoff'] = options.dropoff
+    if options.match_score:
+        params['match_score'] = options.match_score
+    if options.gapopen:
+        params['gapopen'] = options.gapopen
+    if options.gapext:
+        params['gapext'] = options.gapext
+    if options.compstats:
+        params['compstats'] = options.compstats
+
+    # Submit the job
+    jobid = serviceRun(options.email, options.title, params)
+"""

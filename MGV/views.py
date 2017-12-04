@@ -5,13 +5,16 @@ from customAuth.views import *
 from scripts.views import *
 from fileSystem.forms import *
 from fileSystem.views import *
-from scripts.workers.services import clustalomega as co
 from django.contrib.auth.decorators import login_required
+
+from scripts.workers.services import ncbi_blast as blast
+from scripts.workers.services import clustalomega as co
 
 from django.http import JsonResponse
 import json
 
 import os
+
 
 # Create your views here.
 
@@ -90,7 +93,6 @@ def executeService_view(request):
     output = executeService(request)
     return render(request, 'serviceResult.html', {'output': output})
 
-
 def contact_view(request):
     return render(request, 'contact.html')
 
@@ -103,9 +105,8 @@ def loginrequired_view(request):
 
 
 def clustal_omega(request):
-            content=co.clustal_omega(request)
-            print(content)
-            return render(request, 'MSAvisualizer.html', {'content': content})
+    content = co.clustal_omega(request)
+    return render(request, 'MSAvisualizer.html', {'content': content})
     #if request.method=='POST':
     #    form = drawMSAComp(request.POST)
     #    if form.is_valid():
@@ -117,3 +118,7 @@ def clustal_omega(request):
     #else:
     #    form=drawMSAComp()
     #    return render(request, 'MSAvisualizer.html', {'form': form})
+
+def ncbi_blast(request):
+    content = blast.ncbi_blast(request)
+    return HttpResponse()

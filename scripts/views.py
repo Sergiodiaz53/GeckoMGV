@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 from scripts.forms import *
 from scripts import forms
-from scripts.workers.services import clustalomega as co
+from scripts.workers.services.thirdparty import tp_execute
 import subprocess
 import threading
 from django.core.mail import send_mail
@@ -34,19 +34,25 @@ def executeService(request):
         files = userFile.objects.filter(user = request.user)
 
         # Check Service PATH (Internal or External)
-        if service.path == 'Internal':
-            internal_service_name = request.POST.get('exeName')
-            intService.executeInternalService(internal_service_name, args, request)
+        if service.path == 'ThirdParty':
+            third_party_service = request.POST.get('exeName')
+            content = tp_execute(request, third_party_service)
+            #print content
+            #return render(request, 'MSAvisualizer.html', {'content': content})
         else:
-            print "PATH : " + os.path.join(settings.MEDIA_ROOT, service.path+request.POST.get('exeName'))
-            command = [os.path.join(settings.MEDIA_ROOT, service.path+request.POST.get('exeName'))]
-            command.extend(args)
+            if service.path == 'Internal':
+                internal_service_name = request.POST.get('exeName')
+                intService.executeInternalService(internal_service_name, args, request)
+            else:
+                print "PATH : " + os.path.join(settings.MEDIA_ROOT, service.path+request.POST.get('exeName'))
+                command = [os.path.join(settings.MEDIA_ROOT, service.path+request.POST.get('exeName'))]
+                command.extend(args)
 
-            ThreadProcess = threading.Thread(target=runServiceInThread, args=(command, request))
-            ThreadProcess.daemon = True
-            ThreadProcess.start()
+                ThreadProcess = threading.Thread(target=runServiceInThread, args=(command, request))
+                ThreadProcess.daemon = True
+                ThreadProcess.start()
 
-            #fileResult = createFile(request, output, request.POST.get('nameFileResult'))
+                #fileResult = createFile(request, output, request.POST.get('nameFileResult'))
         return render(request, 'filemanager.html', {'form': form, 'files': files})
         #return render(request, 'MSAvisualizer.html', {'content': content})
 
@@ -71,17 +77,6 @@ def runServiceInThread (command, request):
         file.write(content)
         file.close()
 
-    """
-    send_mail(
-        'Subject here',
-        'Here is the message.',
-        'geckomgvsupport@gmail.com',
-        ['sergiodiazdp@gmail.com'],
-        fail_silently=False,
-    )
-    """
-
-
 @csrf_exempt
 def executeServiceInBackground(request):
 
@@ -100,9 +95,8 @@ def executeServiceInBackground(request):
 
         # Check Service PATH (Internal or External)
         if service.path == 'Internal':
-            print "OK"
-            #internal_service_name = "intService."+request.POST.get('exeName')
-            #intService.executeInternalService(eval(internal_service_name), args, request)
+            internal_service_name = request.POST.get('exeName')
+            intService.executeInternalService(internal_service_name, args, request)
         else:
             print os.path.join(settings.MEDIA_ROOT, service.path+request.POST.get('exeName'))
             command = [os.path.join(settings.MEDIA_ROOT, service.path+request.POST.get('exeName'))]
