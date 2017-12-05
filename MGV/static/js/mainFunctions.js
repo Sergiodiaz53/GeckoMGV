@@ -369,6 +369,7 @@ function showConsole(){
 }
 //...........................................................................................................
 $("#serviceForm").submit(function(e){
+    e.preventDefault();
 
     serviceForm=$('#serviceForm :input');
     files=0;
@@ -381,6 +382,7 @@ $("#serviceForm").submit(function(e){
             async: false,
             data: {filename: $(serviceForm[i]).val(), content:''},
             beforeSend:function(){
+                console.log("-- Service Submit --");
                 files++;
             },
             success:function(response){
@@ -400,6 +402,8 @@ $("#serviceForm").submit(function(e){
             data: $(this).serialize(),
             success: function(data) {
                 console.log("BACKGROUND:" + data);
+                //$("html").html(data);
+                window.location.href = "/filemanager/";
                 executingServiceInformation(data);
             }
     });
@@ -408,6 +412,7 @@ $("#serviceForm").submit(function(e){
 });
 
 $("#serviceFormModal").submit(function(e){
+    e.preventDefault();
 
     serviceForm=$('#serviceFormModal :input');
     files=0;

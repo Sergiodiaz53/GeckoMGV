@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 from scripts.forms import *
 from scripts import forms
-from scripts.workers.services import clustalomega as co
+from scripts.workers.services.thirdparty import tp_execute
 import subprocess
 import threading
 from django.core.mail import send_mail
@@ -19,27 +19,32 @@ def storeService(request):
 
 @login_required()
 def executeService(request):
-    print request.POST
+    print "REQUEST --- " + str(request.POST)
     if request.method == 'POST':
-        if request.POST.get('exeName')!= 'clustal':
-            service = Script.objects.get(exeName=request.POST.get('exeName'))
-            auxForm = getattr(forms, service.form)
-            form = auxForm(user = request.user, request=request)
-            args = []
+        service = Script.objects.get(exeName=request.POST.get('exeName'))
+        auxForm = getattr(forms, service.form)
+        form = auxForm(user = request.user, request=request)
+        args = []
 
-            for i in xrange(1, (len(form.fields))+1):
-                idParamater = 'parameter'+str(i)
-                args.append(request.POST.get(idParamater))
+        for i in xrange(1, (len(form.fields))+1):
+            idParamater = 'parameter'+str(i)
+            args.append(request.POST.get(idParamater))
 
-            form = FileForm()
-            files = userFile.objects.filter(user = request.user)
+        form = FileForm()
+        files = userFile.objects.filter(user = request.user)
 
-            # Check Service PATH (Internal or External)
+        # Check Service PATH (Internal or External)
+        if service.path == 'ThirdParty':
+            third_party_service = request.POST.get('exeName')
+            content = tp_execute(request, third_party_service)
+            #print content
+            #return render(request, 'MSAvisualizer.html', {'content': content})
+        else:
             if service.path == 'Internal':
-                internal_service_name = "intService."+request.POST.get('exeName')
-                intService.executeInternalService(eval(internal_service_name), args, request)
+                internal_service_name = request.POST.get('exeName')
+                intService.executeInternalService(internal_service_name, args, request)
             else:
-                print os.path.join(settings.MEDIA_ROOT, service.path+request.POST.get('exeName'))
+                print "PATH : " + os.path.join(settings.MEDIA_ROOT, service.path+request.POST.get('exeName'))
                 command = [os.path.join(settings.MEDIA_ROOT, service.path+request.POST.get('exeName'))]
                 command.extend(args)
 
@@ -48,12 +53,13 @@ def executeService(request):
                 ThreadProcess.start()
 
                 #fileResult = createFile(request, output, request.POST.get('nameFileResult'))
-            return render(request, 'filemanager.html', {'form': form, 'files': files})
-        else:
-            content=co.clustal_omega(request)
-            return render(request, 'MSAvisualizer.html', {'content': content})
+        return render(request, 'filemanager.html', {'form': form, 'files': files})
+        #return render(request, 'MSAvisualizer.html', {'content': content})
 
 def runServiceInThread (command, request):
+    print "###########"
+    print "COMMAND: " + str(command)
+    print "###########"
     output = subprocess.Popen(command, stdout=subprocess.PIPE, close_fds=True).communicate()[0]
 
     path = generatePath(request, 'log')
@@ -71,21 +77,12 @@ def runServiceInThread (command, request):
         file.write(content)
         file.close()
 
-    send_mail(
-        'Subject here',
-        'Here is the message.',
-        'geckomgvsupport@gmail.com',
-        ['sergiodiazdp@gmail.com'],
-        fail_silently=False,
-    )
-
-
 @csrf_exempt
 def executeServiceInBackground(request):
 
     if request.method == 'POST':
         service = Script.objects.get(exeName=request.POST.get('exeName'))
-        auxForm= getattr(forms, service.form)
+        auxForm = getattr(forms, service.form)
         form = auxForm(user = request.user, request=request)
         args = []
 
@@ -98,8 +95,8 @@ def executeServiceInBackground(request):
 
         # Check Service PATH (Internal or External)
         if service.path == 'Internal':
-            internal_service_name = "intService."+request.POST.get('exeName')
-            intService.executeInternalService(eval(internal_service_name), args, request)
+            internal_service_name = request.POST.get('exeName')
+            intService.executeInternalService(internal_service_name, args, request)
         else:
             print os.path.join(settings.MEDIA_ROOT, service.path+request.POST.get('exeName'))
             command = [os.path.join(settings.MEDIA_ROOT, service.path+request.POST.get('exeName'))]

@@ -10,9 +10,10 @@ urlpatterns = patterns(
         url(r'^logout', views.logout_view, name='logout_view'),
         url(r'^loadFileFromServer', views.loadFileFromServer, name='loadFileFromServer'),
         url(r'^getFileList', views.getFileList, name='getFileList'),
-        url(r'^test',views.clustal_omega,name='clustal_omega'),
-        url(r'^upload',views.uploadFrags, name= 'uploadFrags'),
+        url(r'^upload',views.uploadFrags, name= 'uploadFragsss'),
         url(r'^contact',views.contact_view, name= 'contact_view'),
         url(r'^help',views.help_view, name= 'help_view'),
         url(r'^lrequired',views.loginrequired_view, name= 'loginrequired_view'),
+        #url(r'^test-co',views.clustal_omega,name='clustal_omega'),
+        #url(r'^test-b',views.ncbi_blast,name='ncbi_blast'),
 )

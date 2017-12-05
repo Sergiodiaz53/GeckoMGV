@@ -2,44 +2,25 @@
  * Created by sabega on 23/11/15.
  */
 
-
 function drawMSA(string){
-    var clustal=require("biojs-io-clustal");
+  var rootDiv = document.getElementById("msa");
+  var menuOpts = {};
+  var opts = {};
 
-    var menuDiv = document.getElementById('menu');
-    var msaDiv = document.getElementById('msa');
+  opts.seqs = msa.io.clustal.parse(string);
+  opts.el = document.getElementById("msa");
+  opts.vis = {conserv: false, overviewbox: false}
+  opts.zoomer = {alignmentHeight: 405, labelWidth: 110,labelFontsize: "13px",labelIdLength: 50}
 
-    var opts = {
-      el: msaDiv
-    };
+  console.log(opts.seq);
 
-    opts.conf = {
-      dropImport: true,// allow to import sequences via drag & drop
-      manualRendering: true
-    };
+  var m = new msa.msa(opts);
 
-    opts.vis = {
-      conserv: false,
-      overviewbox: false,
-      seqlogo: true,
-      metacell: true
-    };
+  menuOpts.el = document.getElementById('menu');
+  menuOpts.msa = m;
+  var defMenu = new msa.menu.defaultmenu(menuOpts);
 
-    opts.zoomer = {
-      labelIdLength: 20
-    };
+  m.addView("menu", defMenu);
 
-    // init msa
-    var m = msa(opts);
-    var seqs=clustal.parse(string);
-
-    m.seqs.reset(seqs);
-
-    var defMenu = new msa.menu.defaultmenu({
-        el: menuDiv,
-        msa: m
-    });
-
-    defMenu.render();
-    m.render();
+	m.render();
 }

@@ -10,7 +10,7 @@ To run GeckoMGV on your computer you should install first some dependencies, sta
 
 Then, I recommend to create a virtualenv for this project:
 
-* `virutalenv GeckoMGV `
+* `virtualenv GeckoMGV `
 
 And activate it:
 
