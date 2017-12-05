@@ -368,6 +368,18 @@ function showConsole(){
         })
 }
 //...........................................................................................................
+
+$("form[name=viewFile]").submit(function(e){
+  var form = $(this);
+  var filename = form.find(':text').val();
+
+  if (filename.indexOf('.clw') >= 0 || filename.indexOf('.msa') >= 0){
+      form.attr('action', '/scripts/MSAvisualizer/')
+      console.log("TRUE")
+  }
+});
+
+
 $("#serviceForm").submit(function(e){
     e.preventDefault();
 
@@ -376,7 +388,7 @@ $("#serviceForm").submit(function(e){
 
     for (var i=0;i<$('#serviceForm :input').length; i++){
         if($(serviceForm[i]).attr('class')!= null && $(serviceForm[i]).attr('class')=='file')
-            $.ajax({
+          $.ajax({
             url:'/filemanager/createPost/',
             type: "POST",
             async: false,
@@ -393,7 +405,7 @@ $("#serviceForm").submit(function(e){
             complete:function(){
             },
             error:function (xhr, textStatus, thrownError){console.log("error")}
-        });
+          });
     }
 
     $.ajax({

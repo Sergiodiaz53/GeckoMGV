@@ -165,3 +165,18 @@ def getServiceForm(request):
         print "\n**/"
         return render(request, 'modalForm.html', {'name': service.name, 'exeName': service.exeName,
                                                          'files': files, 'form': form})
+
+@csrf_exempt
+def drawMSAVisualizer(request):
+    print("TESTING...")
+    if request.method == 'POST':
+        f_name = request.POST.get('filename')
+        file = open(str(userFile.objects.get(file=request.POST.get('filename')).file), 'r')
+        content = file.read()
+        file.close()
+
+        #msa_file = userFile.objects.get(user = request.user, filename=f_name)
+        #content = openFile(request.user, msa_file)
+
+        print content
+        return render(request, 'MSAvisualizer.html', {'content': content})
