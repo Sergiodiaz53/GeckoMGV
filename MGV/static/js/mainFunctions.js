@@ -373,9 +373,8 @@ $("form[name=viewFile]").submit(function(e){
   var form = $(this);
   var filename = form.find(':text').val();
 
-  if (filename.indexOf('.clw') >= 0 || filename.indexOf('.msa') >= 0){
+  if (filename.indexOf('.clw') >= 0 || filename.indexOf('.msa') >= 0 || filename.indexOf('.aln') >= 0){
       form.attr('action', '/scripts/MSAvisualizer/')
-      console.log("TRUE")
   }
 });
 
