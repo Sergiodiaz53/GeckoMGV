@@ -28,10 +28,10 @@ function processEvolutiveEvents(frags, index){
 	}
 
 	console.time("HugeFiltering");
-    for (var i = frags.length - 1; i >= 0; i--){
+    for (var i = frags.length - 1; i >= 18; i--){
         if(frags[i][0] != "EndEE"){
 
-            if (filter(frags[i]) && huge_file) {
+            if (!filter(frags[i]) && huge_file) {
                 frags.splice(i, 1);
             }
 
@@ -105,9 +105,9 @@ function activateFilters(){
 	$('#filterSimilarity').prop('checked', true);
 	$('#filterIdentity').prop('checked', true);
 
-	$('#filterLenghtNumber').val(1200);
-	$('#filterSimilarityNumber').val(65);
-	$('#filterIdentityNumber').val(70);
+	$('#filterLenghtNumber').val(1000);
+	$('#filterSimilarityNumber').val(50);
+	$('#filterIdentityNumber').val(50);
 }
 
 /**

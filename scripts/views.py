@@ -79,7 +79,6 @@ def runServiceInThread (command, request):
         fail_silently=False,
     )
 
-
 @csrf_exempt
 def executeServiceInBackground(request):
 
