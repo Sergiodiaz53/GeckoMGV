@@ -11,4 +11,5 @@ urlpatterns = patterns(
         url(r'^testForm/$', views.testForm, name='testForm'),
         url(r'^getServiceList/$', views.getServiceList, name='getServiceList'),
         url(r'^getServiceForm/$', views.getServiceForm, name='getServiceForm'),
+        url(r'^MSAvisualizer/$', views.drawMSAVisualizer, name='drawMSAVisualizer'),
 )

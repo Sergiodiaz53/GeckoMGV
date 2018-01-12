@@ -1,20 +1,26 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 from scripts.forms import *
+from fileSystem.models import *
 from scripts import forms
 import subprocess
 import threading
-from django.core.mail import send_mail
+from django.core.exceptions import ObjectDoesNotExist
 
 from fileSystem import views as fs
 
 
 def executeInternalService(function_name, args, request):
     print "### Begin Internal Service"
-    ThreadProcess = threading.Thread(target=function_name, args=[args, request])
+    ThreadProcess = threading.Thread(target=threadInit, args=(function_name, args, request))
     ThreadProcess.daemon = True
-    ThreadProcess.start()
+    ThreadProcess.run()
     print "### End Internal Service"
+
+def threadInit(function_name, args, request):
+    print "--- Thread Init ---"
+    eval(function_name+'(args,request)')
+    print "--- Thread End ---"
 
 def extractRepetitionsService(args, request):
     # <a0::frags.csv> <a1::boolSB> <a2::SBID>
@@ -45,9 +51,9 @@ def extractRepetitionsService(args, request):
         for line in lines[16:-1]:
             items = line.split(',')
             rep_flag = items[-1].replace('\n', '')
-            if rep_flag == '0':
+            if rep_flag == '0' or rep_flag == '1':
                 content_clean_csv += line + "\n"
-            elif rep_flag == '1':
+            elif rep_flag == '2':
                 content_rep_csv += line + "\n"
     elif boolSB == "1":
         for line in lines[16:-1]:
@@ -90,26 +96,30 @@ def extractSequenceFromCSVService(args, request):
     id_counter = 0
     # Read CSV lines and extract from X and Y/Yr
     for line in csv_lines[16:]:
+        print line
         info = line.split(',')[0:6] # 0-frag/csb 1-xi 2-yi 3-xf 4-yf 5-strand
 
         if info[0] == 'Frag':
             x_extracted = extractSequenceFromFastaCoords(x_seq, int(info[1]), int(info[3]))
-            if len(x_extracted) > 0:
-                head = ">ID:" + str(id_counter) + ".0 |X: " + x_seq_info[0] + "|Start:" + str(info[1]) + "|End:" + str(info[3])
-                output_content += head.replace('\n','') + "|\n"
+            if x_extracted != '':
+                head = ">ID-" + str(id_counter) + ".0 X_" + str(info[1]) + "_" + str(info[3]) + "_" + x_seq_info[0][1:].replace('|','_').replace(' ','-').replace(',', '')
+                output_content += head.replace('\n','') + "\n"
                 output_content += x_extracted + "\n"
 
             if info[5] == 'f':
                 y_extracted = extractSequenceFromFastaCoords(y_seq, int(info[2]), int(info[4]))
-                if len(x_extracted) > 0:
-                    head = ">ID:" + str(id_counter) + ".1 |Y: " + y_seq_info[0] + "|Start:" + str(info[2]) + "|End:" + str(info[4])
-                    output_content += head.replace('\n','') + "|\n"
+                print y_extracted + " :: " + info[2] + " :: " + info[4] + " :: " + str(len(y_extracted))
+                if y_extracted != '':
+                    print "IN --- " + str(len(y_extracted))
+                    head = ">ID-" + str(id_counter) + ".1 Y_" + str(info[2]) + "_" + str(info[4]) + "_"  + y_seq_info[0][1:].replace('|','_').replace(' ','-').replace(',', '')
+                    output_content += head.replace('\n','') + "\n"
                     output_content += y_extracted + "\n"
+                    print output_content
             elif info[5] == 'r':
                 yr_extracted = extractSequenceFromFastaCoords(yr_seq, int(info[2]), int(info[4]))
-                if len(x_extracted) > 0:
-                    head = ">ID:" + str(id_counter) + ".2 |Yr: " + yr_seq_info[0] + "|Start:" + str(info[2]) + "|End:" + str(info[4])
-                    output_content += head.replace('\n','') + "|\n"
+                if yr_extracted != '':
+                    head = ">ID-" + str(id_counter) + ".2 Yr_" + str(info[2]) + "_" + str(info[4]) + "_" + yr_seq_info[0][1:].replace('|','_').replace(' ','-').replace(',', '')
+                    output_content += head.replace('\n','') + "\n"
                     output_content += yr_extracted + "\n"
 
             id_counter += 1

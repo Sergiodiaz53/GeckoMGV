@@ -29,7 +29,7 @@
                 </div>
                 <div id='createFile' class="col-md-2 col-centered">
                     <button onclick="openCreationPad()" class="btn btn-lg btn-default glyphicon glyphicon-plus-sign"> New</button>
-                    <form role="form" action="{% url 'createFile_view' %}" method="POST" id=newFileForm">
+                    <form role="form" action="{% url 'createFile_view' %}" method="POST" id="newFileForm">
                                 {% csrf_token %}
                                 <input type="text" class="hidden" name="filename" value="">
                     </form>
@@ -55,7 +55,7 @@
                         <th class="col-md-4">
                             <div class = "row">
                                 <div class="col-md-2 col-md-offset-3">
-                                    <form role="form" action="{% url 'fileViewer_view' %}" method="POST">
+                                    <form role="form" action="{% url 'fileViewer_view' %}" method="POST" name="viewFile">
                                         {% csrf_token %}
                                         <input type="text" class="hidden" name="filename" value="{{ file.file.name }}">
                                         <button type="submit" class="btn btn-md btn-info glyphicon glyphicon-eye-open"></button>

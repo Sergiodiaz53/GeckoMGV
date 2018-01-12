@@ -368,19 +368,32 @@ function showConsole(){
         })
 }
 //...........................................................................................................
+
+$("form[name=viewFile]").submit(function(e){
+  var form = $(this);
+  var filename = form.find(':text').val();
+
+  if (filename.indexOf('.clw') >= 0 || filename.indexOf('.msa') >= 0 || filename.indexOf('.aln') >= 0){
+      form.attr('action', '/scripts/MSAvisualizer/')
+  }
+});
+
+
 $("#serviceForm").submit(function(e){
+    e.preventDefault();
 
     serviceForm=$('#serviceForm :input');
     files=0;
 
     for (var i=0;i<$('#serviceForm :input').length; i++){
         if($(serviceForm[i]).attr('class')!= null && $(serviceForm[i]).attr('class')=='file')
-            $.ajax({
+          $.ajax({
             url:'/filemanager/createPost/',
             type: "POST",
             async: false,
             data: {filename: $(serviceForm[i]).val(), content:''},
             beforeSend:function(){
+                console.log("-- Service Submit --");
                 files++;
             },
             success:function(response){
@@ -391,7 +404,7 @@ $("#serviceForm").submit(function(e){
             complete:function(){
             },
             error:function (xhr, textStatus, thrownError){console.log("error")}
-        });
+          });
     }
 
     $.ajax({
@@ -400,6 +413,8 @@ $("#serviceForm").submit(function(e){
             data: $(this).serialize(),
             success: function(data) {
                 console.log("BACKGROUND:" + data);
+                //$("html").html(data);
+                window.location.href = "/filemanager/";
                 executingServiceInformation(data);
             }
     });
@@ -408,6 +423,7 @@ $("#serviceForm").submit(function(e){
 });
 
 $("#serviceFormModal").submit(function(e){
+    e.preventDefault();
 
     serviceForm=$('#serviceFormModal :input');
     files=0;
