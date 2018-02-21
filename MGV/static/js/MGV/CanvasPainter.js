@@ -823,20 +823,13 @@ function createInstance() {
 				//Draw in vertical layer
 				clearCanvas(currentVerticalCanvas.id);
 				spinnerOn("Drawing Frags on Grid...");
-				drawVerticalLinesInVerticalLayer(linesToPaint,currentVerticalCanvas,numFile,rgba(R[numFile], G[numFile], B[numFile], 0.7));
-				drawVerticalLinesInVerticalLayer(filteredLines,currentVerticalCanvas,numFile,rgba(189, 195, 199, 0.5));
+				drawVerticalLinesInVerticalLayer(linesToPaint,currentVerticalCanvas,numFile,rgba(R[numFile], G[numFile], B[numFile], 1));
+				drawVerticalLinesInVerticalLayer(filteredLines,currentVerticalCanvas,numFile,rgba(189, 195, 199, 0.3));
 
 				//Draw in horizontal layer
-				spinnerOn("Drawing Computational Syntheny Blocks...");
-				if(CSBLines.length>0) {
-					drawHorizontalLinesInHorizontalLayer(CSBLines, currentHorizontalCanvas, numFile, rgba(R[numFile], G[numFile], B[numFile], 1));
-				} else {
-					var context = currentHorizontalCanvas.getContext('2d');
-					context.textAlign = 'center';
-					context.font = "bold 24px Arial";
-					context.fillText('No CSB information', currentHorizontalCanvas.width / 2, currentHorizontalCanvas.height/2);
-					//drawHorizontalLinesInHorizontalLayer(linesToPaint, currentHorizontalCanvas, numFile, rgba(R[numFile], G[numFile], B[numFile], 1));
-				}
+				spinnerOn("Drawing Horizontal view...");
+				drawHorizontalLinesInHorizontalLayer(filteredLines, currentHorizontalCanvas, numFile, rgba(189, 195, 199, 0.5));
+				drawHorizontalLinesInHorizontalLayer(linesToPaint, currentHorizontalCanvas, numFile, rgba(R[numFile], G[numFile], B[numFile], 0.7));
 
 				//drawHorizontalLinesInHorizontalLayer(filteredLines, currentHorizontalCanvas, numFile, rgba(189, 195, 199, 0.5));
 

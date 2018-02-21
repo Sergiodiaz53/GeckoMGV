@@ -23,9 +23,12 @@ function processEvolutiveEvents(frags, index){
 
     //Filter huge_file
     if((frags.length > HUGE_FILE_NUM) && !huge_file) {
+
         activateFilters();
         huge_file = true;
 	}
+
+	var count=0
 
 	console.time("HugeFiltering");
     for (var i = frags.length - 1; i >= 18; i--){
@@ -33,6 +36,7 @@ function processEvolutiveEvents(frags, index){
 
             if (!filter(frags[i]) && huge_file) {
                 frags.splice(i, 1);
+                count++;
             }
 
         } else if (frags[i][0] == "EndEE"){
@@ -51,6 +55,8 @@ function processEvolutiveEvents(frags, index){
         }
     }
     console.timeEnd("HugeFiltering");
+
+    console.log(count);
 
     lines[index] = frags.slice(0);
     originalComparison[index] = frags.slice(0);
