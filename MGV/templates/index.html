@@ -291,6 +291,40 @@
         <div class='tab-content' id='annotations-tab-content'></div>
     </div>
 
+		<!--Dialog for HugeFilters -->
+    <div id="hugeFileOutput" class="ui-helper-hidden">
+				<!-- HugeFilePrompt |  -->
+        <div class="HugeFileFilterOptions">
+            <div class="HugeFileWarning">
+                <p>Due to file size a filter is going to be applied to remove some of your data.
+									We recommend you to execute <a href="/services">RepKiller</a> or <a href="/services">FilterFrags</a> before continuing.
+									If you have alredy or decided not to you can still apply the following filters.
+									You can skip this feature but some the performance of the GECKOMGV will be affected.
+								</p>
+								<div class"col-lg-1 col-centered">
+									<div class="input-group group-padding">
+									   <span class="input-group-addon"> <input
+									      type="checkbox" id="filterIdentity2">Identity<br>
+									   </span> <input type="number" class="form-control"
+									      id="filterIdentityNumber2" value="50">
+									</div>
+									<div class="input-group group-padding">
+									   <span class="input-group-addon"> <input
+									      type="checkbox" id="filterLenght2" value="lenght">MinLength<br>
+									   </span> <input type="number" class="form-control"
+									      id="filterLenghtNumber2" value="200">
+									</div>
+									<div class="input-group group-padding">
+									   <span class="input-group-addon"> <input
+									      type="checkbox" id="filterSimilarity2" value="similarity">MinSimilarity<br>
+									   </span> <input type="number" class="form-control"
+									      id="filterSimilarityNumber2" value="50" min="0" max="100">
+									</div>
+								</div>
+            </div>
+        </div>
+    </div>
+º
     <!-- Popover to show CSB Info in Canvas -->
 	<div class="popover right" id="CSBPopover" role="tooltip"></div>
 

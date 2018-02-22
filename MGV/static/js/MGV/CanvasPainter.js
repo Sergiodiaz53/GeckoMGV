@@ -35,7 +35,6 @@ var currentArea = {
 	y1 : 0
 };
 
-
 var RectInMap = {
 	x : 0,
 	y : 0,

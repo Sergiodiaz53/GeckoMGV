@@ -1,12 +1,12 @@
 var evolutiveIndex = -1;
 var evolutiveFrags = [];
 var huge_file = false;
+var huge_files = [];
 
 //Constants
-HUGE_FILE_NUM = 10000;
-
+HUGE_FILE_NUM = 100;
 /**
- * Store evolutionary events information in a data estructure 
+ * Store evolutionary events information in a data estructure
  * @param  {String} frags File content
  * @param  {Integer} index Number of file
  */
@@ -19,27 +19,20 @@ function processEvolutiveEvents(frags, index){
     evolutiveFrags[index] = [];
     evolutiveFrags[index][eeIndex] = [];
     evolutiveEvents[index] = [];
-
-
+/*
     //Filter huge_file
     if((frags.length > HUGE_FILE_NUM) && !huge_file) {
-
-        activateFilters();
+        console.log("TESTING HUGE FILTERING");
+        dialogHugeFile();
+        //activateFilters();
         huge_file = true;
 	}
-
+*/
 	var count=0
 
-	console.time("HugeFiltering");
+	console.time("processEvolutiveEvents");
     for (var i = frags.length - 1; i >= 18; i--){
-        if(frags[i][0] != "EndEE"){
-
-            if (!filter(frags[i]) && huge_file) {
-                frags.splice(i, 1);
-                count++;
-            }
-
-        } else if (frags[i][0] == "EndEE"){
+        if (frags[i][0] == "EndEE"){
             i--;
             evolutiveEvents[index][eeIndex] = [];
             evolutiveFrags[index][eeIndex] = [];
@@ -54,8 +47,7 @@ function processEvolutiveEvents(frags, index){
             eeIndex++;
         }
     }
-    console.timeEnd("HugeFiltering");
-
+    console.timeEnd("processEvolutiveEvents");
     console.log(count);
 
     lines[index] = frags.slice(0);
@@ -66,6 +58,102 @@ function processEvolutiveEvents(frags, index){
 
     huge_file = false;
     if(eeIndex) $("#EEmanag").show();
+}
+
+function processHugeFile(frags, index){
+  if(frags[i][0] != "EndEE"){
+
+      if (!filter(frags[i]) && huge_files) {
+          frags.splice(i, 1);
+          count++;
+      }
+
+  } else
+}
+var current_huge_file_index = 0;
+function checkHugeFile(frags, index){
+  if(current_huge_file_index == index){
+    console.log("## --- checkHugeFile() | index: " + index + " | i: " + huge_file);
+    huge_file = ( (frags.length > HUGE_FILE_NUM) && !huge_file );
+    console.log("## --- checkHugeFile() | index: " + index + " | o: " + huge_file);
+    return huge_file;
+  }else{
+    console.log("## --- checkHugeFile() | Timeout | index: " + index);
+    return setTimeout(function(){
+      checkHugeFile(frags,index);
+    },  1000)
+    return "timeout";
+  }
+}
+
+function dialogHugeFile(message, frags, index) {
+    if (!$('#hugeFileOutput').is(':visible')) {
+        var $dialogContainer = $('#output');
+        var $detachedChildren = $dialogContainer.children().detach();
+        $('#hugeFileOutput').dialog({
+            closeOnEscape: false,
+            height:400,
+            minHeight:400,
+            width: 400,
+            minWidth: 400,
+            title: message + ' - Huge File Detected!',
+            /*
+            resize: function() {
+               what is this??
+                annotsGrid.forEach(function(grid) {
+                    grid.resizeCanvas();
+                });
+            },
+            */
+            buttons: [
+                {
+                    text: "Continue",
+                    click: function () {
+                        $(this).dialog("close");
+                        spinnerOn("Processing file");
+                        filterHugeFile();
+                        processEvolutiveEvents(frags, index);
+
+                        reset = true;
+                        map = false;
+                        generateAnnotationTab(index);
+                        if (parseCount == 0) {
+                            redraw();
+                            //calculateMatrix(lines[0]);
+                            addPrevZoom();
+                        }
+
+                        spinnerOff();
+                        overlayOff();
+                        current_huge_file_index++;
+                    },
+                    "class": "ui-button-primary"
+                }
+            ],
+            open: function (event, ui) {
+                $(".ui-dialog-titlebar-close").hide();
+                $detachedChildren.appendTo($dialogContainer);
+                updateAnnotsGrids();
+            }
+        });
+
+    }else{
+      //setTimeout(dialogHugeFile(),1000,message, frags, index);
+      console.log("## -- ELSE checkHugeFile | message: " + message);
+    }
+}
+
+function filterHugeFile(){
+  /*
+    $('#filterLenght').prop('checked', document.getElementById('filterLenght2').checked);
+    $('#filterSimilarity').prop('checked', document.getElementById('filterSimilarity2').checked);
+    $('#filterIdentity').prop('checked', document.getElementById('filterIdentity2').checked);
+    */
+    $('#filterLenghtNumber').val($('#filterLenghtNumber2').val());
+    $('#filterSimilarityNumber').val($('#filterSimilarityNumber2').val());
+    $('#filterIdentityNumber').val($('#filterIdentityNumber2').val());
+
+
 }
 
 /**
@@ -182,4 +270,3 @@ function prevEE (){
 
     }
 }
-

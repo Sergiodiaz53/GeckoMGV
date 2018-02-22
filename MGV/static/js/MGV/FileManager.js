@@ -185,6 +185,7 @@ function getFilesListFromServer(extension){
 function handleFiles(files, type) {
 
     console.log(files);
+    current_huge_file_index = 0;
 
     if (files.length!=0) {
         overlayOn();
@@ -216,7 +217,7 @@ function getAsText(fileToRead, i) {
     if(fileType=='csv'){
         fileNames[i] = fileToRead.name;
         fileNames[i]  = fileNames[i].substring(0, fileNames[i].length-4);
-        console.log("I: "+i+" fileName"+fileNames[i]);
+        console.log("I: "+i+" fileName: "+fileNames[i]);
     } else if (fileType=='mat') {
         fileNameMAT = fileToRead.name;
         fileNameMAT = fileNameMAT.substring(0, fileNameMAT.length-10);
@@ -262,24 +263,30 @@ function processData(csv, index) {
           spinnerOn("Processing Data...");
 
         Papa.parse(csv, {
-            worker: true,
+            worker: false,
             delimiter:",",
             complete: function (results) {
                 if(parseCount >= 1) {
                     parseCount--;
-                    processEvolutiveEvents(results.data, index);
-                    reset = true;
-                    map = false;
-                    generateAnnotationTab(index);
-                    if (parseCount == 0) {
-                        redraw();
-                        //calculateMatrix(lines[0]);
-                        addPrevZoom();
-                    }
+                    // Check if huge_file
+                    let is_huge = checkHugeFile(results.data, index);
+                    if (is_huge) {
+                      console.log("## CHECK HUGE - YES");
+                      dialogHugeFile(fileNames[index],results.data, index);
+                    } else {
+                      console.log("## CHECK HUGE - NO");
+                      processEvolutiveEvents(results.data, index);
 
+                      reset = true;
+                      map = false;
+                      generateAnnotationTab(index);
+                      if (parseCount == 0) {
+                          redraw();
+                          //calculateMatrix(lines[0]);
+                          addPrevZoom();
+                      }
+                    }
                 }
-                spinnerOff();
-                overlayOff();
             },
             error: function(err,reason){
                 alert(err);
