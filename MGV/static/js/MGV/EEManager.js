@@ -19,18 +19,7 @@ function processEvolutiveEvents(frags, index){
     evolutiveFrags[index] = [];
     evolutiveFrags[index][eeIndex] = [];
     evolutiveEvents[index] = [];
-/*
-    //Filter huge_file
-    if((frags.length > HUGE_FILE_NUM) && !huge_file) {
-        console.log("TESTING HUGE FILTERING");
-        dialogHugeFile();
-        //activateFilters();
-        huge_file = true;
-	}
-*/
-	var count=0
 
-	console.time("processEvolutiveEvents");
     for (var i = frags.length - 1; i >= 18; i--){
         if (frags[i][0] == "EndEE"){
             i--;
@@ -48,7 +37,6 @@ function processEvolutiveEvents(frags, index){
         }
     }
     console.timeEnd("processEvolutiveEvents");
-    console.log(count);
 
     lines[index] = frags.slice(0);
     originalComparison[index] = frags.slice(0);
@@ -56,76 +44,125 @@ function processEvolutiveEvents(frags, index){
     evolutiveFrags[index] = evolutiveFrags[index].reverse();
     evolutiveEvents[index] = evolutiveEvents[index].reverse();
 
-    huge_file = false;
     if(eeIndex) $("#EEmanag").show();
 }
 
-function processHugeFile(frags, index){
-  if(frags[i][0] != "EndEE"){
+function processHugeFile(){
+  // Filter huge files
+  for(hf of checkForHugeFiles()){
+    var current_f = lines[hf];
+  	var count=0
 
-      if (!filter(frags[i]) && huge_files) {
-          frags.splice(i, 1);
+  	console.time("processHugeFile");
+    for (var i = current_f.length - 1; i >= 18; i--){
+      if (!filterHugeFile(current_f[i])) {
+          current_f.splice(i, 1);
           count++;
       }
+    }
+    lines[hf] = current_f.slice(0);
 
-  } else
-}
-var current_huge_file_index = 0;
-function checkHugeFile(frags, index){
-  if(current_huge_file_index == index){
-    console.log("## --- checkHugeFile() | index: " + index + " | i: " + huge_file);
-    huge_file = ( (frags.length > HUGE_FILE_NUM) && !huge_file );
-    console.log("## --- checkHugeFile() | index: " + index + " | o: " + huge_file);
-    return huge_file;
-  }else{
-    console.log("## --- checkHugeFile() | Timeout | index: " + index);
-    return setTimeout(function(){
-      checkHugeFile(frags,index);
-    },  1000)
-    return "timeout";
+    console.timeEnd("processHugeFile");
+    console.log(count);
   }
+
+  reset = true;
+  map = false;
+  for(i = 0; i < lines.length; i++){
+    generateAnnotationTab(i);
+  }
+
+  redraw();
+  addPrevZoom();
+  spinnerOff();
+  overlayOff();
 }
 
-function dialogHugeFile(message, frags, index) {
+function checkForHugeFiles(index){
+  let ret = [];
+  for(let file = 0; file < lines.length; file++){
+    if(checkHugeFile(file)) ret.push(file);
+  }
+  return ret;
+}
+
+function checkHugeFile(index){
+    return  (lines[index].length > HUGE_FILE_NUM);
+}
+
+/**
+* Function to apply active filters to frags
+* @param  {Array} line fragment to check
+* @return {Boolean}      True/False if paint
+*/
+function filterHugeFile(line){
+  	var paint = false;
+
+  	var filterLenght = document.getElementById("filterLenght2").checked;
+  	var filterSimilarity = document.getElementById("filterSimilarity2").checked;
+  	var filterIdentity = document.getElementById("filterIdentity2").checked;
+
+  	switch (parseInt(line[6])) {
+          case -1:
+              if (!filterIrrelevants) {
+                  paint = true;
+              }
+              break;
+          default:
+              if (filterLenght) {
+                  var lenghtFilter = document.getElementById("filterLenghtNumber2").value
+                  if (parseInt(line[7]) >= parseInt(lenghtFilter)) {
+                      paint = true;
+                  }
+                  break;
+              } else {
+                  paint = true;
+                  break;
+              }
+  	}
+
+  	if (filterSimilarity) {
+  		var similarityValue = document.getElementById("filterSimilarityNumber2").value;
+  		if (parseFloat(line[10]) <= similarityValue) {
+  			paint = false;
+  		}
+  	}
+
+  	if(filterIdentity){
+  		if((line[9]/line[7]).toFixed(2)*100 <= identityLine.identityValue) {
+  			paint = false;
+  		}
+  	}
+
+    return paint;
+}
+
+function dialogHugeFile(huge_files_list) {
     if (!$('#hugeFileOutput').is(':visible')) {
         var $dialogContainer = $('#output');
+        var file_list = document.getElementById("hugeFile_FileNames");
+        for(file of huge_files_list){
+          let current_filename = fileNames[file];
+          let current_li = document.createElement("li");
+          current_li.setAttribute("class", "list-group-item");
+          current_li.appendChild(document.createTextNode(current_filename));
+          file_list.appendChild(current_li);
+        }
         var $detachedChildren = $dialogContainer.children().detach();
         $('#hugeFileOutput').dialog({
             closeOnEscape: false,
-            height:400,
-            minHeight:400,
-            width: 400,
-            minWidth: 400,
-            title: message + ' - Huge File Detected!',
-            /*
-            resize: function() {
-               what is this??
-                annotsGrid.forEach(function(grid) {
-                    grid.resizeCanvas();
-                });
-            },
-            */
+            height:550,
+            minHeight:550,
+            width: 500,
+            minWidth: 500,
+            title: huge_files_list.length + ' Huge File(s) Detected!',
             buttons: [
                 {
                     text: "Continue",
                     click: function () {
                         $(this).dialog("close");
                         spinnerOn("Processing file");
-                        filterHugeFile();
-                        processEvolutiveEvents(frags, index);
-
-                        reset = true;
-                        map = false;
-                        generateAnnotationTab(index);
-                        if (parseCount == 0) {
-                            redraw();
-                            //calculateMatrix(lines[0]);
-                            addPrevZoom();
-                        }
-
-                        spinnerOff();
-                        overlayOff();
-                        current_huge_file_index++;
+                        processHugeFile();
                     },
                     "class": "ui-button-primary"
                 }
@@ -137,23 +174,7 @@ function dialogHugeFile(message, frags, index) {
             }
         });
 
-    }else{
-      //setTimeout(dialogHugeFile(),1000,message, frags, index);
-      console.log("## -- ELSE checkHugeFile | message: " + message);
     }
-}
-
-function filterHugeFile(){
-  /*
-    $('#filterLenght').prop('checked', document.getElementById('filterLenght2').checked);
-    $('#filterSimilarity').prop('checked', document.getElementById('filterSimilarity2').checked);
-    $('#filterIdentity').prop('checked', document.getElementById('filterIdentity2').checked);
-    */
-    $('#filterLenghtNumber').val($('#filterLenghtNumber2').val());
-    $('#filterSimilarityNumber').val($('#filterSimilarityNumber2').val());
-    $('#filterIdentityNumber').val($('#filterIdentityNumber2').val());
-
-
 }
 
 /**

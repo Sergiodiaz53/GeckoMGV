@@ -266,27 +266,26 @@ function processData(csv, index) {
             worker: false,
             delimiter:",",
             complete: function (results) {
-                if(parseCount >= 1) {
-                    parseCount--;
-                    // Check if huge_file
-                    let is_huge = checkHugeFile(results.data, index);
-                    if (is_huge) {
-                      console.log("## CHECK HUGE - YES");
-                      dialogHugeFile(fileNames[index],results.data, index);
-                    } else {
-                      console.log("## CHECK HUGE - NO");
-                      processEvolutiveEvents(results.data, index);
+                    if(parseCount >= 1) {
+                        parseCount--;
+                        processEvolutiveEvents(results.data, index);
 
-                      reset = true;
-                      map = false;
-                      generateAnnotationTab(index);
-                      if (parseCount == 0) {
-                          redraw();
-                          //calculateMatrix(lines[0]);
-                          addPrevZoom();
-                      }
+                        if (parseCount == 0) {
+                            console.log("### --- DEBUG PPP --- ###");
+                            let nhf = checkForHugeFiles();
+                            if(nhf.length>0){
+                              dialogHugeFile(nhf);
+                            } else{
+                                reset = true;
+                                map = false;
+                                generateAnnotationTab(index);
+                                redraw();
+                                addPrevZoom();
+                            }
+                            console.log("### --- DEBUG PPP --- ###");
+                        }
                     }
-                }
+
             },
             error: function(err,reason){
                 alert(err);
