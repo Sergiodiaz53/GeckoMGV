@@ -9,6 +9,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from fileSystem import views as fs
 
+### Threading
 
 def executeInternalService(function_name, args, request):
     print "### Begin Internal Service"
@@ -21,6 +22,51 @@ def threadInit(function_name, args, request):
     print "--- Thread Init ---"
     eval(function_name+'(args,request)')
     print "--- Thread End ---"
+
+### Services
+
+    # REPTOPNG <a0::input> <a1::output> <a2::clearRep (1 quita rep, 0 deja)>
+
+def filterFragsServices(args, request):
+    # <a0::input> <a1::output> <a2::filterIdentity> <a3::filterLenght> <a4::filterSimilarity>
+    input_f = args[0].rsplit('/')[-1]
+    output_f = args[1]
+    filter_identity_number = args[2]
+    filter_lenght_number = args[3]
+    filter_similarity_number = args[4]
+
+    # Load CSV
+    fileObject = userFile.objects.get(user = request.user, filename=input_f)
+    lines = fs.openFile(request.user, fileObject).split('\n')
+
+    # Extract HEADER
+    headers = lines[0:16] # 16 HEADER LINES
+    header = ""
+
+    # Create new CSVfile
+    output_file_csv = ""
+
+    # Copy HEADER on new files
+    for h in headers:
+        output_file_csv += h + "\n"
+
+    # Filter LINES in CONTENT
+    for line in lines[16:-1]:
+        paint = False
+        items = line.split(',')
+        current_identity = format(items[9]/items[7], '.2f')*100
+        current_length = items[7]
+        current_similarity = items[10]
+        
+        filter_identity = (current_identity >= filter_identity_number)
+        filter_length = (current_length >= filter_lenght_number)
+        filter_similarity = (current_similarity >= filter_similarity_number)
+
+        if filter_identity and filter_length and filter_similarity:
+            output_file_csv += line + "\n"
+
+    # Create Files
+    fs.createFile(request=request, content=output_file_csv, filename=output_f)
 
 def extractRepetitionsService(args, request):
     # <a0::frags.csv> <a1::boolSB> <a2::SBID>

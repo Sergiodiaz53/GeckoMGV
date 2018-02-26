@@ -192,6 +192,16 @@ class geckoForm(forms.Form):
         self.fields['parameter1'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="Sequence X FASTA", widget=forms.Select(attrs={'class':'selector','id': 'seqx'}))
         self.fields['parameter2'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="Sequence Y FASTA", widget=forms.Select(attrs={'class':'selector','id': 'seqy'}))
 
+class muscleForm(forms.Form):
+    parameter1 = forms.ChoiceField(label="Multifasta file", widget=forms.Select(attrs={'class':'selector','id': 'input'}))
+    parameter2 =forms.CharField(label="Multiple Alignment Output", widget=forms.TextInput(attrs={'class':'file','id': 'output'}))
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        self.request = kwargs.pop('request', None)
+        super(muscleForm, self).__init__(*args, **kwargs)
+        self.fields['parameter1'] = forms.ChoiceField(choices=[(file.file.name, file.filename)  for file in userFile.objects.filter(user=self.user)], label="Multifasta file", widget=forms.Select(attrs={'class':'selector','id': 'input'}))
+
 class repKillerForm(forms.Form):
     parameter1 = forms.ChoiceField(label="CSV frags file", widget=forms.Select(attrs={'class':'selector','id': 'fragsFile'}))
     parameter2 = forms.CharField(label="Output Marked CSV", widget=forms.TextInput(attrs={'class':'file','id': 'outputFile'}))
@@ -204,15 +214,30 @@ class repKillerForm(forms.Form):
         super(repKillerForm, self).__init__(*args, **kwargs)
         self.fields['parameter1'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="CSV frags file", widget=forms.Select(attrs={'class':'selector','id': 'fragsFile'}))
 
-class muscleForm(forms.Form):
-    parameter1 = forms.ChoiceField(label="Multifasta file", widget=forms.Select(attrs={'class':'selector','id': 'input'}))
-    parameter2 =forms.CharField(label="Multiple Alignment Output", widget=forms.TextInput(attrs={'class':'file','id': 'output'}))
+class CSVToPNGForm(forms.Form):
+    parameter1 = forms.ChoiceField(label="CSV frags file", widget=forms.Select(attrs={'class':'selector','id': 'input'}))
+    parameter2 =forms.CharField(label="Output filename", widget=forms.TextInput(attrs={'class':'file','id': 'output'}))
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
         self.request = kwargs.pop('request', None)
-        super(muscleForm, self).__init__(*args, **kwargs)
+        super(CSVToPNGForm, self).__init__(*args, **kwargs)
         self.fields['parameter1'] = forms.ChoiceField(choices=[(file.file.name, file.filename)  for file in userFile.objects.filter(user=self.user)], label="Multifasta file", widget=forms.Select(attrs={'class':'selector','id': 'input'}))
+
+
+class filterFragsForm(forms.Form):
+    parameter1 = forms.ChoiceField(label="CSV frags file", widget=forms.Select(attrs={'class':'selector','id': 'input'}))
+    parameter2 =forms.CharField(label="Output filename", widget=forms.TextInput(attrs={'class':'file','id': 'output'}))
+    parameter3 = forms.IntegerField(label='Identity', widget=forms.TextInput(attrs={'id': 'filterIdentity'}))
+    parameter4 = forms.IntegerField(label='Min Lenght', widget=forms.TextInput(attrs={'id': 'filterLength'}))
+    parameter5 = forms.IntegerField(label='Min Similarity', widget=forms.TextInput(attrs={'id': 'filterSimilarity'}))
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        self.request = kwargs.pop('request', None)
+        super(filterFragsForm, self).__init__(*args, **kwargs)
+        self.fields['parameter1'] = forms.ChoiceField(choices=[(file.file.name, file.filename)  for file in userFile.objects.filter(user=self.user)], label="Multifasta file", widget=forms.Select(attrs={'class':'selector','id': 'input'}))
+
 
 ### Internal Services Form - DONT USE class=file FOR OUTPUTE --> USE SIMPLE TEXT INSTEAD
 

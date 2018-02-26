@@ -610,22 +610,38 @@ function calculateDistanceBetweenTwoPoints(x1,y1,x2,y2){
  * @param  {Number} numFile      Number of the file
  * @param  {String} color        RGBa color
  */
+var test_ans;
+var test_filter;
 function drawHorizontalLinesInHorizontalLayer(linesToPaint, canvasLayer, numFile, color) {
 
 	var currentCtx = canvasLayer.getContext('2d');
 	var padding = 50;
 
+	console.log("### START DRAW HORIZONTAL LINES DEBUG ###");
+	//var current_mean =
+	var current_anscombe = anscombeTransformLength(numFile);
+	test_ans = current_anscombe;
+	//console.log(current_mean);
+	// Normalize filter
+	var current_filter = (current_anscombe.mean + current_anscombe.sigma) / current_anscombe.sigma;
+
+	test_filter=current_filter;
+	console.log(test_filter);
+
 	currentCtx.beginPath();
 	for (var x in linesToPaint) {
 
-		var line = linesToPaint[x];
+		let line = linesToPaint[x];
+		let temp_anscombe = anscombeTransform( parseInt(lines[numFile][line][7]) );
+		// Normalize temporal anscombe transformation
+		if( (temp_anscombe - current_anscombe.mean) / current_anscombe.sigma >= current_filter){ //anscombeInverse
+			var xIni = (canvasLayer.width * parseInt(lines[numFile][line][1]) / xTotal);
+			var yIni = (canvasLayer.width * parseInt(lines[numFile][line][2]) / yTotal);
+			var xFin = (canvasLayer.width * parseInt(lines[numFile][line][3]) / xTotal);
+			var yFin = (canvasLayer.width * parseInt(lines[numFile][line][4]) / yTotal);
+			drawLine(xIni,xFin,yIni,yFin);
 
-		var xIni = (canvasLayer.width * parseInt(lines[numFile][line][1]) / xTotal);
-		var yIni = (canvasLayer.width * parseInt(lines[numFile][line][2]) / yTotal);
-		var xFin = (canvasLayer.width * parseInt(lines[numFile][line][3]) / xTotal);
-		var yFin = (canvasLayer.width * parseInt(lines[numFile][line][4]) / yTotal);
-
-		drawLine(xIni,xFin,yIni,yFin);
+		}
 	}
 
 	currentCtx.closePath();
@@ -634,8 +650,34 @@ function drawHorizontalLinesInHorizontalLayer(linesToPaint, canvasLayer, numFile
 	currentCtx.fill();
 	currentCtx.stroke();
 
+	console.log("### END DRAW HORIZONTAL LINES DEBUG ###");
+
 	function drawLine(xIni, xFin, yIni, yFin) {
-		// Rect in sequence X
+		// Filter by lineWidth (2)
+		//if( (xFin-xIni)>=current_mean && (yFin - yIni)>=current_mean){
+			// Rect in sequence X
+			currentCtx.rect(xIni, 0, xFin - xIni, padding / 2);
+
+			var halfX = xIni + ((xFin - xIni) / 2);
+			var halfY = yIni + ((yFin - yIni) / 2);
+			currentCtx.moveTo(halfX, padding / 2);
+			currentCtx.lineTo(halfX, padding);
+			currentCtx.moveTo(halfX, padding);
+			currentCtx.lineTo(halfY, canvasLayer.height - padding);
+
+			// Rect in sequence Y
+			var rectYHeight;
+			if (yFin < yIni) {
+				rectYHeight = canvasLayer.height - padding / 2;
+			} else {
+				rectYHeight = canvasLayer.height - padding;
+			}
+			currentCtx.rect( yIni, rectYHeight, yFin - yIni, padding / 2);
+
+			//console.log("Xini; Xfin; Yini; Yfin :: "+(xIni) +";"+ xFin+";"+yIni +";"+(yFin));
+			//console.log("Xwidth: "+(xFin-xIni) +" Ywidth: "+(yFin - yIni));
+		//}
+				/*
 		roundRect(currentCtx, xIni, 0, xFin - xIni, padding / 2);
 
 		var halfX = xIni + ((xFin - xIni) / 2);
@@ -657,6 +699,7 @@ function drawHorizontalLinesInHorizontalLayer(linesToPaint, canvasLayer, numFile
 		}
 
 		roundRect(currentCtx, yIni, rectYHeight, yFin - yIni, padding / 2);
+		*/
 	}
 
 }

@@ -250,6 +250,10 @@ function loadHandler(event, i) {
  */
 function processData(csv, index) {
     console.log("Process index: "+index);
+
+		overlayOn();
+    spinnerOn("Processing Data...");
+
     if (fileType == 'csv') {
         document.getElementById("fileName").innerHTML = fileNames[index];
 
@@ -257,10 +261,6 @@ function processData(csv, index) {
         $(function () {
             $("#infoPopover").popover();
         });
-
-
-      		overlayOn();
-          spinnerOn("Processing Data...");
 
         Papa.parse(csv, {
             worker: false,
@@ -271,7 +271,6 @@ function processData(csv, index) {
                         processEvolutiveEvents(results.data, index);
 
                         if (parseCount == 0) {
-                            console.log("### --- DEBUG PPP --- ###");
                             let nhf = checkForHugeFiles();
                             if(nhf.length>0){
                               dialogHugeFile(nhf);
@@ -282,7 +281,6 @@ function processData(csv, index) {
                                 redraw();
                                 addPrevZoom();
                             }
-                            console.log("### --- DEBUG PPP --- ###");
                         }
                     }
 
@@ -374,6 +372,9 @@ function processData(csv, index) {
         }
     }
 
+
+		overlayOff();
+    spinnerOff();
 }
 
 /**
@@ -399,5 +400,151 @@ function processData(csv, index) {
 function errorHandler(evt) {
     if(evt.target.error.name == "NotReadableError") {
         alert("Canno't read file!");
+    }
+}
+
+/* -----------------
+---- HUGE FILES ----
+----------------- */
+// Constants
+HUGE_FILE_NUM = 1000000;
+
+// Variables
+var huge_file = false;
+var huge_files = [];
+
+function processHugeFile(){
+  // Filter huge files
+  for(hf of checkForHugeFiles()){
+    var current_f = lines[hf];
+  	var count=0
+
+  	console.time("processHugeFile");
+    for (var i = current_f.length - 1; i >= 18; i--){
+      if (!filterHugeFile(current_f[i])) {
+          current_f.splice(i, 1);
+          count++;
+      }
+    }
+    lines[hf] = current_f.slice(0);
+
+    console.timeEnd("processHugeFile");
+    console.log(count);
+  }
+
+  reset = true;
+  map = false;
+  for(i = 0; i < lines.length; i++){
+    generateAnnotationTab(i);
+  }
+
+  redraw();
+  addPrevZoom();
+}
+
+function checkForHugeFiles(index){
+  let ret = [];
+  for(let file = 0; file < lines.length; file++){
+    if(checkHugeFile(file)) ret.push(file);
+  }
+  return ret;
+}
+
+function checkHugeFile(index){
+    return  (lines[index].length > HUGE_FILE_NUM);
+}
+
+/**
+* Function to apply active filters to frags
+* @param  {Array} line fragment to check
+* @return {Boolean}      True/False if paint
+*/
+function filterHugeFile(line){
+  	var paint = false;
+
+  	var filterLenght = document.getElementById("filterLenght2").checked;
+  	var filterSimilarity = document.getElementById("filterSimilarity2").checked;
+  	var filterIdentity = document.getElementById("filterIdentity2").checked;
+
+  	switch (parseInt(line[6])) {
+          case -1:
+              if (!filterIrrelevants) {
+                  paint = true;
+              }
+              break;
+          default:
+              if (filterLenght) {
+                  var lenghtFilter = document.getElementById("filterLenghtNumber2").value
+                  if (parseInt(line[7]) >= parseInt(lenghtFilter)) {
+                      paint = true;
+                  }
+                  break;
+              } else {
+                  paint = true;
+                  break;
+              }
+  	}
+
+  	if (filterSimilarity) {
+  		var similarityValue = document.getElementById("filterSimilarityNumber2").value;
+  		if (parseFloat(line[10]) <= similarityValue) {
+  			paint = false;
+  		}
+  	}
+
+  	if(filterIdentity){
+  		if((line[9]/line[7]).toFixed(2)*100 <= identityLine.identityValue) {
+  			paint = false;
+  		}
+  	}
+
+    return paint;
+}
+
+function dialogHugeFile(huge_files_list) {
+    if (!$('#hugeFileOutput').is(':visible')) {
+        var $dialogContainer = $('#output');
+        var file_list = document.getElementById("hugeFile_FileNames");
+        // Clear huge file list
+        while (file_list.firstChild) {
+          file_list.removeChild(file_list.firstChild);
+        }
+
+        // Fill huge file list
+        for(file of huge_files_list){
+          let current_filename = fileNames[file];
+          let current_li = document.createElement("li");
+          current_li.setAttribute("class", "list-group-item");
+          current_li.appendChild(document.createTextNode(current_filename));
+          file_list.appendChild(current_li);
+        }
+
+        // Create dialog
+        var $detachedChildren = $dialogContainer.children().detach();
+        $('#hugeFileOutput').dialog({
+            closeOnEscape: false,
+            height:550,
+            minHeight:550,
+            width: 500,
+            minWidth: 500,
+            title: huge_files_list.length + ' Huge File(s) Detected!',
+            buttons: [
+                {
+                    text: "Continue",
+                    click: function () {
+                        $(this).dialog("close");
+                        spinnerOn("Processing file");
+                        processHugeFile();
+                    },
+                    "class": "ui-button-primary"
+                }
+            ],
+            open: function (event, ui) {
+                $(".ui-dialog-titlebar-close").hide();
+                $detachedChildren.appendTo($dialogContainer);
+                updateAnnotsGrids();
+            }
+        });
+
     }
 }
