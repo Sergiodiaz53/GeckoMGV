@@ -610,23 +610,16 @@ function calculateDistanceBetweenTwoPoints(x1,y1,x2,y2){
  * @param  {Number} numFile      Number of the file
  * @param  {String} color        RGBa color
  */
-var test_ans;
-var test_filter;
 function drawHorizontalLinesInHorizontalLayer(linesToPaint, canvasLayer, numFile, color) {
 
 	var currentCtx = canvasLayer.getContext('2d');
 	var padding = 50;
 
-	console.log("### START DRAW HORIZONTAL LINES DEBUG ###");
 	//var current_mean =
-	var current_anscombe = anscombeTransformLength(numFile);
+	var current_anscombe = current_anscombe_results;
 	test_ans = current_anscombe;
-	//console.log(current_mean);
 	// Normalize filter
 	var current_filter = (current_anscombe.mean + current_anscombe.sigma) / current_anscombe.sigma;
-
-	test_filter=current_filter;
-	console.log(test_filter);
 
 	currentCtx.beginPath();
 	for (var x in linesToPaint) {
@@ -634,7 +627,7 @@ function drawHorizontalLinesInHorizontalLayer(linesToPaint, canvasLayer, numFile
 		let line = linesToPaint[x];
 		let temp_anscombe = anscombeTransform( parseInt(lines[numFile][line][7]) );
 		// Normalize temporal anscombe transformation
-		if( (temp_anscombe - current_anscombe.mean) / current_anscombe.sigma >= current_filter){ //anscombeInverse
+		if( (temp_anscombe - current_anscombe.mean) / current_anscombe.sigma >= current_filter){
 			var xIni = (canvasLayer.width * parseInt(lines[numFile][line][1]) / xTotal);
 			var yIni = (canvasLayer.width * parseInt(lines[numFile][line][2]) / yTotal);
 			var xFin = (canvasLayer.width * parseInt(lines[numFile][line][3]) / xTotal);
@@ -870,6 +863,7 @@ function createInstance() {
 
 				//Draw in horizontal layer
 				spinnerOn("Drawing Horizontal view...");
+				current_anscombe_results = anscombeTransformLength(numFile);
 				drawHorizontalLinesInHorizontalLayer(filteredLines, currentHorizontalCanvas, numFile, rgba(189, 195, 199, 0.5));
 				drawHorizontalLinesInHorizontalLayer(linesToPaint, currentHorizontalCanvas, numFile, rgba(R[numFile], G[numFile], B[numFile], 0.7));
 

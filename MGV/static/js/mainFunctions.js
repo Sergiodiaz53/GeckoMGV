@@ -545,6 +545,8 @@ function loadServiceForm(serviceExe, serviceName){
         return false;
 }
 
+// Spinner functions
+
 function spinnerOn(loadText){
   var spinner = document.getElementById("spinner");
   spinner.style.display = "block";
@@ -565,6 +567,7 @@ function overlayOff(){
 }
 
 // Statistical functions
+var current_anscombe_results = {};
 
 function meanLength(numFile){
   var current_f = lines[numFile];
