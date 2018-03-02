@@ -225,20 +225,6 @@ class CSVToPNGForm(forms.Form):
         self.fields['parameter1'] = forms.ChoiceField(choices=[(file.file.name, file.filename)  for file in userFile.objects.filter(user=self.user)], label="Multifasta file", widget=forms.Select(attrs={'class':'selector','id': 'input'}))
 
 
-class filterFragsForm(forms.Form):
-    parameter1 = forms.ChoiceField(label="CSV frags file", widget=forms.Select(attrs={'class':'selector','id': 'input'}))
-    parameter2 =forms.CharField(label="Output filename", widget=forms.TextInput(attrs={'class':'file','id': 'output'}))
-    parameter3 = forms.IntegerField(label='Identity', widget=forms.TextInput(attrs={'id': 'filterIdentity'}))
-    parameter4 = forms.IntegerField(label='Min Lenght', widget=forms.TextInput(attrs={'id': 'filterLength'}))
-    parameter5 = forms.IntegerField(label='Min Similarity', widget=forms.TextInput(attrs={'id': 'filterSimilarity'}))
-
-    def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop('user', None)
-        self.request = kwargs.pop('request', None)
-        super(filterFragsForm, self).__init__(*args, **kwargs)
-        self.fields['parameter1'] = forms.ChoiceField(choices=[(file.file.name, file.filename)  for file in userFile.objects.filter(user=self.user)], label="Multifasta file", widget=forms.Select(attrs={'class':'selector','id': 'input'}))
-
-
 ### Internal Services Form - DONT USE class=file FOR OUTPUTE --> USE SIMPLE TEXT INSTEAD
 
 class extractRepetitionsForm(forms.Form):
@@ -268,6 +254,20 @@ class extractSequenceFromCSVForm(forms.Form):
         self.fields['parameter2'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="X Fasta file", widget=forms.Select(attrs={'class':'selector','id': 'xFastaFile'}))
         self.fields['parameter3'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="Y Fasta file", widget=forms.Select(attrs={'class':'selector','id': 'yFastaFile'}))
         self.fields['parameter4'] = forms.ChoiceField(choices=[(file.file.name, file.filename) for file in userFile.objects.filter(user=self.user)], label="Y-Reversed Fasta file", widget=forms.Select(attrs={'class':'selector','id': 'yReversedFastaFile'}))
+
+class filterFragsForm(forms.Form):
+    parameter1 = forms.ChoiceField(label="CSV frags file", widget=forms.Select(attrs={'class':'selector','id': 'input'}))
+    parameter2 =forms.CharField(label="Output filename", widget=forms.TextInput(attrs={'id': 'output'}))
+    parameter3 = forms.IntegerField(label='Identity', widget=forms.TextInput(attrs={'id': 'filterIdentity', 'type': 'number'}))
+    parameter4 = forms.IntegerField(label='Min Lenght', widget=forms.TextInput(attrs={'id': 'filterLength', 'type': 'number'}))
+    parameter5 = forms.IntegerField(label='Min Similarity', widget=forms.TextInput(attrs={'id': 'filterSimilarity', 'type': 'number'}))
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        self.request = kwargs.pop('request', None)
+        super(filterFragsForm, self).__init__(*args, **kwargs)
+        self.fields['parameter1'] = forms.ChoiceField(choices=[(file.file.name, file.filename)  for file in userFile.objects.filter(user=self.user)], label="Multifasta file", widget=forms.Select(attrs={'class':'selector','id': 'input'}))
+
 
 ### Third Party Services Form
 

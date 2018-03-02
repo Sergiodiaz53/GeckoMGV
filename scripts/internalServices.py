@@ -27,13 +27,13 @@ def threadInit(function_name, args, request):
 
     # REPTOPNG <a0::input> <a1::output> <a2::clearRep (1 quita rep, 0 deja)>
 
-def filterFragsServices(args, request):
+def filterFragsService(args, request):
     # <a0::input> <a1::output> <a2::filterIdentity> <a3::filterLenght> <a4::filterSimilarity>
     input_f = args[0].rsplit('/')[-1]
     output_f = args[1]
-    filter_identity_number = args[2]
-    filter_lenght_number = args[3]
-    filter_similarity_number = args[4]
+    filter_identity_number = float(args[2])
+    filter_lenght_number = float(args[3])
+    filter_similarity_number = float(args[4])
 
     # Load CSV
     fileObject = userFile.objects.get(user = request.user, filename=input_f)
@@ -52,12 +52,11 @@ def filterFragsServices(args, request):
 
     # Filter LINES in CONTENT
     for line in lines[16:-1]:
-        paint = False
         items = line.split(',')
-        current_identity = format(items[9]/items[7], '.2f')*100
-        current_length = items[7]
-        current_similarity = items[10]
-        
+        current_identity = format(float(items[9])/float(items[7]), '.2f')*100
+        current_length = float(items[7])
+        current_similarity = float(items[10])
+
         filter_identity = (current_identity >= filter_identity_number)
         filter_length = (current_length >= filter_lenght_number)
         filter_similarity = (current_similarity >= filter_similarity_number)
