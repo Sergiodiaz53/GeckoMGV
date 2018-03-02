@@ -8,7 +8,13 @@
 			    <div class="col-md-8 col-centered">
 
                     <h2>{{ fileName }} : </h2>
-                    <div class="computerOutput"> {{ content|linebreaks }} </div>
+                    <div class="computerOutput">
+                    {% if image == False %}
+                    	{{ content|linebreaks }} 
+                    {% else %}
+                    	<img src="/filemanager/{{ image }}" height="500" width="500" />
+                    {% endif %}
+                    </div>
 
                 </div>
             </div>
