@@ -222,7 +222,7 @@ class CSVToPNGForm(forms.Form):
         self.user = kwargs.pop('user', None)
         self.request = kwargs.pop('request', None)
         super(CSVToPNGForm, self).__init__(*args, **kwargs)
-        self.fields['parameter1'] = forms.ChoiceField(choices=[(file.file.name, file.filename)  for file in userFile.objects.filter(user=self.user)], label="Multifasta file", widget=forms.Select(attrs={'class':'selector','id': 'input'}))
+        self.fields['parameter1'] = forms.ChoiceField(choices=[(file.file.name, file.filename)  for file in userFile.objects.filter(user=self.user)], label="CSV file", widget=forms.Select(attrs={'class':'selector','id': 'input'}))
 
 
 ### Internal Services Form - DONT USE class=file FOR OUTPUTE --> USE SIMPLE TEXT INSTEAD

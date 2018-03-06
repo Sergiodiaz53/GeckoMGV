@@ -406,7 +406,7 @@ function errorHandler(evt) {
 ---- HUGE FILES ----
 ----------------- */
 // Constants
-HUGE_FILE_NUM = 100;
+HUGE_FILE_NUM = 1000000;
 
 // Variables
 var huge_file = false;

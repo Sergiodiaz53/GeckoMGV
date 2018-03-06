@@ -78,18 +78,13 @@ def extractRepetitionsService(args, request):
 
     # Extract HEADER
     headers = lines[0:16] # 16 HEADER LINES
-    header = ""
 
     # Create CSV
     content_clean_csv = ""
     content_rep_csv = ""
 
-    # Copy HEADER on new files
-    for h in headers:
-        header += h + "\n"
-
-    content_clean_csv += header
-    content_rep_csv += header
+    #content_clean_csv += header
+    #content_rep_csv += header
 
     # Filter LINES in CONTENT
     if boolSB == "0":
@@ -109,9 +104,19 @@ def extractRepetitionsService(args, request):
                 content_clean_csv += line + "\n"
             elif csb_flag == CSB_id:
                 content_rep_csv += line + "\n"
+
     # Create Files
-    fs.createFile(request=request, content=content_clean_csv, filename="CLEAN_" + file_name)
-    fs.createFile(request=request, content=content_rep_csv, filename="REPETITIONS_" + file_name)
+    header = ""
+    headers[12] = "Total Fragments :  " + str( content_clean_csv.count('\n') )
+    for h in headers:
+        header += h + "\n"
+    fs.createFile(request=request, content=(header + content_clean_csv), filename="CLEAN_" + file_name)
+
+    header = ""
+    headers[12] = "Total Fragments :  " + str( content_rep_csv.count('\n') )
+    for h in headers:
+        header += h + "\n"
+    fs.createFile(request=request, content=(header + content_rep_csv), filename="REPETITIONS_" + file_name)
 
 
 def extractSequenceFromCSVService(args, request):
