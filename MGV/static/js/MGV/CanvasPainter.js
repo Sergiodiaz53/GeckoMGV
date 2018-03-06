@@ -161,7 +161,7 @@ function drawSelectedFrags(){
 		for (var i = 0; i < selectedLines.length; i++)
 			if ($("#checklayer" + i)[0].checked) {
 				drawLinesInLayer(selectedLines[i], selectLayer, i, rgb(255, 0, 0));
-				drawHorizontalLinesInHorizontalLayer(selectedLines[i], document.getElementById("hSel" + i), i, rgb(255, 0, 0))
+				drawHorizontalLinesInHorizontalLayer(selectedLines[i], document.getElementById("hSel" + i), i, rgb(255, 0, 0), false)
 			}
 	}
 }
@@ -610,16 +610,21 @@ function calculateDistanceBetweenTwoPoints(x1,y1,x2,y2){
  * @param  {Number} numFile      Number of the file
  * @param  {String} color        RGBa color
  */
-function drawHorizontalLinesInHorizontalLayer(linesToPaint, canvasLayer, numFile, color) {
+function drawHorizontalLinesInHorizontalLayer(linesToPaint, canvasLayer, numFile, color, filterflag = true) {
 
 	var currentCtx = canvasLayer.getContext('2d');
 	var padding = 50;
 
 	//var current_mean =
 	var current_anscombe = current_anscombe_results;
-	test_ans = current_anscombe;
-	// Normalize filter
-	var current_filter = (current_anscombe.mean + current_anscombe.sigma) / current_anscombe.sigma;
+	if (filterflag) {
+		test_ans = current_anscombe;
+		// Normalize filter
+		var current_filter = (current_anscombe.mean + current_anscombe.sigma) / current_anscombe.sigma;
+
+	}else {
+		var current_filter = -100;
+	}
 
 	currentCtx.beginPath();
 	for (var x in linesToPaint) {

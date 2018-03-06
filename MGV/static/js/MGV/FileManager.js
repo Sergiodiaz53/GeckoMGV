@@ -40,7 +40,6 @@ function loadFileFromServer($fileName){
             'filename': $fileName // from form
         },
         success: function(content){
-            // START SPINNER - HOW???
             overlayOn();
             spinnerOn("Loading File...");
 
@@ -407,7 +406,7 @@ function errorHandler(evt) {
 ---- HUGE FILES ----
 ----------------- */
 // Constants
-HUGE_FILE_NUM = 1000000;
+HUGE_FILE_NUM = 100;
 
 // Variables
 var huge_file = false;
@@ -533,8 +532,9 @@ function dialogHugeFile(huge_files_list) {
                     text: "Continue",
                     click: function () {
                         $(this).dialog("close");
+                        overlayOn();
                         spinnerOn("Processing file");
-                        processHugeFile();
+                        setTimeout(function(){processHugeFile();}, 250);
                     },
                     "class": "ui-button-primary"
                 }
