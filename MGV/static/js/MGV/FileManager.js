@@ -33,6 +33,9 @@ function CSVHeader (headers) {
  */
 function loadFileFromServer($fileName){
     BootstrapDialog.closeAll();
+    overlayOn();
+    spinnerOn("Loading File...");
+
     $.ajax({
         type:"GET",
         url:"/loadFileFromServer/",
@@ -40,9 +43,6 @@ function loadFileFromServer($fileName){
             'filename': $fileName // from form
         },
         success: function(content){
-            overlayOn();
-            spinnerOn("Loading File...");
-
             var extension = $fileName.split('.').pop().toLowerCase();
             switch (extension) {
                 case 'csv':
@@ -406,61 +406,70 @@ function errorHandler(evt) {
 ---- HUGE FILES ----
 ----------------- */
 // Constants
-HUGE_FILE_NUM = 1000000;
+HUGE_FILE_NUM = 1;
 
 // Variables
 var huge_file = false;
 var huge_files = [];
 
-function processHugeFile(){
-  // Filter huge files
+    function processHugeFile(){
+    // Filter huge files
 
-  let filterLenght = document.getElementById("filterLenght2").checked;
-  let filterSimilarity = document.getElementById("filterSimilarity2").checked;
-  let filterIdentity = document.getElementById("filterIdentity2").checked;
+    let filterLenght = document.getElementById("filterLenght2").checked;
+    let filterSimilarity = document.getElementById("filterSimilarity2").checked;
+    let filterIdentity = document.getElementById("filterIdentity2").checked;
 
-  let lenghtValue, similarityValue, identityValue;
-  if(filterLenght) 
-    lenghtValue = parseInt(document.getElementById("filterLenghtNumber2").value);
-  else
-    lenghtValue = -1;
+    let lenghtValue = 0, similarityValue = 0, identityValue = 0;
+    if(filterLenght) 
+        lenghtValue = parseInt(document.getElementById("filterLenghtNumber2").value);
 
-  if(filterSimilarity)
-    similarityValue = parseInt(document.getElementById("filterSimilarityNumber2").value);
-  else
-    identityValue = -1;
+    if(filterSimilarity)
+        similarityValue = parseInt(document.getElementById("filterSimilarityNumber2").value);
 
-  if(filterIdentity)
-    identityValue = parseInt(document.getElementById("filterIdentity2").value);
-  else
-    identityValue = -1;
+    if(filterIdentity)
+        identityValue = parseInt(document.getElementById("filterIdentity2").value);
 
 
-  for(hf of checkForHugeFiles()){
-    var current_f = lines[hf];
-  	var count=0
+    for(hf of checkForHugeFiles()){
+        var current_f = lines[hf];
+        var count=0
+        console.time("processHugeFile");
+        
+        
+        for (var i = current_f.length - 1; i >= 18; i--){
+            let line = current_f[i];
+            let paint = true;
 
-  	console.time("processHugeFile");
-    for (var i = current_f.length - 1; i >= 18; i--){
-      //if (!filterHugeFile(current_f[i], lenghtValue, similarityValue, identityValue)) {
-          current_f.splice(i, 1);
-          count++;
-      //}
+            if (parseInt(line[7]) <= lenghtValue) {
+                paint = false;
+            }
+
+            if (parseFloat(line[10]) <= similarityValue) {
+                paint = false;
+            }
+            if((line[9]/line[7]).toFixed(2)*100 <= identityValue) {
+                paint = false;
+            }
+            
+            if(!paint){
+            current_f.splice(i, 1);
+            count++;
+            }
+        }
+        lines[hf] = current_f.slice(0);
+
+        console.timeEnd("processHugeFile");
+        console.log(count);
     }
-    lines[hf] = current_f.slice(0);
 
-    console.timeEnd("processHugeFile");
-    console.log(count);
-  }
+    reset = true;
+    map = false;
+    for(i = 0; i < lines.length; i++){
+        generateAnnotationTab(i);
+    }
 
-  reset = true;
-  map = false;
-  for(i = 0; i < lines.length; i++){
-    generateAnnotationTab(i);
-  }
-
-  redraw();
-  addPrevZoom();
+    redraw();
+    addPrevZoom();
 }
 
 function checkForHugeFiles(index){
