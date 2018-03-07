@@ -16,7 +16,9 @@ function processEvolutiveEvents(frags, index){
     evolutiveFrags[index][eeIndex] = [];
     evolutiveEvents[index] = [];
 
-    for (var i = frags.length - 1; i >= 18; i--){
+    console.time("processEvolutiveEvents");
+    for (var i = frags.length - 1; i >= 16; i--){
+        parseLine(frags[i]);
         if (frags[i][0] == "EndEE"){
             i--;
             evolutiveEvents[index][eeIndex] = [];
@@ -32,9 +34,10 @@ function processEvolutiveEvents(frags, index){
             eeIndex++;
         }
     }
-    console.timeEnd("processEvolutiveEvents");
 
+    console.timeEnd("processEvolutiveEvents");
     lines[index] = frags.slice(0);
+
     originalComparison[index] = frags.slice(0);
 
     evolutiveFrags[index] = evolutiveFrags[index].reverse();

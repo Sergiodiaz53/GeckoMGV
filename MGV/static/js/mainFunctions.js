@@ -567,7 +567,7 @@ function overlayOff(){
 }
 
 // Statistical functions
-var current_anscombe_results = {};
+var current_anscombe_results = [];
 
 function meanLength(numFile){
   var current_f = lines[numFile];

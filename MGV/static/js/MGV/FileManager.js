@@ -268,6 +268,8 @@ function processData(csv, index) {
                     if(parseCount >= 1) {
                         parseCount--;
                         processEvolutiveEvents(results.data, index);
+                        current_anscombe_results[index] = anscombeTransformLength(index);
+                        //parseFileColumns(index);
 
                         if (parseCount == 0) {
                             let nhf = checkForHugeFiles();
@@ -406,13 +408,13 @@ function errorHandler(evt) {
 ---- HUGE FILES ----
 ----------------- */
 // Constants
-HUGE_FILE_NUM = 1;
+HUGE_FILE_NUM = 1000000;
 
 // Variables
 var huge_file = false;
 var huge_files = [];
 
-    function processHugeFile(){
+function processHugeFile(){
     // Filter huge files
 
     let filterLenght = document.getElementById("filterLenght2").checked;
@@ -432,28 +434,27 @@ var huge_files = [];
 
     for(hf of checkForHugeFiles()){
         var current_f = lines[hf];
-        var count=0
+        var count = 0;
         console.time("processHugeFile");
+        let paint = true;
         
-        
-        for (var i = current_f.length - 1; i >= 18; i--){
-            let line = current_f[i];
-            let paint = true;
-
-            if (parseInt(line[7]) <= lenghtValue) {
+        for (var i = current_f.length - 1; i >= 16; i--){
+            paint = true;
+            if (current_f[i][7] <= lenghtValue) {
                 paint = false;
             }
 
-            if (parseFloat(line[10]) <= similarityValue) {
+            if (current_f[i][10] <= similarityValue) {
                 paint = false;
             }
-            if((line[9]/line[7]).toFixed(2)*100 <= identityValue) {
+            
+            if( current_f[i][11] <= identityValue) {
                 paint = false;
             }
             
             if(!paint){
-            current_f.splice(i, 1);
-            count++;
+                current_f.splice(i, 1);
+                count++;
             }
         }
         lines[hf] = current_f.slice(0);
@@ -573,4 +574,25 @@ function dialogHugeFile(huge_files_list) {
         });
 
     }
+}
+
+function parseFileColumns(index){
+    // Parse lines
+    console.time("parseFileColumns");
+    for (var i = lines[index].length - 1; i >= 16; i--){
+        let line = lines[index][i];
+
+        line[7] = parseInt(line[7]);
+        line[10] = parseFloat(line[10]);
+        line[11] = parseFloat(line[11]);
+
+        lines[index][i] = line;
+    }
+    console.timeEnd("parseFileColumns");
+}
+
+function parseLine(unparsedLine){
+    unparsedLine[7] = parseInt(unparsedLine[7]);
+    unparsedLine[10] = parseFloat(unparsedLine[10]);
+    unparsedLine[11] = parseFloat(unparsedLine[11]);
 }

@@ -615,8 +615,7 @@ function drawHorizontalLinesInHorizontalLayer(linesToPaint, canvasLayer, numFile
 	var currentCtx = canvasLayer.getContext('2d');
 	var padding = 50;
 
-	//var current_mean =
-	var current_anscombe = current_anscombe_results;
+	var current_anscombe = current_anscombe_results[numFile];
 	if (filterflag) {
 		test_ans = current_anscombe;
 		// Normalize filter
@@ -647,8 +646,6 @@ function drawHorizontalLinesInHorizontalLayer(linesToPaint, canvasLayer, numFile
 	currentCtx.fillStyle = currentCtx.strokeStyle = color;
 	currentCtx.fill();
 	currentCtx.stroke();
-
-	console.log("### END DRAW HORIZONTAL LINES DEBUG ###");
 
 	function drawLine(xIni, xFin, yIni, yFin) {
 		// Filter by lineWidth (2)
@@ -868,7 +865,6 @@ function createInstance() {
 
 				//Draw in horizontal layer
 				spinnerOn("Drawing Horizontal view...");
-				current_anscombe_results = anscombeTransformLength(numFile);
 				drawHorizontalLinesInHorizontalLayer(filteredLines, currentHorizontalCanvas, numFile, rgba(189, 195, 199, 0.5));
 				drawHorizontalLinesInHorizontalLayer(linesToPaint, currentHorizontalCanvas, numFile, rgba(R[numFile], G[numFile], B[numFile], 0.7));
 
