@@ -414,16 +414,38 @@ var huge_files = [];
 
 function processHugeFile(){
   // Filter huge files
+
+  let filterLenght = document.getElementById("filterLenght2").checked;
+  let filterSimilarity = document.getElementById("filterSimilarity2").checked;
+  let filterIdentity = document.getElementById("filterIdentity2").checked;
+
+  let lenghtValue, similarityValue, identityValue;
+  if(filterLenght) 
+    lenghtValue = parseInt(document.getElementById("filterLenghtNumber2").value);
+  else
+    lenghtValue = -1;
+
+  if(filterSimilarity)
+    similarityValue = parseInt(document.getElementById("filterSimilarityNumber2").value);
+  else
+    identityValue = -1;
+
+  if(filterIdentity)
+    identityValue = parseInt(document.getElementById("filterIdentity2").value);
+  else
+    identityValue = -1;
+
+
   for(hf of checkForHugeFiles()){
     var current_f = lines[hf];
   	var count=0
 
   	console.time("processHugeFile");
     for (var i = current_f.length - 1; i >= 18; i--){
-      if (!filterHugeFile(current_f[i])) {
+      //if (!filterHugeFile(current_f[i], lenghtValue, similarityValue, identityValue)) {
           current_f.splice(i, 1);
           count++;
-      }
+      //}
     }
     lines[hf] = current_f.slice(0);
 
@@ -458,12 +480,8 @@ function checkHugeFile(index){
 * @param  {Array} line fragment to check
 * @return {Boolean}      True/False if paint
 */
-function filterHugeFile(line){
+function filterHugeFile(line, filterLenght, filterSimilarity, filterIdentity){
   	var paint = false;
-
-  	var filterLenght = document.getElementById("filterLenght2").checked;
-  	var filterSimilarity = document.getElementById("filterSimilarity2").checked;
-  	var filterIdentity = document.getElementById("filterIdentity2").checked;
 
   	switch (parseInt(line[6])) {
           case -1:
@@ -472,9 +490,9 @@ function filterHugeFile(line){
               }
               break;
           default:
-              if (filterLenght) {
-                  var lenghtFilter = document.getElementById("filterLenghtNumber2").value
-                  if (parseInt(line[7]) >= parseInt(lenghtFilter)) {
+              if (filterLenght != -1) {
+                  
+                  if (parseInt(line[7]) >= filterLenght) {
                       paint = true;
                   }
                   break;
@@ -484,15 +502,14 @@ function filterHugeFile(line){
               }
   	}
 
-  	if (filterSimilarity) {
-  		var similarityValue = document.getElementById("filterSimilarityNumber2").value;
-  		if (parseFloat(line[10]) <= similarityValue) {
+  	if (filterSimilarity != -1) {
+  		if (parseFloat(line[10]) <= filterSimilarity) {
   			paint = false;
   		}
   	}
 
-  	if(filterIdentity){
-  		if((line[9]/line[7]).toFixed(2)*100 <= identityLine.identityValue) {
+  	if(filterIdentity != -1){
+  		if((line[9]/line[7]).toFixed(2)*100 <= filterIdentity) {
   			paint = false;
   		}
   	}

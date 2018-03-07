@@ -46,10 +46,6 @@ def filterFragsService(args, request):
     # Create new CSVfile
     output_file_csv = ""
 
-    # Copy HEADER on new files
-    for h in headers:
-        output_file_csv += h + "\n"
-
     # Filter LINES in CONTENT
     for line in lines[16:-1]:
         items = line.split(',')
@@ -63,9 +59,15 @@ def filterFragsService(args, request):
 
         if filter_identity and filter_length and filter_similarity:
             output_file_csv += line + "\n"
+    
+    # Copy HEADER on new files
+    headers[12] = "Total Fragments :  " + str( output_file_csv.count('\n') )
+    for h in headers:
+        header += h + "\n"
 
+    
     # Create Files
-    fs.createFile(request=request, content=output_file_csv, filename=output_f)
+    fs.createFile(request=request, content=(header + output_file_csv), filename=output_f)
 
 def extractRepetitionsService(args, request):
     # <a0::frags.csv> <a1::boolSB> <a2::SBID>
