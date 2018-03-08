@@ -814,6 +814,18 @@ function createInstance() {
 				var currentHorizontalCanvas = createHorizontalComparisonLayer(numFile);
 
 				//Start the paint proccess
+				filters = {};
+				filters.filterIrrelevants = document.getElementById("filterIrrelevants").checked;
+				filters.filterOverlapped = document.getElementById("filterOverlapped").checked;
+				filters.filterOverlapped2 = document.getElementById("filterOverlapped2").checked;
+				filters.filterLenght = document.getElementById("filterLenght").checked;
+				filters.filterSimilarity = document.getElementById("filterSimilarity").checked;
+				filters.filterPositives = document.getElementById("filterPositives").checked;
+				filters.filterIdentity = document.getElementById("filterIdentity").checked;
+				filters.similarityValue = document.getElementById("filterSimilarityNumber").value;
+				filters.lengthValue = document.getElementById("filterLenghtNumber").value;
+				filters.identityValue = document.getElementById("filterIdentityNumber").value;
+
 				for (i = fragsStarts; i < currentLines.length; i++) {
 
 					var paint = false;
@@ -828,7 +840,7 @@ function createInstance() {
 								|| mode[2].checked) {
 
 							// console.time("filter()");
-							paint = filter(currentLines[i]);
+							paint = filter(currentLines[i], filters);
 							// console.timeEnd("filter()");
 
 							//Zoom filter
@@ -914,7 +926,7 @@ function createInstance() {
 
 		overlayOff();
 		spinnerOff();
-    drawSelectedFrags();
+    	drawSelectedFrags();
 
 		$("#nextZoom").prop( "disabled", true);
 		$("#prevZoom").prop( "disabled", true);
@@ -1260,17 +1272,20 @@ function createInstance() {
  * @param  {Array} line fragment to check
  * @return {Boolean}      True/False if paint
  */
-function filter(line) {
+function filter(line, filters) {
 
 	var paint = false;
+	var filterDuplications = filters.filterDuplications;
+	let filterIrrelevants = filters.filterIrrelevants;
+	let filterOverlapped = filters.filterOverlapped;
+	let filterLenght = filters.filterLenght;
+	let filterSimilarity = filters.filterSimilarity;
+	let filterPositives = filters.filterPositives;
+	let filterIdentity = filters.filterIdentity;
 
-	var filterIrrelevants = document.getElementById("filterIrrelevants").checked;
-	var filterOverlapped = document.getElementById("filterOverlapped").checked;
-	var filterDuplications = document.getElementById("filterOverlapped2").checked;
-	var filterLenght = document.getElementById("filterLenght").checked;
-	var filterSimilarity = document.getElementById("filterSimilarity").checked;
-	var filterPositives = document.getElementById("filterPositives").checked;
-	var filterIdentity = document.getElementById("filterIdentity").checked;
+	let lengthValue = filters.lengthValue;
+	let similarityValue = filters.similarityValue;
+	let identityValue = filters.identityValue;
 
 	switch ((line[6])) {
         case -1:
@@ -1280,8 +1295,7 @@ function filter(line) {
             break;
         default:
             if (filterLenght) {
-                var lenghtFilter = document.getElementById("filterLenghtNumber").value
-                if ((line[7]) >= (lenghtFilter)) {
+                if ((line[7]) >= (lengthValue)) {
                     paint = true;
                 }
                 break;
@@ -1292,7 +1306,6 @@ function filter(line) {
 	}
 
 	if (filterSimilarity) {
-		var similarityValue = document.getElementById("filterSimilarityNumber").value;
 		if ((line[10]) <= similarityValue) {
 			paint = false;
 		}
@@ -1305,13 +1318,13 @@ function filter(line) {
 	}
 
 	if (filterDuplications) {
-		if (parseInt(line[6]) < -2) {
+		if ((line[6]) < -2) {
 			paint = false;
 		}
 	}
 
 	if(filterIdentity){
-		if((line[9]/line[7]).toFixed(2)*100 <= identityLine.identityValue) {
+		if((line[11]) <= identityValue) {
 			paint = false;
 		}
 	}
