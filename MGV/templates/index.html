@@ -353,9 +353,7 @@
 
         $("#filterIdentityNumber").change(function() {
             if ($('#filterIdentity').prop('checked')){
-                var auxValue = $("#filterIdentityNumber").val();
-                identityLine.paint(auxValue);
-                identityLine.update();
+								redraw();
             }
 		});
 

@@ -422,7 +422,7 @@ function processHugeFile(){
     let filterIdentity = document.getElementById("filterIdentity2").checked;
 
     let lenghtValue = 0, similarityValue = 0, identityValue = 0;
-    if(filterLenght) 
+    if(filterLenght)
         lenghtValue = parseInt(document.getElementById("filterLenghtNumber2").value);
 
     if(filterSimilarity)
@@ -434,33 +434,22 @@ function processHugeFile(){
 
     for(hf of checkForHugeFiles()){
         //var current_f = lines[hf];
-        var count = 0;
         console.time("processHugeFile");
-        let paint = true;
-        
-        for (var i = lines[hf].length - 1; i >= 16; i--){
-            paint = true;
-            if (lines[hf][i][7] <= lenghtValue) {
-                paint = false;
-            }
 
-            if (lines[hf][i][10] <= similarityValue) {
-                paint = false;
-            }
-            
-            if( lines[hf][i][11] <= identityValue) {
-                paint = false;
-            }
-            
-            if(!paint){
+        filterHugeFile(lines[hf], lenghtValue, similarityValue, identityValue)
+        /*
+        for (var i = lines[hf].length - 1; i >= 16; i--){
+            if (lines[hf][i][7] <= lenghtValue ||
+              lines[hf][i][10] <= similarityValue ||
+              lines[hf][i][11] <= identityValue) {
                 lines[hf].splice(i, 1);
                 count++;
             }
         }
+        */
         //lines[hf] = current_f.slice(0);
 
         console.timeEnd("processHugeFile");
-        console.log(count);
     }
 
     reset = true;
@@ -490,41 +479,18 @@ function checkHugeFile(index){
 * @param  {Array} line fragment to check
 * @return {Boolean}      True/False if paint
 */
-function filterHugeFile(line, filterLenght, filterSimilarity, filterIdentity){
-  	var paint = false;
+function filterHugeFile(file, lenghtValue, similarityValue, identityValue){
+  var count = 0;
 
-  	switch ((line[6])) {
-          case -1:
-              if (!filterIrrelevants) {
-                  paint = true;
-              }
-              break;
-          default:
-              if (filterLenght != -1) {
-                  
-                  if ((line[7]) >= filterLenght) {
-                      paint = true;
-                  }
-                  break;
-              } else {
-                  paint = true;
-                  break;
-              }
-  	}
-
-  	if (filterSimilarity != -1) {
-  		if ((line[10]) <= filterSimilarity) {
-  			paint = false;
-  		}
-  	}
-
-  	if(filterIdentity != -1){
-  		if((line[9]/line[7]).toFixed(2)*100 <= filterIdentity) {
-  			paint = false;
-  		}
-  	}
-
-    return paint;
+  for (var i = file.length - 1; i >= 16; i--){
+      if (file[i][7] <= lenghtValue ||
+          file[i][10] <= similarityValue ||
+          file[i][11] <= identityValue) {
+          file.splice(i, 1);
+          count++;
+      }
+  }
+  console.log(count);
 }
 
 function dialogHugeFile(huge_files_list) {

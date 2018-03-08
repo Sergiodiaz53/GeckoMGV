@@ -627,3 +627,5 @@ function anscombeTransformLength(numFile){
 
   return {mean: mean, sigma: sigma};
 }
+
+var testing;

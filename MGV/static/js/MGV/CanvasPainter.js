@@ -14,7 +14,7 @@ var mouseInRect = {
 	x : 0,
 	y : 0
 };
-
+var filters_global = {};
 var filtered=[], lines = [], evolutiveEvents = [];
 var currentLines = [], selectedLines=[];
 
@@ -541,7 +541,7 @@ function drawVerticalLinesInVerticalLayer(linesToPaint, canvasLayer, numFile, co
 	var count = 0;
 	var counttotal = 0;
 
-	console.time("DrawFiltrar");
+	//console.time("DrawFiltrar");
 	for (var x in linesToPaint){
 		var line = linesToPaint[x];
 
@@ -575,12 +575,12 @@ function drawVerticalLinesInVerticalLayer(linesToPaint, canvasLayer, numFile, co
 			currentCtx.lineTo(xFin, canvasLayer.height - yFin);
 		}
 	}
-	console.timeEnd("DrawFiltrar");
+	//console.timeEnd("DrawFiltrar");
 
-	console.time("DrawComienzo");
+	//console.time("DrawComienzo");
 
-	console.log("Count: "+count);
-	console.log("CountTotal: "+counttotal);
+	//console.log("Count: "+count);
+	//console.log("CountTotal: "+counttotal);
 	currentCtx.closePath();
 	currentCtx.lineWidth = 2;
 	currentCtx.strokeStyle = color;
@@ -588,7 +588,7 @@ function drawVerticalLinesInVerticalLayer(linesToPaint, canvasLayer, numFile, co
 
 	currentCtx.stroke();
 
-	console.timeEnd("DrawComienzo")
+	//console.timeEnd("DrawComienzo")
 }
 
 /**
@@ -815,9 +815,9 @@ function createInstance() {
 
 				//Start the paint proccess
 				filters = {};
+				filters.filterDuplications = document.getElementById("filterOverlapped2").checked
 				filters.filterIrrelevants = document.getElementById("filterIrrelevants").checked;
 				filters.filterOverlapped = document.getElementById("filterOverlapped").checked;
-				filters.filterOverlapped2 = document.getElementById("filterOverlapped2").checked;
 				filters.filterLenght = document.getElementById("filterLenght").checked;
 				filters.filterSimilarity = document.getElementById("filterSimilarity").checked;
 				filters.filterPositives = document.getElementById("filterPositives").checked;
@@ -825,6 +825,7 @@ function createInstance() {
 				filters.similarityValue = document.getElementById("filterSimilarityNumber").value;
 				filters.lengthValue = document.getElementById("filterLenghtNumber").value;
 				filters.identityValue = document.getElementById("filterIdentityNumber").value;
+				filters_global = filters;
 
 				for (i = fragsStarts; i < currentLines.length; i++) {
 
@@ -1272,10 +1273,10 @@ function createInstance() {
  * @param  {Array} line fragment to check
  * @return {Boolean}      True/False if paint
  */
-function filter(line, filters) {
+function filter(line, filters = filters_global) {
 
-	var paint = false;
-	var filterDuplications = filters.filterDuplications;
+	let paint = false;
+	let filterDuplications = filters.filterDuplications;
 	let filterIrrelevants = filters.filterIrrelevants;
 	let filterOverlapped = filters.filterOverlapped;
 	let filterLenght = filters.filterLenght;
