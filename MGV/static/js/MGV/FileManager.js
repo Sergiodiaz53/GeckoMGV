@@ -18,13 +18,13 @@ function CSVHeader (headers) {
     this.seqYFilename = headers[2];
     this.seqXName = headers[3];
     this.seqYName = headers[4];
-    this.seqXLength = headers[5];
-    this.seqYLength = headers[6];
-    this.minFragmentLength = headers[7];
-    this.minIdentity = headers[8];
-    this.totHits = headers[9];
-    this.totHitsUsed = headers[10];
-    this.totalFragments = headers[11];
+    this.seqXLength = parseInt(headers[5]);
+    this.seqYLength = parseInt(headers[6]);
+    this.minFragmentLength = parseInt(headers[7]);
+    this.minIdentity = parseFloat(headers[8]);
+    this.totHits = parseInt(headers[9]);
+    this.totHitsUsed = parseInt(headers[10]);
+    this.totalFragments = parseInt(headers[11]);
 }
 
 /**
@@ -433,31 +433,31 @@ function processHugeFile(){
 
 
     for(hf of checkForHugeFiles()){
-        var current_f = lines[hf];
+        //var current_f = lines[hf];
         var count = 0;
         console.time("processHugeFile");
         let paint = true;
         
-        for (var i = current_f.length - 1; i >= 16; i--){
+        for (var i = lines[hf].length - 1; i >= 16; i--){
             paint = true;
-            if (current_f[i][7] <= lenghtValue) {
+            if (lines[hf][i][7] <= lenghtValue) {
                 paint = false;
             }
 
-            if (current_f[i][10] <= similarityValue) {
+            if (lines[hf][i][10] <= similarityValue) {
                 paint = false;
             }
             
-            if( current_f[i][11] <= identityValue) {
+            if( lines[hf][i][11] <= identityValue) {
                 paint = false;
             }
             
             if(!paint){
-                current_f.splice(i, 1);
+                lines[hf].splice(i, 1);
                 count++;
             }
         }
-        lines[hf] = current_f.slice(0);
+        //lines[hf] = current_f.slice(0);
 
         console.timeEnd("processHugeFile");
         console.log(count);
@@ -493,7 +493,7 @@ function checkHugeFile(index){
 function filterHugeFile(line, filterLenght, filterSimilarity, filterIdentity){
   	var paint = false;
 
-  	switch (parseInt(line[6])) {
+  	switch ((line[6])) {
           case -1:
               if (!filterIrrelevants) {
                   paint = true;
@@ -502,7 +502,7 @@ function filterHugeFile(line, filterLenght, filterSimilarity, filterIdentity){
           default:
               if (filterLenght != -1) {
                   
-                  if (parseInt(line[7]) >= filterLenght) {
+                  if ((line[7]) >= filterLenght) {
                       paint = true;
                   }
                   break;
@@ -513,7 +513,7 @@ function filterHugeFile(line, filterLenght, filterSimilarity, filterIdentity){
   	}
 
   	if (filterSimilarity != -1) {
-  		if (parseFloat(line[10]) <= filterSimilarity) {
+  		if ((line[10]) <= filterSimilarity) {
   			paint = false;
   		}
   	}
@@ -582,9 +582,15 @@ function parseFileColumns(index){
     for (var i = lines[index].length - 1; i >= 16; i--){
         let line = lines[index][i];
 
+        line[1] = parseInt(line[1]);
+        line[2] = parseInt(line[2]);
+        line[3] = parseInt(line[3]);
+        line[4] = parseInt(line[4]);
         line[7] = parseInt(line[7]);
+        line[6] = parseFloat(line[6]);
         line[10] = parseFloat(line[10]);
         line[11] = parseFloat(line[11]);
+        line[13] = parseFloat(line[13]);
 
         lines[index][i] = line;
     }
@@ -592,7 +598,13 @@ function parseFileColumns(index){
 }
 
 function parseLine(unparsedLine){
+    unparsedLine[1] = parseInt(unparsedLine[1]);
+    unparsedLine[2] = parseInt(unparsedLine[2]);
+    unparsedLine[3] = parseInt(unparsedLine[3]);
+    unparsedLine[4] = parseInt(unparsedLine[4]);
     unparsedLine[7] = parseInt(unparsedLine[7]);
+    unparsedLine[6] = parseFloat(unparsedLine[6]);
     unparsedLine[10] = parseFloat(unparsedLine[10]);
     unparsedLine[11] = parseFloat(unparsedLine[11]);
+    unparsedLine[13] = parseFloat(unparsedLine[13]);
 }
