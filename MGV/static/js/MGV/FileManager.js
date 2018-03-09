@@ -415,43 +415,30 @@ var huge_file = false;
 var huge_files = [];
 
 function processHugeFile(){
+    //console.time("processHugeFile");
     // Filter huge files
 
     let filterLenght = document.getElementById("filterLenght2").checked;
     let filterSimilarity = document.getElementById("filterSimilarity2").checked;
     let filterIdentity = document.getElementById("filterIdentity2").checked;
+    current_lenghtValue = 0; current_similarityValue = 0; current_identityValue = 0;
 
-    let lenghtValue = 0, similarityValue = 0, identityValue = 0;
     if(filterLenght)
-        lenghtValue = parseInt(document.getElementById("filterLenghtNumber2").value);
+        current_lenghtValue = parseInt(document.getElementById("filterLenghtNumber2").value);
 
     if(filterSimilarity)
-        similarityValue = parseInt(document.getElementById("filterSimilarityNumber2").value);
+        current_similarityValue = parseInt(document.getElementById("filterSimilarityNumber2").value);
 
     if(filterIdentity)
-        identityValue = parseInt(document.getElementById("filterIdentity2").value);
+        current_identityValue = parseInt(document.getElementById("filterIdentity2").value);
 
-
+    
+    
     for(hf of checkForHugeFiles()){
-        //var current_f = lines[hf];
-        console.time("processHugeFile");
-
-        filterHugeFile(lines[hf], lenghtValue, similarityValue, identityValue)
-        /*
-        for (var i = lines[hf].length - 1; i >= 16; i--){
-            if (lines[hf][i][7] <= lenghtValue ||
-              lines[hf][i][10] <= similarityValue ||
-              lines[hf][i][11] <= identityValue) {
-                lines[hf].splice(i, 1);
-                count++;
-            }
-        }
-        */
-        //lines[hf] = current_f.slice(0);
-
-        console.timeEnd("processHugeFile");
+        lines[hf] = filterHugeFile(lines[hf]);
     }
 
+    //console.timeEnd("processHugeFile");
     reset = true;
     map = false;
     for(i = 0; i < lines.length; i++){
@@ -474,23 +461,34 @@ function checkHugeFile(index){
     return  (lines[index].length > HUGE_FILE_NUM);
 }
 
+var current_lenghtValue = 0, current_similarityValue = 0, current_identityValue = 0;
+function filterFrag(frag){
+    /*
+    console.log(frag);
+    console.log(frag[7] >= current_lenghtValue);
+    console.log(frag[10] >= current_similarityValue);
+    console.log(frag[11] >= current_identityValue);
+    */
+
+    return (frag[7] > current_lenghtValue &&
+        frag[10] > current_similarityValue &&
+        frag[11] > current_identityValue)
+}
 /**
 * Function to apply active filters to frags
 * @param  {Array} line fragment to check
 * @return {Boolean}      True/False if paint
 */
-function filterHugeFile(file, lenghtValue, similarityValue, identityValue){
-  var count = 0;
+function filterHugeFile(file){
+    console.time("filterHugeFile");
 
-  for (var i = file.length - 1; i >= 16; i--){
-      if (file[i][7] <= lenghtValue ||
-          file[i][10] <= similarityValue ||
-          file[i][11] <= identityValue) {
-          file.splice(i, 1);
-          count++;
-      }
-  }
-  console.log(count);
+    let header = file.splice(0,16);
+    let frags = file.filter(filterFrag);
+    console.log(file.length-frags.length);
+
+    console.timeEnd("filterHugeFile");
+
+    return header.concat(frags);
 }
 
 function dialogHugeFile(huge_files_list) {

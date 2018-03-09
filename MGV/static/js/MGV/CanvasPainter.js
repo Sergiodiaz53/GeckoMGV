@@ -617,7 +617,6 @@ function drawHorizontalLinesInHorizontalLayer(linesToPaint, canvasLayer, numFile
 
 	var current_anscombe = current_anscombe_results[numFile];
 	if (filterflag) {
-		test_ans = current_anscombe;
 		// Normalize filter
 		var current_filter = (current_anscombe.mean + current_anscombe.sigma) / current_anscombe.sigma;
 
