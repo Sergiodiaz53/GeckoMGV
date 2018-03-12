@@ -430,7 +430,7 @@ function processHugeFile(){
         current_similarityValue = parseInt(document.getElementById("filterSimilarityNumber2").value);
 
     if(filterIdentity)
-        current_identityValue = parseInt(document.getElementById("filterIdentity2").value);
+        current_identityValue = parseInt(document.getElementById("filterIdentityNumber2").value);
 
     
     
@@ -465,21 +465,28 @@ var current_lenghtValue = 0, current_similarityValue = 0, current_identityValue 
 function filterFrag(frag){
     /*
     console.log(frag);
-    console.log(frag[7] >= current_lenghtValue);
-    console.log(frag[10] >= current_similarityValue);
-    console.log(frag[11] >= current_identityValue);
+    console.log("7 :: " + frag[7]);
+    console.log(frag[7] > current_lenghtValue);
+    console.log("10 :: " + frag[10]);
+    console.log(frag[10] > current_similarityValue);
+    console.log("11 :: " + frag[11]);
+    console.log(frag[11] > current_identityValue);
     */
 
     return (frag[7] > current_lenghtValue &&
         frag[10] > current_similarityValue &&
         frag[11] > current_identityValue)
 }
+
 /**
 * Function to apply active filters to frags
-* @param  {Array} line fragment to check
+* @param  {Array} file fragments to check
 * @return {Boolean}      True/False if paint
 */
 function filterHugeFile(file){
+    console.log("C_LV :: " + current_lenghtValue);
+    console.log("C_SV :: " + current_similarityValue);
+    console.log("C_IV :: " + current_identityValue);
     console.time("filterHugeFile");
 
     let header = file.splice(0,16);
