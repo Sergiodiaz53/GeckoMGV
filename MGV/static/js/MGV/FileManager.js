@@ -491,7 +491,7 @@ function filterHugeFile(file){
 
     let header = file.splice(0,16);
     let frags = file.filter(filterFrag);
-    console.log(file.length-frags.length);
+    console.log(file.length-frags.length); // Filtered count
 
     console.timeEnd("filterHugeFile");
 

@@ -821,11 +821,30 @@ function createInstance() {
 				filters.filterSimilarity = document.getElementById("filterSimilarity").checked;
 				filters.filterPositives = document.getElementById("filterPositives").checked;
 				filters.filterIdentity = document.getElementById("filterIdentity").checked;
-				filters.similarityValue = document.getElementById("filterSimilarityNumber").value;
-				filters.lengthValue = document.getElementById("filterLenghtNumber").value;
-				filters.identityValue = document.getElementById("filterIdentityNumber").value;
+
+/*
+				filters.similarityValue = (filters.filterSimilarity) ?
+					document.getElementById("filterSimilarityNumber").value :
+					0;
+				filters.lengthValue = (filters.filterLenght) ?
+					document.getElementById("filterLenghtNumber").value :
+					0;
+				filters.identityValue = (filters.filterIdentity) ?
+					document.getElementById("filterIdentityNumber").value :
+					0;
 				filters_global = filters;
 
+				current_numfile_filter = numFile;
+				let header = currentLines.splice(0,16);
+				linesToPaint = header.concat(currentLines.filter(paintFilter) );
+				console.log("linesToPaint");
+				console.log(linesToPaint);
+				test_ltp = linesToPaint;
+				filteredLines = header.concat( currentLines.filter(f => !paintFilter(f)) );
+				console.log("filteredLines");
+				console.log(filteredLines);
+				test_fl = filteredLines;
+*/
 				for (i = fragsStarts; i < currentLines.length; i++) {
 
 					var paint = false;
@@ -2092,3 +2111,65 @@ function createAnnotations(numFile){
 	}
 
 }
+
+/* ############
+### Filters ###
+############ */
+function csbFilter(frag){
+	return (frag[0] == "CSB");
+}
+
+var current_numfile_filter = -1;
+function paintFilter(frag){
+	let mode = document.option.tipo;
+	let csb_check = (frag[0] == 'CSB' || frag[0] == 'Frag');
+	let mode_check = (
+		(mode[0].checked && mode[0].value == frag[0])
+		|| (mode[1].checked && mode[1].value == frag[0])
+		|| mode[2].checked
+	)
+	let area_check = (
+		((frag[1]) >= (currentArea.x0 * xTotal / 500))
+		&& ((frag[2]) >= (currentArea.y0 * yTotal / 500))
+		&& ((frag[3]) <= (currentArea.x1 * xTotal / 500))
+		&& ((frag[4]) <= (currentArea.y1 * yTotal / 500))
+	)
+	let filtered_file_check = (
+		!(filtered[current_numfile_filter]!=null&&filtered[current_numfile_filter].indexOf(i)>-1)
+	)
+
+	let filter_irrelevants = (frag[6] == -1 && filters_global.filterIrrelevants) ? false : true;
+	let filter_duplications = (filters_global.filterDuplications && frag[6] < -2) ? false : true;
+	let filter_positives = (filters_global.filterPositives && frag[6] > 0) ? false : true;
+	let filter_overlapped = (filters_global.filterOverlapped && frag[13] > 0) ? false : true;
+
+	let filter_length = (filters_global.filterLenght && frag[7] <= filters_global.lengthValue) ? false : true;
+	let filter_similarity = (filters_global.filters_globalimilarity && frag[10] <= similarityValue) ? false : true;
+	let filter_identity = (filters_global.filterIdentity && frag[11] <= filters_global.identityValue) ? false : true;
+
+	let filters_check = (
+		filter_irrelevants && filter_duplications && filter_positives && filter_overlapped
+		&& filter_length && filter_similarity && filter_identity
+	);
+
+	/*
+	console.log("csb_check :: " + csb_check)
+	console.log("mode_check :: " + mode_check)
+	console.log("area_check :: " + area_check)
+	console.log("filtered_file_check :: " + filtered_file_check)
+
+	console.log("------------")
+	console.log("filter_irrelevants :: " + filter_irrelevants)
+	console.log("filter_duplications :: " + filter_duplications)
+	console.log("filter_positives :: " + filter_positives)
+	console.log("filter_overlapped :: " + filter_overlapped)
+	console.log("filter_length :: " + filter_length)
+	console.log("filter_similarity :: " + filter_similarity)
+	console.log("filter_identity :: " + filter_identity)
+	*/
+	
+	return (csb_check && mode_check && filters_check && area_check && filtered_file_check)
+}
+
+	
+var test_ltp, test_fl;
