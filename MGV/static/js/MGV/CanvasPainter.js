@@ -542,16 +542,14 @@ function drawVerticalLinesInVerticalLayer(linesToPaint, canvasLayer, numFile, co
 	var counttotal = 0;
 
 	//console.time("DrawFiltrar");
-	for (var x in linesToPaint){
-		var line = linesToPaint[x];
-
-		var xIni = ((canvasLayer.width * ((lines[numFile][line][1]) / xTotal) - currentArea.x0) / (currentArea.x1 - currentArea.x0))
+	for (var line of linesToPaint){
+		var xIni = ((canvasLayer.width * ((line[1]) / xTotal) - currentArea.x0) / (currentArea.x1 - currentArea.x0))
 				* canvasLayer.width;
-		var yIni = ((canvasLayer.height * ((lines[numFile][line][2]) / yTotal) - currentArea.y0) / (currentArea.y1 - currentArea.y0))
+		var yIni = ((canvasLayer.height * ((line[2]) / yTotal) - currentArea.y0) / (currentArea.y1 - currentArea.y0))
 				* canvasLayer.height;
-		var xFin = ((canvasLayer.width * ((lines[numFile][line][3]) / xTotal) - currentArea.x0) / (currentArea.x1 - currentArea.x0))
+		var xFin = ((canvasLayer.width * ((line[3]) / xTotal) - currentArea.x0) / (currentArea.x1 - currentArea.x0))
 				* canvasLayer.width;
-		var yFin = ((canvasLayer.height * ((lines[numFile][line][4]) / yTotal) - currentArea.y0) / (currentArea.y1 - currentArea.y0))
+		var yFin = ((canvasLayer.height * ((line[4]) / yTotal) - currentArea.y0) / (currentArea.y1 - currentArea.y0))
 				* canvasLayer.height;
 
 		if((xFin-xIni < 1)&&(xFin-xIni>0)){
@@ -625,16 +623,14 @@ function drawHorizontalLinesInHorizontalLayer(linesToPaint, canvasLayer, numFile
 	}
 
 	currentCtx.beginPath();
-	for (var x in linesToPaint) {
-
-		let line = linesToPaint[x];
-		let temp_anscombe = anscombeTransform( (lines[numFile][line][7]) );
+	for (var line of linesToPaint) {
+		let temp_anscombe = anscombeTransform( (line[7]) );
 		// Normalize temporal anscombe transformation
 		if( (temp_anscombe - current_anscombe.mean) / current_anscombe.sigma >= current_filter){
-			var xIni = (canvasLayer.width * (lines[numFile][line][1]) / xTotal);
-			var yIni = (canvasLayer.width * (lines[numFile][line][2]) / yTotal);
-			var xFin = (canvasLayer.width * (lines[numFile][line][3]) / xTotal);
-			var yFin = (canvasLayer.width * (lines[numFile][line][4]) / yTotal);
+			var xIni = (canvasLayer.width * (line[1]) / xTotal);
+			var yIni = (canvasLayer.width * (line[2]) / yTotal);
+			var xFin = (canvasLayer.width * (line[3]) / xTotal);
+			var yFin = (canvasLayer.width * (line[4]) / yTotal);
 			drawLine(xIni,xFin,yIni,yFin);
 
 		}
@@ -822,7 +818,6 @@ function createInstance() {
 				filters.filterPositives = document.getElementById("filterPositives").checked;
 				filters.filterIdentity = document.getElementById("filterIdentity").checked;
 
-/*
 				filters.similarityValue = (filters.filterSimilarity) ?
 					document.getElementById("filterSimilarityNumber").value :
 					0;
@@ -835,16 +830,10 @@ function createInstance() {
 				filters_global = filters;
 
 				current_numfile_filter = numFile;
-				let header = currentLines.splice(0,16);
-				linesToPaint = header.concat(currentLines.filter(paintFilter) );
-				console.log("linesToPaint");
-				console.log(linesToPaint);
-				test_ltp = linesToPaint;
-				filteredLines = header.concat( currentLines.filter(f => !paintFilter(f)) );
-				console.log("filteredLines");
-				console.log(filteredLines);
-				test_fl = filteredLines;
-*/
+				linesToPaint = currentLines.filter(paintFilter);
+				filteredLines = currentLines.filter(f => !paintFilter(f));
+
+/*
 				for (i = fragsStarts; i < currentLines.length; i++) {
 
 					var paint = false;
@@ -886,7 +875,7 @@ function createInstance() {
 							}
 						}
 					}
-				}
+				}*/
 
 				//Draw in vertical layer
 				clearCanvas(currentVerticalCanvas.id);
