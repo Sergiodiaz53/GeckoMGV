@@ -2071,6 +2071,7 @@ function createAnnotations(numFile){
 /* ############
 ### Filters ###
 ############ */
+
 function csbFilter(frag){
 	return (frag[0] == "CSB");
 }
@@ -2126,6 +2127,3 @@ function paintFilter(frag){
 	
 	return (csb_check && mode_check && filters_check && area_check && filtered_file_check)
 }
-
-	
-var test_ltp, test_fl;

@@ -463,16 +463,6 @@ function checkHugeFile(index){
 
 var current_lenghtValue = 0, current_similarityValue = 0, current_identityValue = 0;
 function filterFrag(frag){
-    /*
-    console.log(frag);
-    console.log("7 :: " + frag[7]);
-    console.log(frag[7] > current_lenghtValue);
-    console.log("10 :: " + frag[10]);
-    console.log(frag[10] > current_similarityValue);
-    console.log("11 :: " + frag[11]);
-    console.log(frag[11] > current_identityValue);
-    */
-
     return (frag[7] > current_lenghtValue &&
         frag[10] > current_similarityValue &&
         frag[11] > current_identityValue)
@@ -484,12 +474,9 @@ function filterFrag(frag){
 * @return {Boolean}      True/False if paint
 */
 function filterHugeFile(file){
-    console.log("C_LV :: " + current_lenghtValue);
-    console.log("C_SV :: " + current_similarityValue);
-    console.log("C_IV :: " + current_identityValue);
     console.time("filterHugeFile");
 
-    let header = file.splice(0,16);
+    let header = file.splice(0,fragsStarts);
     let frags = file.filter(filterFrag);
     console.log(file.length-frags.length); // Filtered count
 
@@ -546,28 +533,6 @@ function dialogHugeFile(huge_files_list) {
 
     }
 }
-
-function parseFileColumns(index){
-    // Parse lines
-    console.time("parseFileColumns");
-    for (var i = lines[index].length - 1; i >= 16; i--){
-        let line = lines[index][i];
-
-        line[1] = parseInt(line[1]);
-        line[2] = parseInt(line[2]);
-        line[3] = parseInt(line[3]);
-        line[4] = parseInt(line[4]);
-        line[7] = parseInt(line[7]);
-        line[6] = parseFloat(line[6]);
-        line[10] = parseFloat(line[10]);
-        line[11] = parseFloat(line[11]);
-        line[13] = parseFloat(line[13]);
-
-        lines[index][i] = line;
-    }
-    console.timeEnd("parseFileColumns");
-}
-
 function parseLine(unparsedLine){
     unparsedLine[1] = parseInt(unparsedLine[1]);
     unparsedLine[2] = parseInt(unparsedLine[2]);
@@ -578,4 +543,28 @@ function parseLine(unparsedLine){
     unparsedLine[10] = parseFloat(unparsedLine[10]);
     unparsedLine[11] = parseFloat(unparsedLine[11]);
     unparsedLine[13] = parseFloat(unparsedLine[13]);
+}
+
+function parseFileColumns(frags){
+    // Parse lines
+    console.time("parseFileColumns");
+    let header = frags.splice(0,fragsStarts);
+    frags = frags.map((frag) => parseLine2(frag));
+    console.timeEnd("parseFileColumns");
+
+    return header.concat(frags);
+}
+
+function parseLine2(unparsedLine){
+    let line = unparsedLine;
+    line[1] = parseInt(unparsedLine[1]);
+    line[2] = parseInt(unparsedLine[2]);
+    line[3] = parseInt(unparsedLine[3]);
+    line[4] = parseInt(unparsedLine[4]);
+    line[7] = parseInt(unparsedLine[7]);
+    line[6] = parseFloat(unparsedLine[6]);
+    line[10] = parseFloat(unparsedLine[10]);
+    line[11] = parseFloat(unparsedLine[11]);
+    line[13] = parseFloat(unparsedLine[13]);
+    return line;
 }

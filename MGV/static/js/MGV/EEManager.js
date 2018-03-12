@@ -16,6 +16,8 @@ function processEvolutiveEvents(frags, index){
     evolutiveFrags[index][eeIndex] = [];
     evolutiveEvents[index] = [];
 
+    // ParseFileColumns?
+    
     console.time("processEvolutiveEvents");
     for (var i = frags.length - 1; i >= 16; i--){
         parseLine(frags[i]);
