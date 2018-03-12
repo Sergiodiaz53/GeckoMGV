@@ -830,52 +830,19 @@ function createInstance() {
 				filters_global = filters;
 
 				current_numfile_filter = numFile;
-				linesToPaint = currentLines.filter(paintFilter);
-				filteredLines = currentLines.filter(f => !paintFilter(f));
 
-/*
-				for (i = fragsStarts; i < currentLines.length; i++) {
+				// Filter current lines
+				let filter_results = currentLines.reduce((output, frag) => {
+					if(csbFilter(frag)) output[2].push(frag);
+					if(paintFilter(frag)) output[0].push(frag);
+					else output[1].push(frag);
+					return output;
+				}, [[], [], []]);
 
-					var paint = false;
-
-					if (currentLines[i][0]=='CSB' || currentLines[i][0] == 'Frag') {
-
-						if(currentLines[i][0]=='CSB') CSBLines.push(i);
-
-						//Check mode (HSP, CSB or both)
-						if ((mode[0].checked && mode[0].value == currentLines[i][0])
-								|| (mode[1].checked && mode[1].value == currentLines[i][0])
-								|| mode[2].checked) {
-
-							// console.time("filter()");
-							paint = filter(currentLines[i], filters);
-							// console.timeEnd("filter()");
-
-							//Zoom filter
-							if (paint == true) {
-								if (((currentLines[i][1]) >= (currentArea.x0
-										* xTotal / 500))
-										&& ((currentLines[i][2]) >= (currentArea.y0
-												* yTotal / 500))
-										&& ((currentLines[i][3]) <= (currentArea.x1
-												* xTotal / 500))
-										&& ((currentLines[i][4]) <= (currentArea.y1
-												* yTotal / 500))) {
-									paint = true;
-								} else {
-									paint = false;
-								}
-
-							}
-
-							if (paint == true && !(filtered[numFile]!=null&&filtered[numFile].indexOf(i)>-1)) {
-								linesToPaint.push(i);
-							} else {
-								filteredLines.push(i);
-							}
-						}
-					}
-				}*/
+				
+				linesToPaint = filter_results[0];
+				filteredLines = filter_results[1];
+				CSBLines = output[2];
 
 				//Draw in vertical layer
 				clearCanvas(currentVerticalCanvas.id);
