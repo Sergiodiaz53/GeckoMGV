@@ -16,9 +16,21 @@ function processEvolutiveEvents(frags, index){
     evolutiveFrags[index][eeIndex] = [];
     evolutiveEvents[index] = [];
 
-    // ParseFileColumns?
-    
     console.time("processEvolutiveEvents");
+    // ParseFileColumns?
+    /*
+    let header = frags.splice(0,fragsStarts);
+
+    let filter_results = frags.reduce((output, frag) => {
+        if(frag[0] == "StartEE") output[0].push(frag); // [0] StartEE
+        else if (frag[0] == "EndEE") output[1].push(frag); // [1] EndEE
+        output[2].push(parseLine2(frag)); // [2] Parsed frags
+        return output;
+    }, [[], [], []]);
+    frags = header.concat(filter_results[2]);
+    test_ee = filter_results;
+    
+*/
     for (var i = frags.length - 1; i >= 16; i--){
         parseLine(frags[i]);
         if (frags[i][0] == "EndEE"){
@@ -36,7 +48,6 @@ function processEvolutiveEvents(frags, index){
             eeIndex++;
         }
     }
-
     console.timeEnd("processEvolutiveEvents");
     lines[index] = frags.slice(0);
 
@@ -161,4 +172,27 @@ function prevEE (){
        },3000);
 
     }
+}
+
+function EEPromise(frags){
+    let header = frags.splice(0,fragsStarts);
+    console.log("EE Promise Start");
+
+    let ee_results = [[], [], []]
+    let ee_promise = new Promise( function(resolve, reject){
+        ee_results = frags.reduce((output, frag) => {
+            if(frag[0] == "StartEE") output[0].push(frag); // [0] StartEE
+            else if (frag[0] == "EndEE") output[1].push(frag); // [1] EndEE
+            output[2].push(parseLine2(frag)); // [2] Parsed frags
+            return output;
+        }, [[], [], []]);
+
+        resolve(header, ee_results);
+    });
+
+    ee_promise.then(function (header, output){
+        frags = header.concat(output[2]);
+    })
+    
+    frags = header.concat(output[2]);
 }
