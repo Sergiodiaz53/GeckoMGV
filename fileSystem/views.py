@@ -102,26 +102,28 @@ def createFile_view(request):
 
 def fileViewer_view(request):
     if request.user.is_authenticated():
-
+        image = False
         file = open(str(userFile.objects.get(file=request.POST.get('filename')).file), 'r')
         content = file.read()
         file.close()
 
         fileInstance = userFile.objects.get(file=request.POST.get('filename'))
+        if(fileInstance.filename[-3:] == "png"):
+            image = '/'.join(request.POST.get('filename').split('/')[-5:])
 
-        return render(request, 'fileViewer.html', {'fileName': fileInstance.filename, 'content': content})
+        return render(request, 'fileViewer.html', {'fileName': fileInstance.filename, 'content': content, 'image': image})
 
 @csrf_exempt
 def consoleViewer_view(request):
     if request.user.is_authenticated():
         path= generatePath(request, 'log')
         if not os.path.isfile(path):
-            return render(request, 'fileViewer.html', {'fileName': "console.log", 'content': ''})
+            return render(request, 'fileViewer.html', {'fileName': "console.log", 'content': '', 'image': False})
         else:
             file = open(path, 'r')
             content=file.read()
             file.close()
-            return render(request, 'fileViewer.html', {'fileName': "console.log", 'content': content})
+            return render(request, 'fileViewer.html', {'fileName': "console.log", 'content': content, 'image': False})
 
 def downloadFile_view(request):
     if request.user.is_authenticated():

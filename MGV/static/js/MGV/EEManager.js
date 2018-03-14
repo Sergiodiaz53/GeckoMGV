@@ -1,12 +1,8 @@
 var evolutiveIndex = -1;
 var evolutiveFrags = [];
-var huge_file = false;
-
-//Constants
-HUGE_FILE_NUM = 10000;
 
 /**
- * Store evolutionary events information in a data estructure 
+ * Store evolutionary events information in a data estructure
  * @param  {String} frags File content
  * @param  {Integer} index Number of file
  */
@@ -20,26 +16,24 @@ function processEvolutiveEvents(frags, index){
     evolutiveFrags[index][eeIndex] = [];
     evolutiveEvents[index] = [];
 
+    console.time("processEvolutiveEvents");
+    // ParseFileColumns?
+    /*
+    let header = frags.splice(0,fragsStarts);
 
-    //Filter huge_file
-    if((frags.length > HUGE_FILE_NUM) && !huge_file) {
-
-        activateFilters();
-        huge_file = true;
-	}
-
-	var count=0
-
-	console.time("HugeFiltering");
-    for (var i = frags.length - 1; i >= 18; i--){
-        if(frags[i][0] != "EndEE"){
-
-            if (!filter(frags[i]) && huge_file) {
-                frags.splice(i, 1);
-                count++;
-            }
-
-        } else if (frags[i][0] == "EndEE"){
+    let filter_results = frags.reduce((output, frag) => {
+        if(frag[0] == "StartEE") output[0].push(frag); // [0] StartEE
+        else if (frag[0] == "EndEE") output[1].push(frag); // [1] EndEE
+        output[2].push(parseLine2(frag)); // [2] Parsed frags
+        return output;
+    }, [[], [], []]);
+    frags = header.concat(filter_results[2]);
+    test_ee = filter_results;
+    
+*/
+    for (var i = frags.length - 1; i >= 16; i--){
+        parseLine(frags[i]);
+        if (frags[i][0] == "EndEE"){
             i--;
             evolutiveEvents[index][eeIndex] = [];
             evolutiveFrags[index][eeIndex] = [];
@@ -54,17 +48,14 @@ function processEvolutiveEvents(frags, index){
             eeIndex++;
         }
     }
-    console.timeEnd("HugeFiltering");
-
-    console.log(count);
-
+    console.timeEnd("processEvolutiveEvents");
     lines[index] = frags.slice(0);
+
     originalComparison[index] = frags.slice(0);
 
     evolutiveFrags[index] = evolutiveFrags[index].reverse();
     evolutiveEvents[index] = evolutiveEvents[index].reverse();
 
-    huge_file = false;
     if(eeIndex) $("#EEmanag").show();
 }
 
@@ -183,3 +174,25 @@ function prevEE (){
     }
 }
 
+function EEPromise(frags){
+    let header = frags.splice(0,fragsStarts);
+    console.log("EE Promise Start");
+
+    let ee_results = [[], [], []]
+    let ee_promise = new Promise( function(resolve, reject){
+        ee_results = frags.reduce((output, frag) => {
+            if(frag[0] == "StartEE") output[0].push(frag); // [0] StartEE
+            else if (frag[0] == "EndEE") output[1].push(frag); // [1] EndEE
+            output[2].push(parseLine2(frag)); // [2] Parsed frags
+            return output;
+        }, [[], [], []]);
+
+        resolve(header, ee_results);
+    });
+
+    ee_promise.then(function (header, output){
+        frags = header.concat(output[2]);
+    })
+    
+    frags = header.concat(output[2]);
+}

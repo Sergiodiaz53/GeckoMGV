@@ -1,4 +1,6 @@
 from django.conf.urls import patterns, url
+from django.conf import settings
+from django.conf.urls.static import static
 from fileSystem import views
 
 
@@ -12,4 +14,4 @@ urlpatterns = patterns(
         url(r'^viewFile$', views.fileViewer_view, name='fileViewer_view'),
         url(r'^createPost/$', views.createFilePost_view, name='createFilePost_view'),
         url(r'^console$',views.consoleViewer_view, name='consoleViewer_view')
-)
+) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -18,13 +18,13 @@ function CSVHeader (headers) {
     this.seqYFilename = headers[2];
     this.seqXName = headers[3];
     this.seqYName = headers[4];
-    this.seqXLength = headers[5];
-    this.seqYLength = headers[6];
-    this.minFragmentLength = headers[7];
-    this.minIdentity = headers[8];
-    this.totHits = headers[9];
-    this.totHitsUsed = headers[10];
-    this.totalFragments = headers[11];
+    this.seqXLength = parseInt(headers[5]);
+    this.seqYLength = parseInt(headers[6]);
+    this.minFragmentLength = parseInt(headers[7]);
+    this.minIdentity = parseFloat(headers[8]);
+    this.totHits = parseInt(headers[9]);
+    this.totHitsUsed = parseInt(headers[10]);
+    this.totalFragments = parseInt(headers[11]);
 }
 
 /**
@@ -33,6 +33,9 @@ function CSVHeader (headers) {
  */
 function loadFileFromServer($fileName){
     BootstrapDialog.closeAll();
+    overlayOn();
+    spinnerOn("Loading File...");
+
     $.ajax({
         type:"GET",
         url:"/loadFileFromServer/",
@@ -40,10 +43,6 @@ function loadFileFromServer($fileName){
             'filename': $fileName // from form
         },
         success: function(content){
-            // START SPINNER - HOW???
-            overlayOn();
-            spinnerOn("Loading File...");
-
             var extension = $fileName.split('.').pop().toLowerCase();
             switch (extension) {
                 case 'csv':
@@ -185,6 +184,7 @@ function getFilesListFromServer(extension){
 function handleFiles(files, type) {
 
     console.log(files);
+    current_huge_file_index = 0;
 
     if (files.length!=0) {
         overlayOn();
@@ -216,7 +216,7 @@ function getAsText(fileToRead, i) {
     if(fileType=='csv'){
         fileNames[i] = fileToRead.name;
         fileNames[i]  = fileNames[i].substring(0, fileNames[i].length-4);
-        console.log("I: "+i+" fileName"+fileNames[i]);
+        console.log("I: "+i+" fileName: "+fileNames[i]);
     } else if (fileType=='mat') {
         fileNameMAT = fileToRead.name;
         fileNameMAT = fileNameMAT.substring(0, fileNameMAT.length-10);
@@ -249,6 +249,10 @@ function loadHandler(event, i) {
  */
 function processData(csv, index) {
     console.log("Process index: "+index);
+
+		overlayOn();
+    spinnerOn("Processing Data...");
+
     if (fileType == 'csv') {
         document.getElementById("fileName").innerHTML = fileNames[index];
 
@@ -257,29 +261,30 @@ function processData(csv, index) {
             $("#infoPopover").popover();
         });
 
-
-      		overlayOn();
-          spinnerOn("Processing Data...");
-
         Papa.parse(csv, {
-            worker: true,
+            worker: false,
             delimiter:",",
             complete: function (results) {
-                if(parseCount >= 1) {
-                    parseCount--;
-                    processEvolutiveEvents(results.data, index);
-                    reset = true;
-                    map = false;
-                    generateAnnotationTab(index);
-                    if (parseCount == 0) {
-                        redraw();
-                        //calculateMatrix(lines[0]);
-                        addPrevZoom();
+                    if(parseCount >= 1) {
+                        parseCount--;
+                        processEvolutiveEvents(results.data, index);
+                        current_anscombe_results[index] = anscombeTransformLength(index);
+                        //parseFileColumns(index);
+
+                        if (parseCount == 0) {
+                            let nhf = checkForHugeFiles();
+                            if(nhf.length>0){
+                              dialogHugeFile(nhf);
+                            } else{
+                                reset = true;
+                                map = false;
+                                generateAnnotationTab(index);
+                                redraw();
+                                addPrevZoom();
+                            }
+                        }
                     }
 
-                }
-                spinnerOff();
-                overlayOff();
             },
             error: function(err,reason){
                 alert(err);
@@ -368,6 +373,9 @@ function processData(csv, index) {
         }
     }
 
+
+		overlayOff();
+    spinnerOff();
 }
 
 /**
@@ -394,4 +402,169 @@ function errorHandler(evt) {
     if(evt.target.error.name == "NotReadableError") {
         alert("Canno't read file!");
     }
+}
+
+/* -----------------
+---- HUGE FILES ----
+----------------- */
+// Constants
+HUGE_FILE_NUM = 1000000;
+
+// Variables
+var huge_file = false;
+var huge_files = [];
+
+function processHugeFile(){
+    //console.time("processHugeFile");
+    // Filter huge files
+
+    let filterLenght = document.getElementById("filterLenght2").checked;
+    let filterSimilarity = document.getElementById("filterSimilarity2").checked;
+    let filterIdentity = document.getElementById("filterIdentity2").checked;
+    current_lenghtValue = 0; current_similarityValue = 0; current_identityValue = 0;
+
+    if(filterLenght)
+        current_lenghtValue = parseInt(document.getElementById("filterLenghtNumber2").value);
+
+    if(filterSimilarity)
+        current_similarityValue = parseInt(document.getElementById("filterSimilarityNumber2").value);
+
+    if(filterIdentity)
+        current_identityValue = parseInt(document.getElementById("filterIdentityNumber2").value);
+
+    
+    
+    for(hf of checkForHugeFiles()){
+        lines[hf] = filterHugeFile(lines[hf]);
+    }
+
+    //console.timeEnd("processHugeFile");
+    reset = true;
+    map = false;
+    for(i = 0; i < lines.length; i++){
+        generateAnnotationTab(i);
+    }
+
+    redraw();
+    addPrevZoom();
+}
+
+function checkForHugeFiles(index){
+  let ret = [];
+  for(let file = 0; file < lines.length; file++){
+    if(checkHugeFile(file)) ret.push(file);
+  }
+  return ret;
+}
+
+function checkHugeFile(index){
+    return  (lines[index].length > HUGE_FILE_NUM);
+}
+
+var current_lenghtValue = 0, current_similarityValue = 0, current_identityValue = 0;
+function filterFrag(frag){
+    return (frag[7] > current_lenghtValue &&
+        frag[10] > current_similarityValue &&
+        frag[11] > current_identityValue)
+}
+
+/**
+* Function to apply active filters to frags
+* @param  {Array} file fragments to check
+* @return {Boolean}      True/False if paint
+*/
+function filterHugeFile(file){
+    console.time("filterHugeFile");
+
+    let header = file.splice(0,fragsStarts);
+    let frags = file.filter(filterFrag);
+    console.log(file.length-frags.length); // Filtered count
+
+    console.timeEnd("filterHugeFile");
+
+    return header.concat(frags);
+}
+
+function dialogHugeFile(huge_files_list) {
+    if (!$('#hugeFileOutput').is(':visible')) {
+        var $dialogContainer = $('#output');
+        var file_list = document.getElementById("hugeFile_FileNames");
+        // Clear huge file list
+        while (file_list.firstChild) {
+          file_list.removeChild(file_list.firstChild);
+        }
+
+        // Fill huge file list
+        for(file of huge_files_list){
+          let current_filename = fileNames[file];
+          let current_li = document.createElement("li");
+          current_li.setAttribute("class", "list-group-item");
+          current_li.appendChild(document.createTextNode(current_filename));
+          file_list.appendChild(current_li);
+        }
+
+        // Create dialog
+        var $detachedChildren = $dialogContainer.children().detach();
+        $('#hugeFileOutput').dialog({
+            closeOnEscape: false,
+            height:550,
+            minHeight:550,
+            width: 500,
+            minWidth: 500,
+            title: huge_files_list.length + ' Huge File(s) Detected!',
+            buttons: [
+                {
+                    text: "Continue",
+                    click: function () {
+                        $(this).dialog("close");
+                        overlayOn();
+                        spinnerOn("Processing file");
+                        setTimeout(function(){processHugeFile();}, 250);
+                    },
+                    "class": "ui-button-primary"
+                }
+            ],
+            open: function (event, ui) {
+                $(".ui-dialog-titlebar-close").hide();
+                $detachedChildren.appendTo($dialogContainer);
+                updateAnnotsGrids();
+            }
+        });
+
+    }
+}
+function parseLine(unparsedLine){
+    unparsedLine[1] = parseInt(unparsedLine[1]);
+    unparsedLine[2] = parseInt(unparsedLine[2]);
+    unparsedLine[3] = parseInt(unparsedLine[3]);
+    unparsedLine[4] = parseInt(unparsedLine[4]);
+    unparsedLine[7] = parseInt(unparsedLine[7]);
+    unparsedLine[6] = parseFloat(unparsedLine[6]);
+    unparsedLine[10] = parseFloat(unparsedLine[10]);
+    unparsedLine[11] = parseFloat(unparsedLine[11]);
+    unparsedLine[13] = parseFloat(unparsedLine[13]);
+}
+
+function parseFileColumns(frags){
+    // Parse lines
+    console.time("parseFileColumns");
+    let header = frags.splice(0,fragsStarts);
+    frags = frags.map((frag) => parseLine2(frag));
+    console.timeEnd("parseFileColumns");
+
+    return header.concat(frags);
+}
+
+function parseLine2(unparsedLine){
+    let line = unparsedLine;
+    line[1] = parseInt(unparsedLine[1]);
+    line[2] = parseInt(unparsedLine[2]);
+    line[3] = parseInt(unparsedLine[3]);
+    line[4] = parseInt(unparsedLine[4]);
+    line[7] = parseInt(unparsedLine[7]);
+    line[6] = parseFloat(unparsedLine[6]);
+    line[10] = parseFloat(unparsedLine[10]);
+    line[11] = parseFloat(unparsedLine[11]);
+    line[13] = parseFloat(unparsedLine[13]);
+    return line;
 }

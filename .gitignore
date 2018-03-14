@@ -1,5 +1,8 @@
 # Created by https://www.gitignore.io/api/pycharm,webstorm,python,sublimetext,windows,xcode
 
+### VS Code
+.vscode/
+
 ### PyCharm ###
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio
 

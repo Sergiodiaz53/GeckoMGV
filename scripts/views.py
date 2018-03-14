@@ -70,9 +70,16 @@ def runServiceInThread (command, request):
         file.write(output)
         file.close()
     else:
+        file_info = os.stat(path)
+        print "FILE SIZE :: " + str(file_info.st_size)
         print os.path.isfile(path)
-        file = open(path, 'r+b')
-        content = file.read()
+        if file_info.st_size >= 5242880: # Clear log if >= 5MB
+            file = open(path, 'wb')
+            print "# -- LOG DELETED --"
+            content = "..."
+        else:
+            file = open(path, 'r+b')
+            content = file.read()
         content += "\n\n-----------------------------------NEXT SERVICE-----------------------------------\n\n" + output
         file.write(content)
         file.close()

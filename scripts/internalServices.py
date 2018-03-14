@@ -9,6 +9,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from fileSystem import views as fs
 
+### Threading
 
 def executeInternalService(function_name, args, request):
     print "### Begin Internal Service"
@@ -22,6 +23,52 @@ def threadInit(function_name, args, request):
     eval(function_name+'(args,request)')
     print "--- Thread End ---"
 
+### Services
+
+    # REPTOPNG <a0::input> <a1::output> <a2::clearRep (1 quita rep, 0 deja)>
+
+def filterFragsService(args, request):
+    # <a0::input> <a1::output> <a2::filterIdentity> <a3::filterLenght> <a4::filterSimilarity>
+    input_f = args[0].rsplit('/')[-1]
+    output_f = args[1]
+    filter_identity_number = float(args[2])
+    filter_lenght_number = float(args[3])
+    filter_similarity_number = float(args[4])
+
+    # Load CSV
+    fileObject = userFile.objects.get(user = request.user, filename=input_f)
+    lines = fs.openFile(request.user, fileObject).split('\n')
+
+    # Extract HEADER
+    headers = lines[0:16] # 16 HEADER LINES
+    header = ""
+
+    # Create new CSVfile
+    output_file_csv = ""
+
+    # Filter LINES in CONTENT
+    for line in lines[16:-1]:
+        items = line.split(',')
+        current_identity = format(float(items[9])/float(items[7]), '.2f')*100
+        current_length = float(items[7])
+        current_similarity = float(items[10])
+
+        filter_identity = (current_identity >= filter_identity_number)
+        filter_length = (current_length >= filter_lenght_number)
+        filter_similarity = (current_similarity >= filter_similarity_number)
+
+        if filter_identity and filter_length and filter_similarity:
+            output_file_csv += line + "\n"
+    
+    # Copy HEADER on new files
+    headers[12] = "Total Fragments :  " + str( output_file_csv.count('\n') )
+    for h in headers:
+        header += h + "\n"
+
+    
+    # Create Files
+    fs.createFile(request=request, content=(header + output_file_csv), filename=output_f)
+
 def extractRepetitionsService(args, request):
     # <a0::frags.csv> <a1::boolSB> <a2::SBID>
     boolSB = args[1]
@@ -33,18 +80,13 @@ def extractRepetitionsService(args, request):
 
     # Extract HEADER
     headers = lines[0:16] # 16 HEADER LINES
-    header = ""
 
     # Create CSV
     content_clean_csv = ""
     content_rep_csv = ""
 
-    # Copy HEADER on new files
-    for h in headers:
-        header += h + "\n"
-
-    content_clean_csv += header
-    content_rep_csv += header
+    #content_clean_csv += header
+    #content_rep_csv += header
 
     # Filter LINES in CONTENT
     if boolSB == "0":
@@ -64,9 +106,19 @@ def extractRepetitionsService(args, request):
                 content_clean_csv += line + "\n"
             elif csb_flag == CSB_id:
                 content_rep_csv += line + "\n"
+
     # Create Files
-    fs.createFile(request=request, content=content_clean_csv, filename="CLEAN_" + file_name)
-    fs.createFile(request=request, content=content_rep_csv, filename="REPETITIONS_" + file_name)
+    header = ""
+    headers[12] = "Total Fragments :  " + str( content_clean_csv.count('\n') )
+    for h in headers:
+        header += h + "\n"
+    fs.createFile(request=request, content=(header + content_clean_csv), filename="CLEAN_" + file_name)
+
+    header = ""
+    headers[12] = "Total Fragments :  " + str( content_rep_csv.count('\n') )
+    for h in headers:
+        header += h + "\n"
+    fs.createFile(request=request, content=(header + content_rep_csv), filename="REPETITIONS_" + file_name)
 
 
 def extractSequenceFromCSVService(args, request):

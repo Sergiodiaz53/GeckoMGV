@@ -545,6 +545,8 @@ function loadServiceForm(serviceExe, serviceName){
         return false;
 }
 
+// Spinner functions
+
 function spinnerOn(loadText){
   var spinner = document.getElementById("spinner");
   spinner.style.display = "block";
@@ -562,4 +564,66 @@ function overlayOn(){
 function overlayOff(){
   var overlay = document.getElementById("overlay");
   overlay.style.display = "none";
+}
+
+// Statistical functions
+var current_anscombe_results = [];
+
+function meanLength(numFile){
+  var current_f = lines[numFile];
+  var mean_length = 0;
+
+  console.time("meanLength");
+  for (var i = current_f.length - 2; i >= 18; i--){
+    mean_length += parseInt(current_f[i][7]);
+  }
+  mean_length = mean_length/current_f.length
+  console.timeEnd("meanLength");
+
+  return Math.round(mean_length);
+}
+
+function meanOf(array){
+  var ret = 0;
+  console.time("meanOf");
+  for( n of array){
+    ret += n;
+  }
+  console.timeEnd("meanOf");
+  return (ret/array.length);
+}
+
+// http://www.cs.tut.fi/~foi/invansc/
+function anscombeTransform(number){
+  return ( 2 * Math.sqrt(number + (3/8)) )
+}
+
+function anscombeInverse(number){
+  return ( Math.pow(number/2, 2) - 3/8 )
+}
+
+function anscombeTransformLength(numFile){
+  let current_f = lines[numFile];
+  let ret = []
+  var mean = 0;
+  var sigma = 0;
+
+  console.time("anscombeTransformLength");
+  // Problem with file ending lines ???
+  for (let i = current_f.length - 3; i >= 18; i--){
+    let temp = anscombeTransform( parseInt(current_f[i][7]) )
+    ret.push( temp );
+    mean += temp;
+  }
+  mean = mean / current_f.length;
+
+  for (num of ret){
+    let temp = parseFloat(Math.pow(parseInt(num-mean),2));
+    sigma += temp;
+  }
+  sigma = Math.sqrt(sigma / current_f.length);
+
+  console.timeEnd("anscombeTransformLength");
+
+  return {mean: mean, sigma: sigma};
 }

@@ -216,6 +216,7 @@ var identityLine = {
                 pad = 40,
                 left_pad = 100;
 
+                console.log(currentMatrix); testing = currentMatrix;
             var x = d3.scale.linear().domain([0,currentMatrix.length]).range([left_pad, w-pad]),
             y = d3.scale.linear().domain([currentMatrix[0].length, 0]).range([pad, h-pad*2]);
 

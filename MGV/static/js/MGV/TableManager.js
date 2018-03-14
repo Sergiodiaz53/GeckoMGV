@@ -72,24 +72,23 @@ function generateFragTable(currentLines, numFile, linesToPaint, activate){
 
     var data = [];
     var i = 0;
-    for (var x in linesToPaint) {
-        var line = linesToPaint[x];
-          data[i] = {
-              type: currentLines[line][0],
-              xstart: currentLines[line][1],
-              ystart: currentLines[line][2],
-              xend: currentLines[line][3],
-              yend: currentLines[line][4],
-              strand:currentLines[line][5],
-              block: currentLines[line][6],
-              length: currentLines[line][7],
-              score: currentLines[line][8],
-              ident: currentLines[line][9],
-              similarity: currentLines[line][10],
-              identp: currentLines[line][11],
-              seqx: currentLines[line][12],
-              seqy: currentLines[line][13]
-          };
+    for (var line of linesToPaint) {
+        data[i] = {
+            type: line[0],
+            xstart: line[1],
+            ystart: line[2],
+            xend: line[3],
+            yend: line[4],
+            strand:line[5],
+            block: line[6],
+            length: line[7],
+            score: line[8],
+            ident: line[9],
+            similarity: line[10],
+            identp: line[11],
+            seqx: line[12],
+            seqy: line[13]
+        };
         i++;
     }
 
