@@ -71,8 +71,18 @@ function generateFragTable(currentLines, numFile, linesToPaint, activate){
     };
 
     var data = [];
+    let linesToIterate = linesToPaint;
     var i = 0;
-    for (var line of linesToPaint) {
+    if(!isNaN(linesToPaint[0])){
+        console.log("Test");
+        // Get linesToPaint info
+        let new_lines = linesToPaint.reduce((output, line) => {
+            output[0].push(lines[numFile][line]);
+            return output
+        }, [[]]);
+        linesToIterate = new_lines[0].slice(0);
+    }
+    for (var line of linesToIterate) {
         data[i] = {
             type: line[0],
             xstart: line[1],

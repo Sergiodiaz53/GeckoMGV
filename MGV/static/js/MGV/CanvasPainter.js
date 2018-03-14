@@ -1138,7 +1138,7 @@ function createInstance() {
                                 }
                                 if (paint) {
                                     drawVerticalLinesInVerticalLayer([i],selectLayer,x,rgb(255,0,0));
-                                    if(selectedLines[x].indexOf(i)==-1)
+									if(selectedLines[x].indexOf(i)==-1)
                                         selectedLines[x].push(i);
                                 }
 

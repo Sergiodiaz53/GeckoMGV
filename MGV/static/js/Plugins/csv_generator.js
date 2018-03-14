@@ -11,7 +11,6 @@ function CsvGenerator(dataArray, fileName, separator, addQuotes) {
     this.getDownloadLink = function () {
         var separator = this.separator;
         var addQuotes = this.addQuotes;
-
         var rows = this.dataArray.map(function (row) {
             var rowData = row.join(separator);
 
