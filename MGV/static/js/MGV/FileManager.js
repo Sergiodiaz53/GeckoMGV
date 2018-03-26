@@ -63,8 +63,7 @@ function loadFileFromServer($fileName){
 
 function processGBFF(content){
     console.log("PROCESSING");
-    console.log(content)
-    $('#loading-indicator').show();
+    //console.log(content)
     Papa.parse(content, {
         worker: true,
         header: true,
@@ -129,7 +128,8 @@ function processGBFF(content){
             console.log(AnotFiles[id]);
             fillGeneratedAnnotationTab(id);
             console.log("Finishing processing");
-            $('#loading-indicator').hide();
+            overlayOff();
+            spinnerOff();
         }
     });
 }
