@@ -1,42 +1,37 @@
 #!/bin/bash
 
 FL=1000   # frequency limit
-MG=0
 
-if [ $# -lt 7 ]; then
+if [ $# != 7 ]; then
    echo " ==== ERROR ... you called this script inappropriately."
    echo ""
-   echo "   usage:  $0 seqXName seqYName lenght similarity WL fixedL CSVOutput"
+   echo "   usage:  $0 seqXName seqYName lenght similarity WL fixedL output.csv"
    echo ""
    exit -1
 fi
 
-if [ $# == 8 ]; then
-   MG=$8
-fi
-
 {
 
-BINDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-
-dirNameX=$(${BINDIR}/readlink.sh $1 | xargs dirname)
+dirNameX=$(readlink -f $1 | xargs dirname)
 seqXName=$(basename "$1")
 extensionX="${seqXName##*.}"
 seqXName="${seqXName%.*}"
 
-dirNameY=$(${BINDIR}/readlink.sh $2 | xargs dirname)
+dirNameY=$(readlink -f $2 | xargs dirname)
 seqYName=$(basename "$2")
 extensionY="${seqYName##*.}"
 seqYName="${seqYName%.*}"
-outputFile=$7
 
 #seqXName=`basename $1 .fasta`
 #seqYName=`basename $2 .fasta`
+
+BINDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 length=${3}
 similarity=${4}
 WL=${5} # wordSize
 fixedL=${6}
+output=${7}
 
 mkdir intermediateFiles
 
@@ -45,47 +40,31 @@ mkdir results
 mkdir intermediateFiles/dictionaries
 mkdir intermediateFiles/hits
 
-mkdir csv
-mkdir csb
-mkdir comparaciones
-mkdir hist
-
-
 # Copiamos los fastas
 ln -s ${dirNameX}/${seqXName}.${extensionX} intermediateFiles/${seqXName}-${seqYName}
 ln -s ${dirNameY}/${seqYName}.${extensionY} intermediateFiles/${seqXName}-${seqYName}
 
-
-
 cd intermediateFiles/${seqXName}-${seqYName}
 
-
-mkdir GRIMM
-cd GRIMM
-mkdir anchor
-cd ..
 ###############
 
 
 echo "${BINDIR}/reverseComplement ${seqYName}.${extensionX} ${seqYName}-revercomp.${extensionY}"
 ${BINDIR}/reverseComplement ${seqYName}.${extensionX} ${seqYName}-revercomp.${extensionY}
 
-echo "${BINDIR}/reverseComplement ${seqXName}.${extensionX} ${seqXName}-revercomp.${extensionX}"
-${BINDIR}/reverseComplement ${seqXName}.${extensionX} ${seqXName}-revercomp.${extensionX}
-
 if [[ ! -f ../dictionaries/${seqXName}.d2hP ]];	then
-	echo "${BINDIR}/dictionary.sh ${seqXName}.${extensionX} 8 &"
-	${BINDIR}/dictionary.sh ${seqXName}.${extensionX} 8 &		
+	echo "${BINDIR}/dictionary.sh ${seqXName}.${extensionX} &"
+	${BINDIR}/dictionary.sh ${seqXName}.${extensionX} &		
 fi
 		
 if [[ ! -f ../dictionaries/${seqYName}.d2hP ]];	then
-	echo "${BINDIR}/dictionary.sh ${seqYName}.${extensionY} 8 &"
-	${BINDIR}/dictionary.sh ${seqYName}.${extensionY} 8 &
+	echo "${BINDIR}/dictionary.sh ${seqYName}.${extensionY} &"
+	${BINDIR}/dictionary.sh ${seqYName}.${extensionY} &
 fi
 		
 if [[ ! -f ../dictionaries/${seqYName}-revercomp.d2hP ]];	then
-	echo "${BINDIR}/dictionary.sh ${seqYName}-revercomp.${extensionY} 8 &"
-	${BINDIR}/dictionary.sh ${seqYName}-revercomp.${extensionY} 8 &
+	echo "${BINDIR}/dictionary.sh ${seqYName}-revercomp.${extensionY} &"
+	${BINDIR}/dictionary.sh ${seqYName}-revercomp.${extensionY} &
 fi		
 
 echo "Waiting for the calculation of the dictionaries"
@@ -139,59 +118,40 @@ ${BINDIR}/combineFrags ${seqXName}-${seqYName}-sf.frags ${seqXName}-${seqYName}-
 
 #echo "${BINDIR}/af2pngrev ${seqXName}-${seqYName}.frags ${seqXName}-${seqYName}.png ${seqXName} ${seqYName}"
 #${BINDIR}/af2pngrev ${seqXName}-${seqYName}.frags ${seqXName}-${seqYName}.png ${seqXName} ${seqYName}
-	# Calc ACGT frequencies
-        echo "${BINDIR}/getFreqFasta ${seqXName}.${extensionX} ${seqXName}.freq"
-        ${BINDIR}/getFreqFasta ${seqXName}.${extensionX} ${seqXName}.freq
 
-        #Calc karlin parameters
-        echo "${BINDIR}/kar2test ${seqXName}.freq ${BINDIR}/matrix.mat 1 ${seqXName}.karpar"
-        ${BINDIR}/kar2test ${seqXName}.freq ${BINDIR}/matrix.mat 1 ${seqXName}.karpar
-
-        #rm -rf ${seqXName}.freq
-
-        echo "----------- p-value filter --------------"
-        ## Filtro por pvalue
-        echo "${BINDIR}/pvalueFilter ${seqXName}-${seqYName}.frags ${seqXName}.karpar ${seqXName}-${seqYName}.fil.frags ${seqXName}-${seqYName}.trash.frags "
-        ${BINDIR}/pvalueFilter ${seqXName}-${seqYName}.frags ${seqXName}.karpar ${seqXName}-${seqYName}.fil.frags ${seqXName}-${seqYName}.trash.frags 1
-
-echo "-------"
-echo ${BINDIR}
-echo "-------"
-${BINDIR}/fragstoMaster ${seqXName}-${seqYName}.fil.frags ${seqXName}-${seqYName}.original.master ${seqXName}.${extensionX} ${seqYName}.${extensionY}
-echo "${BINDIR}/csb2csv ${seqXName}-${seqYName}.original.master ${seqXName}-${seqYName}.original.master 0 > ${seqXName}-${seqYName}.original.csv.tmp"
-${BINDIR}/csb2csv ${seqXName}-${seqYName}.original.master ${seqXName}-${seqYName}.original.master ${seqXName}.${extensionX} ${seqXName} ${seqYName}.${extensionY} ${seqYName} ${seqXName}-${seqYName}.csv
-#fragstoMaster frags/NC_014448.1-NC_019552.1.fil.frags master fastas/NC_014448.1.fasta fastas/NC_019552.1.fasta
-#csb2csv master master fastas/NC_014448.1.fasta NC_014448.1 fastas/NC_019552.1.fasta NC_019552.1 master.csv
-#cat ${seqXName}-${seqYName}.csb.frags.INF ${seqXName}-${seqYName}.original.csv.tmp > ${seqXName}-${seqYName}.original.csv
-	
-# calculamos hits en txt
-#${BINDIR}/getHistogramFromHits ${seqXName}-${seqYName}-revercomp-K${WL}.hits.sorted ${seqXName}-${seqYName}-K${WL}.histXrever.txt ${seqXName}-${seqYName}-K${WL}.histYrever.txt r 0 
-
-#${BINDIR}/getHistogramFromHits ${seqXName}-${seqYName}-K${WL}.hits.sorted ${seqXName}-${seqYName}-K${WL}.histX.txt ${seqXName}-${seqYName}-K${WL}.histY.txt f 0
- 
 #Borramos todo menos los frags y los diccionarios
 
+# Get Info from frags 
+echo "${BINDIR}/getInfo ${seqXName}-${seqYName}.frags > ${seqXName}-${seqYName}.csv"
+${BINDIR}/getInfo ${seqXName}-${seqYName}.frags > ${seqXName}-${seqYName}.csv.tmp
+cat ${seqXName}-${seqYName}.frags.INF ${seqXName}-${seqYName}.csv.tmp > ${seqXName}-${seqYName}.csv
+rm -rf ${seqXName}-${seqYName}.csv.tmp
+	
+if [[ -L "../../${seqXName}.fasta" ]]
+then
+	rm ../../${seqXName}.fasta
+fi
 
-#cat ${seqXName}-${seqYName}.frags.INF ${seqXName}-${seqYName}.original.csv > ${seqXName}-${seqYName}.csv
-mv ${seqXName}-${seqYName}.csv ${outputFile}
-mv ${seqXName}-${seqYName}.frags ../../results
-mv ${seqXName}-${seqYName}.frags.INF ../../results
-mv ${seqXName}-${seqYName}.frags.MAT ../../results
-#mv ${seqXName}-${seqYName}-K${WL}.histXrever.txt ../../hist
-#mv ${seqXName}-${seqYName}-K${WL}.histYrever.txt ../../hist
-#mv ${seqXName}-${seqYName}-K${WL}.histX.txt ../../hist 
-#mv ${seqXName}-${seqYName}-K${WL}.histY.txt ../../hist
+if [[ -L "../../${seqYName}.fasta" ]]
+then
+	rm ../../${seqYName}.fasta
+fi
 
+#Movemos los frags y los info
+#mv ${seqXName}-${seqYName}.frags ../../results
+#mv ${seqXName}-${seqYName}.frags.INF ../../results
+#mv ${seqXName}-${seqYName}.frags.MAT ../../results
+#mv ${seqXName}-${seqYName}.old.frags ../../results
+mv ${seqXName}-${seqYName}.csv ../../results
 
-echo "Deleting the tmp folder: ${seqXName}-${seqYName}"
+#echo "Borrando ${seqXName}-${seqYName}"
 cd ..
-
 #rm -rf ${seqXName}-${seqYName}
-#rm -r ../intermediateFiles
-rm -r ../intermediateFiles/${seqXName}-${seqYName}.v3.frags
-rm -r ../intermediateFiles/${seqXName}-${seqYName}.joined
-rm -r ../intermediateFiles/${seqXName}-${seqYName}.evol.frag2
-rm -r ../intermediateFiles/${seqXName}-${seqYName}.evol.csb2
+# Salvando output .csv
+mv ../results/${seqXName}-${seqYName}.csv ${output}
+# Borrando carpetas
+cd ..
+rm -rf ./results
+rm -rf ./intermediateFiles
 
 }
-#&> log.txt
