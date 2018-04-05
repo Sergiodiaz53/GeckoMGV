@@ -194,7 +194,8 @@ class geckoForm(forms.Form):
 
 class muscleForm(forms.Form):
     parameter1 = forms.ChoiceField(label="Multifasta file", widget=forms.Select(attrs={'class':'selector','id': 'input'}))
-    parameter2 =forms.CharField(label="Multiple Alignment Output", widget=forms.TextInput(attrs={'class':'file','id': 'output'}))
+    parameter2 = forms.CharField(label="Multiple Alignment Output", widget=forms.TextInput(attrs={'class':'file','id': 'output'}))
+    parameter3 = forms.CharField(label="Dendrogram Output", widget=forms.TextInput(attrs={'class':'file','id': 'output_dnd'}))
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
