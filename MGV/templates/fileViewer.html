@@ -10,7 +10,20 @@
                     <h2>{{ fileName }} : </h2>
                     <div class="computerOutput">
                     {% if image == False %}
-                    	{{ content|linebreaks }} 
+                        {{ content|linebreaks }}
+                    {% elif image == "dendrogram" %}
+                        <script type="text/javascript">
+                        testing = "{{ content }}";
+                        window.onload = function(){
+                            phylocanvas = new Smits.PhyloCanvas(
+                                "{{ content }}",
+                                'dendrogramCanvas', 
+                                500, 
+                                500
+                            );
+                        };
+                        </script>
+                        <div id="dendrogramCanvas"> </div>
                     {% else %}
                     	<img src="/filemanager/{{ image }}" height="500" width="500" />
                     {% endif %}

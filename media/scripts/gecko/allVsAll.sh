@@ -19,11 +19,10 @@ for elem in $(ls -d $DIR/*.$EXT | awk -F "/" '{print $NF}' | awk -F ".$EXT" '{pr
 do
 	array[$x]=$elem
 	x=`expr $x + 1`
-	echo "X: $elem"
+	#echo "X: $elem"
 done
 
 for ((i=0 ; i < ${#array[@]} ; i++))
-#for ((i=0 ; i < 1 ; i++))
 do
 	for ((j=i ; j < ${#array[@]} ; j++))
 	do
@@ -34,7 +33,7 @@ do
 			if [[ ! -f frags/${seqX}-${seqY}.frags ]];	then
 				
 				echo "${BINDIR}/workflow.sh $DIR/${seqX}.$EXT $DIR/${seqY}.$EXT $L $S $WL 1"
-				${BINDIR}/workflow.sh $DIR/${seqX}.$EXT $DIR/${seqY}.$EXT $L $S $WL 1 
+				${BINDIR}/workflow.sh $DIR/${seqX}.$EXT $DIR/${seqY}.$EXT $L $S $WL 1
 			
 			fi
 		fi

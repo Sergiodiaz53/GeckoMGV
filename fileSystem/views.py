@@ -108,8 +108,12 @@ def fileViewer_view(request):
         file.close()
 
         fileInstance = userFile.objects.get(file=request.POST.get('filename'))
-        if(fileInstance.filename[-3:] == "png"):
+        extension = fileInstance.filename[-3:]
+        if(extension == "png"):
             image = '/'.join(request.POST.get('filename').split('/')[-5:])
+        elif(extension == "dnd"):
+            content = content.replace('\n','')
+            image = "dendrogram"
 
         return render(request, 'fileViewer.html', {'fileName': fileInstance.filename, 'content': content, 'image': image})
 
