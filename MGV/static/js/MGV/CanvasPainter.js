@@ -54,7 +54,7 @@ var annotsGrid = [];
 
 // Constants
 const headerSize = 12;
-const fragsStarts = 16;
+const fragsStarts = 17;
 
 // Colors
 // negro, rojo, azul, naranja, verde, amarillo, morado, verde2

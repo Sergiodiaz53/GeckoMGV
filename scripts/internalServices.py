@@ -9,6 +9,8 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from fileSystem import views as fs
 
+
+FRAGSTART = 17
 ### Threading
 
 def executeInternalService(function_name, args, request):
@@ -40,16 +42,16 @@ def filterFragsService(args, request):
     lines = fs.openFile(request.user, fileObject).split('\n')
 
     # Extract HEADER
-    headers = lines[0:16] # 16 HEADER LINES
+    headers = lines[0:FRAGSTART] # 16 HEADER LINES
     header = ""
 
     # Create new CSVfile
     output_file_csv = ""
 
     # Filter LINES in CONTENT
-    for line in lines[16:-1]:
+    for line in lines[FRAGSTART:]:
         items = line.split(',')
-        current_identity = format(float(items[9])/float(items[7]), '.2f')*100
+        current_identity = float(items[11])
         current_length = float(items[7])
         current_similarity = float(items[10])
 
@@ -90,7 +92,7 @@ def extractRepetitionsService(args, request):
 
     # Filter LINES in CONTENT
     if boolSB == "0":
-        for line in lines[16:-1]:
+        for line in lines[FRAGSTART:-1]:
             items = line.split(',')
             rep_flag = items[-1].replace('\n', '')
             if rep_flag == '0' or rep_flag == '1':
@@ -98,7 +100,7 @@ def extractRepetitionsService(args, request):
             elif rep_flag == '2':
                 content_rep_csv += line + "\n"
     elif boolSB == "1":
-        for line in lines[16:-1]:
+        for line in lines[FRAGSTART:-1]:
             items = line.split(',')
             csb_flag = items[6]
 
