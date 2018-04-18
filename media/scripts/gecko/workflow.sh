@@ -29,7 +29,7 @@ BINDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 length=${3}
 similarity=${4}
-WL=${5} # wordSize
+WL=$((2 ** ${5})) #${5} # wordSize
 fixedL=${6}
 output=${7}
 
