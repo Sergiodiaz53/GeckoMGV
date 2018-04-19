@@ -50,7 +50,7 @@ function saveCSV(){
     for(var x=0;x<lines.length;x++) {
         prepareTable(anot, csvtab,x);
         //console.log(document.getElementById("output"+x));
-        var fileName = lines[x][2][0].split(":")[1].trim().split(".")[0]+"-"+lines[x][3][0].split(":")[1].trim().split(".")[0]+".csv";
+        var fileName = lines[x][2][0].split(":")[1].trim().split(".")[0]+"-"+lines[x][3][0].split(":")[1].trim().split(".")[0]+"_Selectedlines.csv";
         console.log("downloading "+fileName);
         CSV.begin("#output"+x).download(fileName).go();
         $('#infoModal').modal('toggle');
