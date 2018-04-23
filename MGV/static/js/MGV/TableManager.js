@@ -114,7 +114,7 @@ function saveActualState() {
     var numFile = getActiveNumFileInFileTab();
 
     //Download the file
-    var csvGenerator = new CsvGenerator(csvContent, fileNames[numFile]);
+    var csvGenerator = new CsvGenerator(csvContent, fileNames[numFile].split('.csv')[0] + "_Selectedlines.csv");
     csvGenerator.download(true);
 }
 
@@ -125,7 +125,7 @@ function uploadActualState(){
     $.ajax({
             url:'/upload/',
             type: "POST",
-            data: {name: fileNames[numFile], content: csvContent.join("\r\n")},
+            data: {name: fileNames[numFile].split('.csv')[0] + "_Selectedlines.csv", content: csvContent.join("\r\n")},
             success:function(){
                  newFileInformation();
             },
@@ -140,7 +140,6 @@ function getCSVContent(){
     var numFile = getActiveNumFileInFileTab();
 
     var csvContent = [];
-
     //Add header to file
     for(var i=0; i <= fragsStarts; i++){
         csvContent.push(lines[numFile][i]);
@@ -148,7 +147,7 @@ function getCSVContent(){
 
     if(!showingSelected) {
         //Add to file the lines represented in the canvas
-        visualizedLines[numFile].forEach(function(lineNumber){
+        currentLines[numFile].forEach(function(lineNumber){
             csvContent.push(lines[numFile][lineNumber]);
         }); 
     } else {
@@ -157,8 +156,10 @@ function getCSVContent(){
         });
     }
 
-    return csvContent;
+    csvContent[12][0] = csvContent[12][0].split(':')[0] + ": " + (csvContent.length-fragsStarts)
 
+    console.log(csvContent); testing=csvContent;
+    return csvContent;
 }
 
 function getActiveNumFileInFileTab(){

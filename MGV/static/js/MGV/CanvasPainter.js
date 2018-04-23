@@ -1167,7 +1167,9 @@ function createInstance() {
 					// CSB & Frag modal
 					try{
 						document.getElementById('uploadSelected').className = "ui-button-primary ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only";
+						document.getElementById('uploadSelected').disabled = false;
 						document.getElementById('saveSelected').className = "ui-button-primary ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only";
+						document.getElementById('saveSelected').disabled = false;
 					}
 					catch(err){
 						// Ignore, modal is not open
@@ -2031,7 +2033,7 @@ function paintCodingRegions(numFile) {
 		annotationsWorking = false;
 		d3.select("#annotationXLayer").remove();
 		d3.select("#annotationYLayer").remove();
-		paintCodingRegions(numFile);
+		//paintCodingRegions(numFile);
 	}
 
 }
