@@ -161,7 +161,11 @@ function drawSelectedFrags(){
 		for (var i = 0; i < selectedLines.length; i++)
 			if ($("#checklayer" + i)[0].checked) {
 				drawLinesInLayer(selectedLines[i], selectLayer, i, rgb(255, 0, 0));
-				drawHorizontalLinesInHorizontalLayer(selectedLines[i], document.getElementById("hSel" + i), i, rgb(255, 0, 0), false)
+				let horizontalPaintLines = [];
+				for(index of selectedLines[i]){
+					horizontalPaintLines.push(lines[i][index])
+				}
+				drawHorizontalLinesInHorizontalLayer(horizontalPaintLines, document.getElementById("hSel" + i), i, rgb(255, 0, 0))
 			}
 	}
 }
@@ -608,7 +612,7 @@ function calculateDistanceBetweenTwoPoints(x1,y1,x2,y2){
  * @param  {Number} numFile      Number of the file
  * @param  {String} color        RGBa color
  */
-function drawHorizontalLinesInHorizontalLayer(linesToPaint, canvasLayer, numFile, color, filterflag = true) {
+function drawHorizontalLinesInHorizontalLayer(linesToPaint, canvasLayer, numFile, color, filterflag = false) {
 
 	var currentCtx = canvasLayer.getContext('2d');
 	var padding = 50;
@@ -626,13 +630,19 @@ function drawHorizontalLinesInHorizontalLayer(linesToPaint, canvasLayer, numFile
 	for (var line of linesToPaint) {
 		let temp_anscombe = anscombeTransform( (line[7]) );
 		// Normalize temporal anscombe transformation
-		if( (temp_anscombe - current_anscombe.mean) / current_anscombe.sigma >= current_filter){
+		if( filterflag && (temp_anscombe - current_anscombe.mean) / current_anscombe.sigma >= current_filter){
 			var xIni = (canvasLayer.width * (line[1]) / xTotal);
 			var yIni = (canvasLayer.width * (line[2]) / yTotal);
 			var xFin = (canvasLayer.width * (line[3]) / xTotal);
 			var yFin = (canvasLayer.width * (line[4]) / yTotal);
 			drawLine(xIni,xFin,yIni,yFin);
 
+		}else if (!filterflag){
+			var xIni = (canvasLayer.width * (line[1]) / xTotal);
+			var yIni = (canvasLayer.width * (line[2]) / yTotal);
+			var xFin = (canvasLayer.width * (line[3]) / xTotal);
+			var yFin = (canvasLayer.width * (line[4]) / yTotal);
+			drawLine(xIni,xFin,yIni,yFin);
 		}
 	}
 
@@ -820,18 +830,20 @@ function createInstance() {
 
 				filters.similarityValue = (filters.filterSimilarity) ?
 					document.getElementById("filterSimilarityNumber").value :
-					0;
+					-1;
 				filters.lengthValue = (filters.filterLenght) ?
 					document.getElementById("filterLenghtNumber").value :
-					0;
+					-1;
 				filters.identityValue = (filters.filterIdentity) ?
 					document.getElementById("filterIdentityNumber").value :
-					0;
+					-1;
 				filters_global = filters;
 
 				current_numfile_filter = numFile;
 
 				// Filter current lines
+				currentLines = currentLines.slice(fragsStarts);
+
 				let filter_results = currentLines.reduce((output, frag) => {
 					if(csbFilter(frag)) output[2].push(frag);
 					if(paintFilter(frag)) output[0].push(frag);
@@ -852,8 +864,8 @@ function createInstance() {
 
 				//Draw in horizontal layer
 				spinnerOn("Drawing Horizontal view...");
-				drawHorizontalLinesInHorizontalLayer(filteredLines, currentHorizontalCanvas, numFile, rgba(189, 195, 199, 0.5));
-				drawHorizontalLinesInHorizontalLayer(linesToPaint, currentHorizontalCanvas, numFile, rgba(R[numFile], G[numFile], B[numFile], 0.7));
+				drawHorizontalLinesInHorizontalLayer(filteredLines, currentHorizontalCanvas, numFile, rgba(189, 195, 199, 0.5), true);
+				drawHorizontalLinesInHorizontalLayer(linesToPaint, currentHorizontalCanvas, numFile, rgba(R[numFile], G[numFile], B[numFile], 0.6), true);
 
 				//drawHorizontalLinesInHorizontalLayer(filteredLines, currentHorizontalCanvas, numFile, rgba(189, 195, 199, 0.5));
 
@@ -1027,8 +1039,8 @@ function createInstance() {
                             } else {
                                 i++;
                             }
-		}
-							console.log(linefound);
+						}
+							console.log(linefound)
                             if(linefound&&filter(lines[arrayIndex][lineIndex])){
                                 if(selectedLines[arrayIndex]==null)
                                     selectedLines[arrayIndex]=[];
@@ -1144,12 +1156,22 @@ function createInstance() {
 
                             }
                         }
-                    }
+					} // Todo lo de arriba, para que?
+					
                     drawSelectedFrags();
                     var layer1 = document.getElementById("myCanvasLayer1");
                     var ctx1 = layer1.getContext("2d");
                     ctx1.clearRect(0, 0, canvas.width, canvas.height);
-                    area=false;
+					area=false;
+					
+					// CSB & Frag modal
+					try{
+						document.getElementById('uploadSelected').className = "ui-button-primary ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only";
+						document.getElementById('saveSelected').className = "ui-button-primary ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only";
+					}
+					catch(err){
+						// Ignore, modal is not open
+					}
                 }
 
 			}, false);

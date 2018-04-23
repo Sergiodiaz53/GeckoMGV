@@ -281,8 +281,11 @@ function processData(csv, index) {
                                 generateAnnotationTab(index);
                                 redraw();
                                 addPrevZoom();
+
+                                document.getElementById('drawGrid').disabled = false; 
                             }
                         }
+
                     }
 
             },
