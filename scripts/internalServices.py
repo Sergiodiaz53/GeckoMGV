@@ -162,13 +162,13 @@ def extractSequenceFromCSVService(args, request):
 
             if info[5] == 'f':
                 y_extracted = extractSequenceFromFastaCoords(y_seq, int(info[2]), int(info[4]))
-                print y_extracted + " :: " + info[2] + " :: " + info[4] + " :: " + str(len(y_extracted))
+                #print y_extracted + " :: " + info[2] + " :: " + info[4] + " :: " + str(len(y_extracted))
                 if y_extracted != '':
-                    print "IN --- " + str(len(y_extracted))
+                    #print "IN --- " + str(len(y_extracted))
                     head = ">ID-" + str(id_counter) + ".1 Y_" + str(info[2]) + "_" + str(info[4]) + "_"  + y_seq_info[0][1:].replace('|','_').replace(' ','-').replace(',', '')
                     output_content += head.replace('\n','') + "\n"
                     output_content += y_extracted + "\n"
-                    print output_content
+                    #print output_content
             elif info[5] == 'r':
                 yr_extracted = extractSequenceFromFastaCoords(yr_seq, int(info[2]), int(info[4]))
                 if yr_extracted != '':
