@@ -15,8 +15,9 @@ def uploadFile(request):
         files = request.FILES.getlist('userfile')
         if form.is_valid():
             for f in files:
-                newFile = userFile(user=request.user, filename=f.name, file=f)
-                newFile.save()
+                content = f.read()
+                createFile(request,content,f.name)
+                
     return userFile.objects.filter(user = request.user)
 
 @csrf_exempt

@@ -270,14 +270,18 @@ function dialogFrags() {
                     click: function () {
                         uploadActualState();
                     },
-                    "class": "ui-button-primary"
+                    "class": "ui-button-primary ui-button-disabled ui-state-disabled",
+                    "id": "uploadSelected",
+                    "disabled": true
                 },
                 {
-                    text: "Save",
+                    text: "Download",
                     click: function () {
                        saveActualState();
                     },
-                    "class": "ui-button-primary"
+                    "class": "ui-button-primary ui-button-disabled ui-state-disabled",
+                    "id": "saveSelected",
+                    "disabled": true
                 },
 
                 {
@@ -294,6 +298,14 @@ function dialogFrags() {
         });
     }else
         $('#output').dialog("close");
+
+    
+    if(selectedLines.length > 0){        
+        document.getElementById('uploadSelected').className = "ui-button-primary ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only";
+        document.getElementById('uploadSelected').disabled = false;
+        document.getElementById('saveSelected').className = "ui-button-primary ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only";
+        document.getElementById('saveSelected').disabled = false;
+    }
 }
 
 function dialogAnnotations(){
@@ -627,3 +639,5 @@ function anscombeTransformLength(numFile){
 
   return {mean: mean, sigma: sigma};
 }
+
+var testing;
