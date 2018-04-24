@@ -154,22 +154,38 @@ function goToNextZoom(){
 }
 
 //Draw in red frag that have been selected (Storaged in SelectedLines)
-function drawSelectedFrags(){
+function drawSelectedFrags(clear = false){
+	let color;
+		
 	if(selectedLines.length>0) {
 		clearCanvas("selectLayer");
 		$('#executeServiceButton').prop('disabled', false);
 		for (var i = 0; i < selectedLines.length; i++)
 			if ($("#checklayer" + i)[0].checked) {
-				drawLinesInLayer(selectedLines[i], selectLayer, i, rgb(255, 0, 0));
-				let horizontalPaintLines = [];
+				if(!clear)
+					color = rgb(255,0,0);
+				else
+					color = rgba(R[i], G[i], B[i], 1);
+
+				let paintLines = [];
 				for(index of selectedLines[i]){
-					horizontalPaintLines.push(lines[i][index])
+					paintLines.push(lines[i][index]);
 				}
-				drawHorizontalLinesInHorizontalLayer(horizontalPaintLines, document.getElementById("hSel" + i), i, rgb(255, 0, 0))
+				drawVerticalLinesInVerticalLayer(paintLines, document.getElementById("layer" + i), i, color)
+				drawHorizontalLinesInHorizontalLayer(paintLines, document.getElementById("hSel" + i), i, color)
 			}
 	}
 }
 
+function fragAreaCheck(frag){
+	let area_check = (
+		((frag[1]) > (currentArea.x0 * xTotal / 500))
+		&& ((frag[2]) > (currentArea.y0 * yTotal / 500))
+		&& ((frag[3]) < (currentArea.x1 * xTotal / 500))
+		&& ((frag[4]) < (currentArea.y1 * yTotal / 500))
+	)
+	return area_check;
+}
 /**
  * Erase all the content in the canvas given
  * @param  {String} canvasName [Canvas ID to erase content]
@@ -532,7 +548,7 @@ function createComparisonCheck(numLayer){
 
 /**
  *  Paint an array of lines in a vertical layer
- * @param  {Number} linesToPaint Array of index of the lines
+ * @param  {Number} linesToPaint Array of the lines
  * @param  {Number} canvasLayer  ID of the canvas layer
  * @param  {Number} numFile      Number of the file
  * @param  {Number} color        RGBa color
@@ -793,7 +809,6 @@ function createInstance() {
 		// Draw Grid
 		drawGrid(board, vertical, "myCanvasGrid");
 
-
 		spinnerOn("Filtering lines in CSV...");
 		for (var numFile = 0; numFile < lines.length; numFile++) {
             console.log("Round: "+numFile);
@@ -801,7 +816,6 @@ function createInstance() {
 			currentLines = lines[numFile].slice(0);
 
 			if (currentLines) {
-
 				var mode = document.option.tipo;
 
 				// Store the file header
@@ -837,9 +851,10 @@ function createInstance() {
 				filters.identityValue = (filters.filterIdentity) ?
 					document.getElementById("filterIdentityNumber").value :
 					-1;
-				filters_global = filters;
 
-				current_numfile_filter = numFile;
+				filters.current_numfile_filter = numFile;
+
+				filters_global = filters;
 
 				// Filter current lines
 				currentLines = currentLines.slice(fragsStarts);
@@ -854,7 +869,7 @@ function createInstance() {
 				
 				linesToPaint = filter_results[0];
 				filteredLines = filter_results[1];
-				CSBLines = output[2];
+				CSBLines = filter_results[2];
 
 				//Draw in vertical layer
 				clearCanvas(currentVerticalCanvas.id);
@@ -985,10 +1000,12 @@ function createInstance() {
 				dragStart = null;
 
 				if (!dragged) {
+					// Clicked without dragging, select a frag and clear selectedLines
                     if (!shiftSel) {
 						$("#filter").html("Filter");
-                        selectFrag(lines, getMousePos(canvas, evt), evt);
-                        selectedLines = [];
+						selectFrag(lines, getMousePos(canvas, evt), evt);
+						drawSelectedFrags(clear = true);
+						selectedLines = [];
                     }else{
                         var linefound=false;
                         var arrayIndex=0;
@@ -1109,6 +1126,7 @@ function createInstance() {
 				if(!lines.length)
 					clearCanvas("myCanvasLayer1");
 
+				// If Area drawn with Shift select
                 if(area&&vertical&&(shiftSel||filterSel)) {
                      if(startX>mouseX)
                         startX=[mouseX,mouseX=startX][0];
@@ -1152,11 +1170,11 @@ function createInstance() {
                                     drawVerticalLinesInVerticalLayer([i],selectLayer,x,rgb(255,0,0));
 									if(selectedLines[x].indexOf(i)==-1)
                                         selectedLines[x].push(i);
-                                }
+								}
 
                             }
                         }
-					} // Todo lo de arriba, para que?
+					}
 					
                     drawSelectedFrags();
                     var layer1 = document.getElementById("myCanvasLayer1");
@@ -2116,7 +2134,7 @@ function paintFilter(frag){
 		&& ((frag[4]) <= (currentArea.y1 * yTotal / 500))
 	)
 	let filtered_file_check = (
-		!(filtered[current_numfile_filter]!=null&&filtered[current_numfile_filter].indexOf(i)>-1)
+		!(filtered[filters.current_numfile_filter]!=null&&filtered[filters.current_numfile_filter].indexOf(i)>-1)
 	)
 
 	let filter_irrelevants = (frag[6] == -1 && filters_global.filterIrrelevants) ? false : true;

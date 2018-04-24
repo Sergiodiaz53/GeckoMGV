@@ -282,7 +282,7 @@ function processData(csv, index) {
                                 redraw();
                                 addPrevZoom();
 
-                                document.getElementById('drawGrid').disabled = false; 
+                                document.getElementById('drawGrid').disabled = false;
                             }
                         }
 
