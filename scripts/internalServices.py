@@ -149,8 +149,8 @@ def extractSequenceFromCSVService(args, request):
     output_content = ""
     id_counter = 0
     # Read CSV lines and extract from X and Y/Yr
-    for line in csv_lines[16:]:
-        print line
+    for line in csv_lines[FRAGSTART:-1]:
+        #print line
         info = line.split(',')[0:6] # 0-frag/csb 1-xi 2-yi 3-xf 4-yf 5-strand
 
         if info[0] == 'Frag':
