@@ -8,6 +8,11 @@ include/
 local/
 share/
 GeckoMGV/
+geckomgv_uwsgi.ini
+os
+site
+sys
+uwsgi_params
 
 ### PyCharm ###
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio
