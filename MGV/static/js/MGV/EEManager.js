@@ -31,8 +31,7 @@ function processEvolutiveEvents(frags, index){
     test_ee = filter_results;
     
 */
-    for (var i = frags.length - 1; i >= 16; i--){
-        parseLine(frags[i]);
+    for (var i = frags.length - 1; i >= fragsStarts; i--){
         if (frags[i][0] == "EndEE"){
             i--;
             evolutiveEvents[index][eeIndex] = [];
@@ -47,6 +46,7 @@ function processEvolutiveEvents(frags, index){
             }
             eeIndex++;
         }
+        parseLine(frags[i]);
     }
     console.timeEnd("processEvolutiveEvents");
     lines[index] = frags.slice(0);
@@ -55,7 +55,6 @@ function processEvolutiveEvents(frags, index){
 
     evolutiveFrags[index] = evolutiveFrags[index].reverse();
     evolutiveEvents[index] = evolutiveEvents[index].reverse();
-
     if(eeIndex) $("#EEmanag").show();
 }
 
@@ -83,7 +82,7 @@ function nextEE (){
 
         setTimeout(function(){
             clearCanvas("selectLayer");
-            lines[0] = lines[0].slice(0, 16).concat(evolutiveEvents[0][evolutiveIndex]);
+            lines[0] = lines[0].slice(0, fragsStarts).concat(evolutiveEvents[0][evolutiveIndex]);
             redraw();
             drawArrayFragsInLayer(auxNextArray, document.getElementById("selectLayer"), 0, rgb(255, 0, 0));
         },1500);
@@ -95,16 +94,6 @@ function nextEE (){
         },3000);
 
     }
-}
-
-function activateFilters(){
-	$('#filterLenght').prop('checked', true);
-	$('#filterSimilarity').prop('checked', true);
-	$('#filterIdentity').prop('checked', true);
-
-	$('#filterLenghtNumber').val(1000);
-	$('#filterSimilarityNumber').val(50);
-	$('#filterIdentityNumber').val(50);
 }
 
 /**
@@ -128,7 +117,7 @@ function prevEE (){
 
         setTimeout(function(){
             clearCanvas("selectLayer");
-            lines[0] = lines[0].slice(0, 16).concat(evolutiveEvents[0][evolutiveIndex]);
+            lines[0] = lines[0].slice(0, fragsStarts).concat(evolutiveEvents[0][evolutiveIndex]);
             redraw();
             drawArrayFragsInLayer(auxPrevArray, document.getElementById("selectLayer"), 0, rgb(255, 0, 0));
         },1500);
@@ -174,6 +163,8 @@ function prevEE (){
     }
 }
 
+// Others...
+
 function EEPromise(frags){
     let header = frags.splice(0,fragsStarts);
     console.log("EE Promise Start");
@@ -195,4 +186,14 @@ function EEPromise(frags){
     })
     
     frags = header.concat(output[2]);
+}
+
+function activateFilters(){
+	$('#filterLenght').prop('checked', true);
+	$('#filterSimilarity').prop('checked', true);
+	$('#filterIdentity').prop('checked', true);
+
+	$('#filterLenghtNumber').val(1000);
+	$('#filterSimilarityNumber').val(50);
+	$('#filterIdentityNumber').val(50);
 }

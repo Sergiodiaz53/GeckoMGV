@@ -34,7 +34,7 @@ def ClustalOmega(request):
 
     #file_name = generatePath(request, fout)
 
-    inner=EBI.getResultV2(jobid, 'aln-clustal',baseUrl, fout)
+    inner=EBI.getResultV2(jobid, 'aln-clustal_num',baseUrl, fout)
     html = "<html><body><script src=\"https://s3-eu-west-1.amazonaws.com/biojs/msa/latest/msa.js\"></script><link type=text/css rel=stylesheet href=https://s3-eu-west-1.amazonaws.com/biojs/msa/latest/msa.css /><div id=\"menu\"></div><div id=\"msa\"></div></body></html>" #%inner.replace('\n','<br>').replace(' ','&ensp;')
 
     return inner
