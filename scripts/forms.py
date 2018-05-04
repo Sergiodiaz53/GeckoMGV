@@ -179,11 +179,12 @@ class geckoForm(forms.Form):
     choice=(("2","8"),("3","12"),("4","16"),("5","20"),("6","24"),("7","28"),("8","32"))
     parameter1 = forms.ChoiceField(label="Sequence X FASTA", widget=forms.Select(attrs={'class':'selector','id': 'seqx'}))
     parameter2 = forms.ChoiceField(label="Sequence Y FASTA", widget=forms.Select(attrs={'class':'selector','id': 'seqy'}))
-    parameter3 = forms.IntegerField(label='min length', widget=forms.TextInput(attrs={'id': 'leng'}))
-    parameter4 = forms.CharField(label='min similarity', max_length=3, widget=forms.TextInput(attrs={'id': 'sim'}))
-    parameter5 = forms.ChoiceField(label='word length', choices=choice, widget=forms.Select(attrs={'class':'selector','id': 'Wleng'}))
-    parameter6 = forms.CharField(label='fixed length', initial="1",widget = forms.HiddenInput())
-    parameter7 = forms.CharField(label="CSV result", widget=forms.TextInput(attrs={'class':'file','id': 'csvout'}))
+    parameter3 = forms.IntegerField(label='Min length', widget=forms.TextInput(attrs={'id': 'leng'}))
+    parameter4 = forms.CharField(label='Min similarity', max_length=3, widget=forms.TextInput(attrs={'id': 'sim'}))
+    parameter5 = forms.ChoiceField(label='Word length', choices=choice, widget=forms.Select(attrs={'class':'selector','id': 'Wleng'}))
+    parameter6 = forms.CharField(label='Fixed length', initial="1",widget = forms.HiddenInput())
+    parameter7 = forms.CharField(label="Result csv", widget=forms.TextInput(attrs={'class':'file','id': 'csvout'}))
+    parameter8 = forms.CharField(label="Result matrix", widget=forms.TextInput(attrs={'class':'file','id': 'matout'}))
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)

@@ -2,10 +2,10 @@
 
 FL=1000   # frequency limit
 
-if [ $# != 7 ]; then
+if [ $# != 8 ]; then
    echo " ==== ERROR ... you called this script inappropriately."
    echo ""
-   echo "   usage:  $0 seqXName seqYName lenght similarity WL fixedL output.csv"
+   echo "   usage:  $0 seqXName seqYName lenght similarity WL fixedL output.csv output.mat"
    echo ""
    exit -1
 fi
@@ -32,6 +32,7 @@ similarity=${4}
 WL=$((4 * ${5})) #${5} # wordSize
 fixedL=${6}
 output=${7}
+output2=${8}
 
 mkdir intermediateFiles
 
@@ -140,15 +141,18 @@ fi
 #Movemos los frags y los info
 #mv ${seqXName}-${seqYName}.frags ../../results
 #mv ${seqXName}-${seqYName}.frags.INF ../../results
-#mv ${seqXName}-${seqYName}.frags.MAT ../../results
+mv ${seqXName}-${seqYName}.frags.MAT ../../results
 #mv ${seqXName}-${seqYName}.old.frags ../../results
 mv ${seqXName}-${seqYName}.csv ../../results
 
 #echo "Borrando ${seqXName}-${seqYName}"
 cd ..
 #rm -rf ${seqXName}-${seqYName}
+
 # Salvando output .csv
 mv ../results/${seqXName}-${seqYName}.csv ${output}
+mv ../results/${seqXName}-${seqYName}.frags.MAT ${output2}
+
 # Borrando carpetas
 cd ..
 rm -rf ./results
