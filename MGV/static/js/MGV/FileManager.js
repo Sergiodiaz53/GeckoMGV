@@ -427,13 +427,13 @@ function processHugeFile(){
     current_lenghtValue = 0; current_similarityValue = 0; current_identityValue = 0;
 
     if(filterLenght)
-        current_lenghtValue = parseInt(document.getElementById("filterLenghtNumber2").value);
+        current_lenghtValue = parseFloat(document.getElementById("filterLenghtNumber2").value);
 
     if(filterSimilarity)
-        current_similarityValue = parseInt(document.getElementById("filterSimilarityNumber2").value);
+        current_similarityValue = parseFloat(document.getElementById("filterSimilarityNumber2").value);
 
     if(filterIdentity)
-        current_identityValue = parseInt(document.getElementById("filterIdentityNumber2").value);
+        current_identityValue = parseFloat(document.getElementById("filterIdentityNumber2").value);
 
     
     

@@ -93,7 +93,8 @@ function addPrevZoom(){
 //Go to the previous zoom
 function goToPrevZoom(){
 	if(currentZoomIndex>0) {
-
+		//drawSelectedFrags(true);
+		drawGrid(false, vertical, "myCanvasGrid");
 		for (var i = 0; i < lines.length; i++) {
 			clearCanvas("layer" + i);
 		}
@@ -101,13 +102,13 @@ function goToPrevZoom(){
 		var l0Ctx = $("#layer0")[0].getContext('2d');
 		var last = backZoomList[--currentZoomIndex];
 		currentArea = $.extend(true, {},last[0]);
-        RectInMap=$.extend(true, {},last[2]);
-        redrawMap();
+        	RectInMap=$.extend(true, {},last[2]);
+	        redrawMap();
 
-        for(var j=0;j<last[3].length;j++){
-            clearCanvas(createHorizontalComparisonLayer(j).id);
-            createHorizontalComparisonLayer(j).getContext('2d').putImageData(last[3][j],0,0);
-        }
+        	for(var j=0;j<last[3].length;j++){
+        		clearCanvas(createHorizontalComparisonLayer(j).id);
+		        createHorizontalComparisonLayer(j).getContext('2d').putImageData(last[3][j],0,0);
+        	}
 
 		scaleX = (currentArea.x1 - currentArea.x0) / canvas.width;
 		scaleY = (currentArea.y1 - currentArea.y0) / canvas.height;
@@ -121,6 +122,7 @@ function goToPrevZoom(){
 		if(currentZoomIndex<=0)
 			$("#prevZoom").prop( "disabled",true);
 
+		drawGrid(board, vertical, "myCanvasGrid");
 		console.log("------- CURRENT INDEX: "+ currentZoomIndex);
 	}
 }
@@ -128,27 +130,31 @@ function goToPrevZoom(){
 //Go forward zooming
 function goToNextZoom(){
 	if(currentZoomIndex<backZoomList.length-1) {
+		//drawSelectedFrags(true);
+		drawGrid(false, vertical, "myCanvasGrid");
 		for (var i = 0; i < lines.length; i++) {
 			clearCanvas("layer" + i);
 		}
 		var l0Ctx = $("#layer0")[0].getContext('2d');
 		var last = backZoomList[++currentZoomIndex];
-        RectInMap=$.extend(true, {},last[2]);
-        redrawMap();
+        	RectInMap=$.extend(true, {},last[2]);
+	        redrawMap();
 		currentArea = $.extend(true, {},last[0]);
-        for(var i=0;i<last[3].length;i++){
-            clearCanvas(createHorizontalComparisonLayer(i).id);
-            createHorizontalComparisonLayer(i).getContext('2d').putImageData(last[3][i],0,0);
-        }
+        	for(var i=0;i<last[3].length;i++){
+	            clearCanvas(createHorizontalComparisonLayer(i).id);
+        	    createHorizontalComparisonLayer(i).getContext('2d').putImageData(last[3][i],0,0);
+	        }
 		scaleX = (currentArea.x1 - currentArea.x0) / canvas.width;
 		scaleY = (currentArea.y1 - currentArea.y0) / canvas.height;
 		l0Ctx.putImageData(last[1], 0, 0);
-		drawSelectedFrags()
+		drawSelectedFrags();
 		if($("#prevZoom").prop( "disabled"))
 			$("#prevZoom").prop( "disabled",false);
 		if(currentZoomIndex>=backZoomList.length-1)
 			$("#nextZoom").prop( "disabled", true );
 		paintCodingRegions(annotationsNumFile)
+
+		drawGrid(board, vertical, "myCanvasGrid");
 	}
 	console.log("------- CURRENT INDEX: "+ currentZoomIndex);
 }
@@ -156,7 +162,6 @@ function goToNextZoom(){
 //Draw in red frag that have been selected (Storaged in SelectedLines)
 function drawSelectedFrags(clear = false){
 	let color;
-		
 	if(selectedLines.length>0) {
 		clearCanvas("selectLayer");
 		$('#executeServiceButton').prop('disabled', false);
@@ -584,14 +589,16 @@ function drawVerticalLinesInVerticalLayer(linesToPaint, canvasLayer, numFile, co
 
 		var distance = calculateDistanceBetweenTwoPoints(xIni,yIni,xFin,yFin);
 		//console.log("Distance: "+distance);
+		/*
 		if(distance<=1){
 			count++;
 		}
+		*/
 		counttotal++;
-		if(distance>1){
+		//if(distance>1){
 			currentCtx.moveTo(xIni, canvasLayer.height - yIni);
 			currentCtx.lineTo(xFin, canvasLayer.height - yFin);
-		}
+		//}
 	}
 	//console.timeEnd("DrawFiltrar");
 
@@ -843,13 +850,13 @@ function createInstance() {
 				filters.filterIdentity = document.getElementById("filterIdentity").checked;
 
 				filters.similarityValue = (filters.filterSimilarity) ?
-					document.getElementById("filterSimilarityNumber").value :
+					parseFloat(document.getElementById("filterSimilarityNumber").value) :
 					-1;
 				filters.lengthValue = (filters.filterLenght) ?
-					document.getElementById("filterLenghtNumber").value :
+					parseFloat(document.getElementById("filterLenghtNumber").value) :
 					-1;
 				filters.identityValue = (filters.filterIdentity) ?
-					document.getElementById("filterIdentityNumber").value :
+					parseFloat(document.getElementById("filterIdentityNumber").value) :
 					-1;
 
 				filters.current_numfile_filter = numFile;
@@ -866,7 +873,6 @@ function createInstance() {
 					return output;
 				}, [[], [], []]);
 
-				
 				linesToPaint = filter_results[0];
 				filteredLines = filter_results[1];
 				CSBLines = filter_results[2];
@@ -1738,6 +1744,17 @@ function drawGrid(board, vertical, canvasName) {
     }
 }
 
+function sqr(x) { return x * x }
+function dist2(x1,x2,y1,y2) { return sqr(x1 - y1) + sqr(x2 - y2) }
+function distToSegmentSquared(x0,y0,x1,x2,y1,y2) {
+  var l2 = dist2(x1,x2,y1,y2);
+  if (l2 == 0) return dist2(x0,y0,x1,x2);
+  var t = ((x0 - x1) * (y1 - x1) + (y0 - x2) * (y2 - x2)) / l2;
+  t = Math.max(0, Math.min(1, t));
+  return dist2(x0, y0, x1 + t * (y1 - x1), x2 + t * (y2 - x2) );
+}
+function distToSegment(x0,y0,x1,x2,y1,y2) { return Math.sqrt(distToSegmentSquared(x0,y0,x1,x2,y1,y2)); }
+
 /**
  * Calculate the distance between a Frag and a point. Used to select frags with a mouse click
  * @param  {Array} position X,Y point
@@ -1759,10 +1776,13 @@ function calculateDistance(position,frag){
             * canvas.width;
     y2 = (((canvas.height * ((frag[4])) / yTotal) - currentArea.y0) / ((currentArea.y1 - currentArea.y0)))
             * canvas.height;
-    //console.log(x1+" - "+y1+" - "+x2+" - "+y2);
+    console.log(x1+" - "+y1+" - "+x2+" - "+y2);
+//	distance = distToSegment(x0,y0,x1,x2,y1,y2);
+
     aux = Math.abs(((x2 - x1) * (y1 - y0))- ((x1 - x0) * (y2 - y1)));
     aux2 = Math.sqrt(Math.pow(x2 - x1, 2)+ Math.pow(y2 - y1, 2));
     distance = aux / aux2;
+
     return distance;
 }
 
@@ -1787,12 +1807,12 @@ function selectFrag(lines, position, evt) {
 
 	for (var j = 0; j < lines.length; j++) {
 
-		console.log("Checking lines" + j);
+		console.log("Checking lines (File " + j + ")");
 		xTotal = fileHeader[0].seqXLength;
 		yTotal = fileHeader[0].seqYLength;
-		var i = 17;
+		var i = fragsStarts;
 
-		console.log("X: " + xTotal + " Y:" + yTotal);
+		console.log("X: " + xTotal + " Y:" + yTotal + " | X0: " + x0 + " Y0: " + y0);
 
 		while (!linefound && i < lines[j].length) {
 
@@ -1805,30 +1825,32 @@ function selectFrag(lines, position, evt) {
 					* canvas.width;
 			y2 = (((canvas.height * ((lines[j][i][4])) / yTotal) - currentArea.y0) / ((currentArea.y1 - currentArea.y0)))
 					* canvas.height;
-
+/*
 			if ((mode[0].checked && mode[0].value == lines[j][i][0])
 					|| (mode[1].checked && mode[1].value == lines[j][i][0])
 					|| mode[2].checked) {
-
-				// Pendiente positiva
-				if ((x0 > x1) && (x0 < x2) && (y0 != y1) && y0!= y2) {
+*/
+				if ((x0 > x1) && (x0 < x2) && (y0 != y1) && (y0 != y2)) {
 					distance = calculateDistance(position,lines[j][i]);
-                    console.log(distance+" - "+x0+" - "+y0);
-					if (distance < 6&&filter(lines[j][i])) {
-                        linefound = true;
+		 	                console.log(distance+" - "+x0+" - "+y0);
+
+					if (distance < 10 && filter(lines[j][i])) {
+ 			                	linefound = true;
 						arrayIndex = j;
 						lineIndex = i;
-						//console.log("linefound PP: " + j + " " + i);
+						console.log("linefound PP: " + j + " " + i);
 					} else {
 						i++;
 					}
 
-				}else {
-				i++;
-			    }
+				} else {
+					i++;
+				}
+/*
 			} else {
 				i++;
 			}
+*/
 		}
 
 	}
@@ -1841,7 +1863,7 @@ function selectFrag(lines, position, evt) {
 		var top = evt.pageY;
 
 		if(currentMatrix.length>0){
-			paintFrag(((lines[arrayIndex][lineIndex][9]/lines[arrayIndex][lineIndex][7]).toFixed(2))*100,lines[arrayIndex][lineIndex][7]);
+			paintFrag(lines[arrayIndex][lineIndex][11],lines[arrayIndex][lineIndex][7]); console.log("test");
 		}
 
 		$('#CSBPopover')
@@ -1870,7 +1892,7 @@ function selectFrag(lines, position, evt) {
 								+ "<br> Identity: "
 								+ lines[arrayIndex][lineIndex][9]
 								+ "<br> Identity %: "
-								+ (lines[arrayIndex][lineIndex][9]/lines[arrayIndex][lineIndex][7]).toFixed(2)
+								+ lines[arrayIndex][lineIndex][11] //lines[arrayIndex][lineIndex][7]).toFixed(2)
 								+ "<br>Similarity: "
 								+ lines[arrayIndex][lineIndex][10] + "</div>")
 
@@ -1882,18 +1904,15 @@ function selectFrag(lines, position, evt) {
                         }).show();
 
 		if (selected) {
-            clearCanvas("selectLayer");
-            for(var i=0;i<lines.length;i++)
-                clearCanvas("hSel"+i);
-        }
-
+	            clearCanvas("selectLayer");
+        	for(var i=0;i<lines.length;i++)
+                	clearCanvas("hSel"+i);
+	        }
 		selected = true;
 		xTotal = fileHeader[0].seqXLength;
 		yTotal = fileHeader[0].seqYLength;
-		drawLinesInLayer([lineIndex],selectLayer, arrayIndex, rgb(255,0,0))
-
+		drawLinesInVerticalLayer([lineIndex],selectLayer, arrayIndex, rgb(255,0,0))
 	}
-
 }
 
 /**
@@ -2143,7 +2162,7 @@ function paintFilter(frag){
 	let filter_overlapped = (filters_global.filterOverlapped && frag[13] > 0) ? false : true;
 
 	let filter_length = (filters_global.filterLenght && frag[7] <= filters_global.lengthValue) ? false : true;
-	let filter_similarity = (filters_global.filters_globalimilarity && frag[10] <= similarityValue) ? false : true;
+	let filter_similarity = (filters_global.filterSimilarity && frag[10] <= filters_global.similarityValue) ? false : true;
 	let filter_identity = (filters_global.filterIdentity && frag[11] <= filters_global.identityValue) ? false : true;
 
 	let filters_check = (

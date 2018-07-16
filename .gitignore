@@ -8,6 +8,15 @@ include/
 local/
 share/
 
+MGV/static/bower.json
+MGV/static/bower_components/
+MGV/static/css/xcout.css
+MGV/static/js/controllers/
+MGV/static/js/utils.js
+MGV/static/js/visualizationManager.js
+MGV/static/labeller/
+
+
 ### PyCharm ###
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio
 

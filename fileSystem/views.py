@@ -2,7 +2,7 @@ from django.http import HttpResponse, JsonResponse
 from MGV.views import *
 from fileSystem.models import *
 from fileSystem.forms import *
-
+import os
 from django.core.servers.basehttp import FileWrapper
 
 # Methods
@@ -41,6 +41,9 @@ def createFile(request, content, filename):
             auxname = filename+"("+str(x)+")"
         path = generatePath(request, auxname)
         x += 1
+
+    if not os.path.exists(path.rsplit("/", 1)[0]):
+        os.makedirs(path.rsplit("/",1)[0])
 
     file = open(path,'wb')
     file.write(content)
