@@ -107,7 +107,7 @@ function goToNextZoom(){
 		}
 
 		currentZoomIndex++;
-		last = backZoomList.slice(currentZoomIndex,currentZoomIndex+1)[0]; //[currentZoomIndex];
+		last = backZoomList.slice(currentZoomIndex,currentZoomIndex+1)[0];
 		currentArea = last;
 		scaleX = (last.x1 - last.x0) / canvas.width;
 		scaleY = (last.y1 - last.y0) / canvas.height;
@@ -411,8 +411,8 @@ function resetZoom(){
     currentArea.y1 = canvas.height;
     scaleX = 1;
     scaleY = 1;
-	currentZoomIndex=-1;
-	backZoomList=[];
+	currentZoomIndex=0;
+	backZoomList=[$.extend(true, {}, currentArea)];
     reset = false;
 }
 
@@ -1384,7 +1384,7 @@ function resetDraw() {
 		backZoomList=[];
         document.getElementById("myCanvasLayer2").getContext("2d").clearRect(0,0,500,500);
 		redraw();
-		addPrevZoom();
+		//addPrevZoom();
 	}
 }
 
