@@ -63,6 +63,7 @@ def clustal_omega(request):
     params['dismatout'] = True
     params['dealign'] = True
     params['mbed'] = True
+    params['outfmt'] = 'clustal_num'
     jobid = EBI.serviceRun("sabega@uma.es", "Test", params, baseUrl)
 
     inner=EBI.getResult(jobid, 'aln-clustal_num',baseUrl)

@@ -280,7 +280,7 @@ function processData(csv, index) {
                                 map = false;
                                 generateAnnotationTab(index);
                                 redraw();
-                                addPrevZoom();
+                                //addPrevZoom();
 
                                 document.getElementById('drawGrid').disabled = false;
                             }

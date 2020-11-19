@@ -1,0 +1,29 @@
+ html, body {
+     height: 100vh;
+     width: 100%;
+    }
+
+.container {
+    padding-top: 15px;
+    background-color: white;
+    height: auto;
+}
+
+.form-row {
+    margin-top:10px;
+    margin-bottom: 10px;
+}
+
+#title-container{
+    text-align: center;
+}
+
+#title {
+    font-family:sans-serif;
+    font-weight: bold;
+    font-size: xx-large;
+}
+
+#subtitle{
+    margin-top:-30px;
+}

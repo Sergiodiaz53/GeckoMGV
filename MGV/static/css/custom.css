@@ -302,7 +302,7 @@ body {
 
 #layersBox{
     max-height: 10%;
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 #myCanvasGrid {

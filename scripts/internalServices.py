@@ -149,7 +149,9 @@ def extractSequenceFromCSVService(args, request):
     output_content = ""
     id_counter = 0
     # Read CSV lines and extract from X and Y/Yr
-    for line in csv_lines[FRAGSTART:-1]:
+    for line in csv_lines[FRAGSTART:]:
+    # A = [1,2,3]
+    # print(A[0:-1])
         info = line.split(',')[0:6] # 0-frag/csb 1-xi 2-yi 3-xf 4-yf 5-strand
 
         if info[0] == 'Frag':
@@ -174,6 +176,8 @@ def extractSequenceFromCSVService(args, request):
                     output_content += yr_extracted + "\n"
 
             id_counter += 1
+
+
 
     # Create Files
     fs.createFile(request=request, content=output_content, filename=args[4].rsplit('/')[-1])

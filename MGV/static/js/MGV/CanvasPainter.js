@@ -54,7 +54,7 @@ var annotsGrid = [];
 
 // Constants
 const headerSize = 12;
-const fragsStarts = 17;
+const fragsStarts = 16;
 
 // Colors
 // negro, rojo, azul, naranja, verde, amarillo, morado, verde2
@@ -67,30 +67,8 @@ window.onload = function() {
 	createInstance();
 };
 
-//Add zoom to the backZoomList array
-function addPrevZoom(){
-	backCtx.save();
-	backCtx.clearRect(0, 0, backCtx.canvas.width, backCtx.canvas.height);
-	backCtx.restore();
-	for(var i=0;i<lines.length;i++){
-		var canvasLayer= $("#layer"+i)[0];
-		backCtx.drawImage(canvasLayer,0,0);
-	}
-    var horizontalLayers=[];
-    for(var x=0;x<$("#horizontalCanvasContainer")[0].childNodes.length-1;x++) {
-        var horizontalLayer = createHorizontalComparisonLayer(x);
-        var horImg = horizontalLayer.getContext('2d').getImageData(0, 0, horizontalLayer.width, horizontalLayer.height);
-        horizontalLayers.push(horImg);
-    }
-	var img=backCtx.getImageData(0,0,canvas.width,canvas.height);
-	backZoomList[++currentZoomIndex]=[$.extend(true, {},currentArea),img,$.extend(true, {},RectInMap),horizontalLayers];
-	console.log("modifying index: "+currentZoomIndex);
-	backZoomList.length=currentZoomIndex+1;
-	if(currentZoomIndex>0)
-		$("#prevZoom").prop( "disabled",false);
-}
-
 //Go to the previous zoom
+var last;
 function goToPrevZoom(){
 	if(currentZoomIndex>0) {
 		//drawSelectedFrags(true);
@@ -99,31 +77,23 @@ function goToPrevZoom(){
 			clearCanvas("layer" + i);
 		}
 
-		var l0Ctx = $("#layer0")[0].getContext('2d');
-		var last = backZoomList[--currentZoomIndex];
-		currentArea = $.extend(true, {},last[0]);
-        	RectInMap=$.extend(true, {},last[2]);
-	        redrawMap();
+		currentZoomIndex--;
+		last = backZoomList.slice(currentZoomIndex,currentZoomIndex+1)[0];
+		currentArea = last;
+		
+		scaleX = (last.x1 - last.x0) / canvas.width;
+		scaleY = (last.y1 - last.y0) / canvas.height;
 
-        	for(var j=0;j<last[3].length;j++){
-        		clearCanvas(createHorizontalComparisonLayer(j).id);
-		        createHorizontalComparisonLayer(j).getContext('2d').putImageData(last[3][j],0,0);
-        	}
-
-		scaleX = (currentArea.x1 - currentArea.x0) / canvas.width;
-		scaleY = (currentArea.y1 - currentArea.y0) / canvas.height;
-		l0Ctx.putImageData(last[1], 0, 0);
 		drawSelectedFrags();
-
 		paintCodingRegions(annotationsNumFile)
 
-		if($("#nextZoom").prop( "disabled"))
-			$("#nextZoom").prop( "disabled",false);
+		if($("#nextZoom").prop("disabled"))
+			$("#nextZoom").prop("disabled",false);
 		if(currentZoomIndex<=0)
-			$("#prevZoom").prop( "disabled",true);
+			$("#prevZoom").prop("disabled",true);
 
-		drawGrid(board, vertical, "myCanvasGrid");
 		console.log("------- CURRENT INDEX: "+ currentZoomIndex);
+		redraw();
 	}
 }
 
@@ -135,28 +105,24 @@ function goToNextZoom(){
 		for (var i = 0; i < lines.length; i++) {
 			clearCanvas("layer" + i);
 		}
-		var l0Ctx = $("#layer0")[0].getContext('2d');
-		var last = backZoomList[++currentZoomIndex];
-        	RectInMap=$.extend(true, {},last[2]);
-	        redrawMap();
-		currentArea = $.extend(true, {},last[0]);
-        	for(var i=0;i<last[3].length;i++){
-	            clearCanvas(createHorizontalComparisonLayer(i).id);
-        	    createHorizontalComparisonLayer(i).getContext('2d').putImageData(last[3][i],0,0);
-	        }
-		scaleX = (currentArea.x1 - currentArea.x0) / canvas.width;
-		scaleY = (currentArea.y1 - currentArea.y0) / canvas.height;
-		l0Ctx.putImageData(last[1], 0, 0);
-		drawSelectedFrags();
+
+		currentZoomIndex++;
+		last = backZoomList.slice(currentZoomIndex,currentZoomIndex+1)[0];
+		currentArea = last;
+		scaleX = (last.x1 - last.x0) / canvas.width;
+		scaleY = (last.y1 - last.y0) / canvas.height;
+
+		drawSelectedFrags(true);
+		paintCodingRegions(annotationsNumFile)
+
 		if($("#prevZoom").prop( "disabled"))
 			$("#prevZoom").prop( "disabled",false);
 		if(currentZoomIndex>=backZoomList.length-1)
 			$("#nextZoom").prop( "disabled", true );
-		paintCodingRegions(annotationsNumFile)
-
-		drawGrid(board, vertical, "myCanvasGrid");
+	
+		console.log("------- CURRENT INDEX: "+ currentZoomIndex);
+		redraw();
 	}
-	console.log("------- CURRENT INDEX: "+ currentZoomIndex);
 }
 
 //Draw in red frag that have been selected (Storaged in SelectedLines)
@@ -445,8 +411,8 @@ function resetZoom(){
     currentArea.y1 = canvas.height;
     scaleX = 1;
     scaleY = 1;
-	currentZoomIndex=-1;
-	backZoomList=[];
+	currentZoomIndex=0;
+	backZoomList=[$.extend(true, {}, currentArea)];
     reset = false;
 }
 
@@ -839,7 +805,9 @@ function createInstance() {
 				var currentVerticalCanvas = createVerticalComparisonLayer(numFile);
 				var currentHorizontalCanvas = createHorizontalComparisonLayer(numFile);
 
-				//Start the paint proccess
+				//Start the paint process
+
+				// Filters Init
 				filters = {};
 				filters.filterDuplications = document.getElementById("filterOverlapped2").checked
 				filters.filterIrrelevants = document.getElementById("filterIrrelevants").checked;
@@ -867,16 +835,16 @@ function createInstance() {
 				currentLines = currentLines.slice(fragsStarts);
 
 				let filter_results = currentLines.reduce((output, frag) => {
-					if(csbFilter(frag)) output[2].push(frag);
-					if(paintFilter(frag)) output[0].push(frag);
-					else output[1].push(frag);
-					return output;
-				}, [[], [], []]);
-
+					if(csbFilter(frag)) CSBLines.push(frag);
+					if(paintFilter(frag)) linesToPaint.push(frag);
+					else filteredLines.push(frag);
+					//return output;
+				});
+/*
 				linesToPaint = filter_results[0];
 				filteredLines = filter_results[1];
 				CSBLines = filter_results[2];
-
+*/
 				//Draw in vertical layer
 				clearCanvas(currentVerticalCanvas.id);
 				spinnerOn("Drawing Frags on Grid...");
@@ -936,8 +904,10 @@ function createInstance() {
 		spinnerOff();
     	drawSelectedFrags();
 
-		$("#nextZoom").prop( "disabled", true);
-		$("#prevZoom").prop( "disabled", true);
+		if(currentZoomIndex>=backZoomList.length-1)
+			$("#nextZoom").prop("disabled", true);
+		if(currentZoomIndex<=0)
+			$("#prevZoom").prop("disabled", true);
 	};
 
 	var lastX = canvas.width / 2, lastY = canvas.height / 2;
@@ -1102,20 +1072,49 @@ function createInstance() {
 					console.log("Selecting new area :" + startX + ","
 							+ (canvas.height - mouseY) + "," + mouseX + ","
 							+ (canvas.height - startY));
-
-					currentArea.x1 = currentArea.x0 + mouseX * scaleX;
-					currentArea.y1 = currentArea.y0 + (canvas.height - startY)
-							* scaleY;
-					currentArea.x0 += (scaleX * startX);
-					currentArea.y0 += (canvas.height - mouseY) * scaleY;
-					scaleX = (currentArea.x1 - currentArea.x0) / canvas.width;
-					scaleY = (currentArea.y1 - currentArea.y0) / canvas.height;
-
-					console.log("CurrentArea :" + currentArea.x0 + ","
+					console.log("OLD area :" + currentArea.x0 + ","
 							+ currentArea.y0 + "," + currentArea.x1 + ","
 							+ currentArea.y1);
-					console.log("ScaleX: " + scaleX + " ScaleY: " + scaleY);
+					console.log("OLD ScaleX: " + scaleX + " ScaleY: " + scaleY);
 
+						/*
+					console.log("...........");
+					currentZoomIndex++;
+					var aux_zooms = []
+					for (var i=0; i<currentZoomIndex; i++){
+						var tmp = backZoomList[i];
+						console.log(i + " :: " + tmp.x0);
+						aux_zooms[i] = tmp;
+					}
+					console.log("...........");
+					*/
+
+					// Initialize Deep Copy
+					console.log(":: ----------------------------- ::");
+					var aux_area =  $.extend(true, {}, currentArea);
+					console.log("INDEX BEFORE :: " + currentZoomIndex);
+					console.log(":: ----------------------------- ::");
+
+					// New Area calculation
+					//var new_area = recalculateArea(mouseX, mouseY, startX, startY);
+					aux_area.x1 = currentArea.x0 + mouseX * scaleX;
+					aux_area.y1 = currentArea.y0 + (canvas.height - startY)
+							* scaleY;
+					aux_area.x0 += (scaleX * startX);
+					aux_area.y0 += (canvas.height - mouseY) * scaleY;
+					scaleX = (aux_area.x1 - aux_area.x0) / canvas.width;
+					scaleY = (aux_area.y1 - aux_area.y0) / canvas.height;
+
+					// Save Zoom
+					console.log(":: ----------------------------- ::");
+					currentZoomIndex++;
+					backZoomList[currentZoomIndex] = aux_area;
+					backZoomList = backZoomList.slice(0,currentZoomIndex+1);
+
+					currentArea = $.extend(true, {}, aux_area);
+					console.log(":: ----------------------------- ::");
+
+					// Redraw
 					var layer1 = document.getElementById("myCanvasLayer1");
 					var ctx1 = layer1.getContext("2d");
 					ctx1.clearRect(0, 0, canvas.width, canvas.height);
@@ -1125,7 +1124,12 @@ function createInstance() {
 					canvas.style.cursor = "default";
 					clearCanvas("selectLayer");
 					redraw();
-					addPrevZoom();
+					
+					//addPrevZoom();
+					if(currentZoomIndex>=backZoomList.length-1)
+						$("#nextZoom").prop("disabled", true);
+					if(currentZoomIndex>0)
+						$("#prevZoom").prop("disabled", false);
                     //drawAnnotations();
 				}
 
@@ -1380,7 +1384,7 @@ function resetDraw() {
 		backZoomList=[];
         document.getElementById("myCanvasLayer2").getContext("2d").clearRect(0,0,500,500);
 		redraw();
-		addPrevZoom();
+		//addPrevZoom();
 	}
 }
 
@@ -1911,7 +1915,7 @@ function selectFrag(lines, position, evt) {
 		selected = true;
 		xTotal = fileHeader[0].seqXLength;
 		yTotal = fileHeader[0].seqYLength;
-		drawLinesInVerticalLayer([lineIndex],selectLayer, arrayIndex, rgb(255,0,0))
+		drawLinesInLayer([lineIndex],selectLayer, arrayIndex, rgb(255,0,0))
 	}
 }
 
@@ -2152,6 +2156,7 @@ function paintFilter(frag){
 		&& ((frag[3]) <= (currentArea.x1 * xTotal / 500))
 		&& ((frag[4]) <= (currentArea.y1 * yTotal / 500))
 	)
+
 	let filtered_file_check = (
 		!(filtered[filters.current_numfile_filter]!=null&&filtered[filters.current_numfile_filter].indexOf(i)>-1)
 	)
